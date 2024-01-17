@@ -16,7 +16,7 @@ export APPNAME=xxxxxx
 #----------------------------------------------
 echo "71.file-zip.sh"
 
-if [ -d "$basePath/Publish/release/release" ]; then
+if [ ! -d "$basePath/Publish/release/release" ]; then
     echo '71.file-zip.sh'
 else
     echo '71.file-zip.sh -> skip for no docker image files exist'
