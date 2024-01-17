@@ -18,17 +18,19 @@ export NUGET_KEY=xxxxxxxxxx
 #----------------------------------------------
 echo "72.nuget-push.sh"
 
-if [ ! -d "$basePath/Publish/release/release/nuget" ] then
-    echo '72.nuget-push.sh -> skip for no nuget files exist'
-    exit 0
-fi
-
-
 docker run -i --rm \
 --env LANG=C.UTF-8 \
 -v $basePath:/root/code \
 serset/dotnet:sdk-6.0 \
 bash -c "
+
+
+if [ ! -d \"/root/code/Publish/release/release/nuget\" ]; then
+    echo '72.nuget-push.sh -> skip for no nuget files exist'
+    exit 0
+fi
+
+
 for file in /root/code/Publish/release/release/nuget/*.nupkg
 do
     echo nuget push \$file
