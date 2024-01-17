@@ -16,9 +16,9 @@ export APPNAME=xxxxxx
 #----------------------------------------------
 echo "71.file-zip.sh"
 
-if [ ! -d "$basePath/Publish/release" ] then
-    echo '71.file-zip.sh -> skip for no files exist'
-    exit 0
+if [ ! -d "$basePath/Publish/release" ]; then
+	echo '71.file-zip.sh -> skip for no files exist'
+	exit 0
 fi
 
 
