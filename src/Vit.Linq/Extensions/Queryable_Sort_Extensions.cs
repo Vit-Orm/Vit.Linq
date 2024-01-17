@@ -12,7 +12,7 @@ namespace Vit.Extensions.Linq_Extensions
     /// <summary>
     /// ref https://www.cnblogs.com/Extnet/p/9848272.html
     /// </summary>
-    public static partial class Queryable_SortExtensions
+    public static partial class Queryable_Sort_Extensions
     {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

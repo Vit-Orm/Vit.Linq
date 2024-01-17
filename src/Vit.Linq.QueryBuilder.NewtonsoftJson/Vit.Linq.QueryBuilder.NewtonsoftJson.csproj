@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <pack>nuget</pack>
@@ -15,10 +15,11 @@
         <PackageProjectUrl>https://github.com/serset/Vit.Linq</PackageProjectUrl>
     </PropertyGroup>
 
-    <PropertyGroup>
-        <DocumentationFile>bin\Debug\netstandard2.0\Vit.Linq.QueryBuilder</DocumentationFile>
-    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Vit.Linq.QueryBuilder\Vit.Linq.QueryBuilder.csproj" />
+    </ItemGroup>
 
-
-
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    </ItemGroup>
 </Project>

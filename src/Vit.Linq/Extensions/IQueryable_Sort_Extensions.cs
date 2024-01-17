@@ -9,7 +9,7 @@ using Vit.Linq.QueryBuilder;
 namespace Vit.Extensions.Linq_Extensions
 {
 
-    public static partial class IQueryable_SortExtensions
+    public static partial class IQueryable_Sort_Extensions
     {
 
         #region Sort

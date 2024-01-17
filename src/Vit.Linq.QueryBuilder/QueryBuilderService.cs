@@ -80,6 +80,14 @@ namespace Vit.Linq.QueryBuilder
             return operate;
         }
 
+        public Func<object, IFilterRule, Type, object> GetRuleValue;
+        protected virtual object GetRulePrimitiveValue(object value, IFilterRule rule, Type fieldType)
+        {
+            if (GetRuleValue != null) return GetRuleValue(value, rule, fieldType);
+            return value;
+        }
+
+
         Expression ConvertToExpression(IFilterRule rule, ParameterExpression parameter)
         {
             if (rule == null) return null;
@@ -211,7 +219,7 @@ namespace Vit.Linq.QueryBuilder
             #region Method ConvertValueExp
             UnaryExpression ConvertValueExp()
             {
-                object value = rule.value;
+                object value = GetRulePrimitiveValue(rule.value,rule,fieldType);
                 if (value != null)
                 {
                     Type valueType = Nullable.GetUnderlyingType(fieldType) ?? fieldType;
@@ -244,11 +252,8 @@ namespace Vit.Linq.QueryBuilder
                     object value = null;
                     if (rule.value != null)
                     {
-                        //value = Vit.Core.Module.Serialization.Json.Deserialize(Vit.Core.Module.Serialization.Json.Serialize(rule.value), valueType);
-                        if (rule.value is IEnumerable arr)
-                        {
-                            value = ConvertToList(arr, fieldType);
-                        }
+                        //value = Vit.Core.Module.Serialization.Json.Deserialize(Vit.Core.Module.Serialization.Json.Serialize(rule.value), valueType);                        
+                        value = ConvertToList(rule.value, rule, fieldType);
                     }
                     Expression<Func<object>> valueLamba = () => value;
                     arrayExp = Expression.Convert(valueLamba.Body, valueType);
@@ -299,18 +304,29 @@ namespace Vit.Linq.QueryBuilder
         }
 
         #region ConvertToList
-        internal object ConvertToList(IEnumerable values, Type fieldType)
+        internal object ConvertToList(object value,IFilterRule rule, Type fieldType)
         {
-            var methodInfo = typeof(QueryBuilderService).GetMethod("ConvertToListByType", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).MakeGenericMethod(fieldType);
-            return methodInfo.Invoke(this, new object[] { values });
+            if (value is string str)
+            {
+                var itemValue = GetRulePrimitiveValue(str, rule, fieldType);
+                if (itemValue is IEnumerable)
+                    return itemValue;
+            }
+            else if (value is IEnumerable values)
+            {
+                var methodInfo = typeof(QueryBuilderService).GetMethod("ConvertToListByType", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).MakeGenericMethod(fieldType);
+                return methodInfo.Invoke(this, new object[] { values , rule });
+            }
+            return null;
         }
-        internal List<T> ConvertToListByType<T>(IEnumerable values)
+        internal List<T> ConvertToListByType<T>(IEnumerable values, IFilterRule rule)
         {
-            Type valueType = typeof(T);
+            Type fieldType = typeof(T);
             var list = new List<T>();
             foreach (var item in values)
             {
-                var value = (T)Convert.ChangeType(item, valueType);
+                var itemValue = GetRulePrimitiveValue(item, rule, fieldType);
+                T value = (T)Convert.ChangeType(itemValue, fieldType);
                 list.Add(value);
             }
             return list;

@@ -4,7 +4,7 @@ using Vit.Core.Util.ComponentModel.Data;
 using Vit.Core.Util.ComponentModel.Query;
 
 
-namespace Vit.Linq.MsTest
+namespace Vit.Linq.MsTest.Extensions
 {
     [TestClass]
     public class IQueryable_SortAndPage_Test

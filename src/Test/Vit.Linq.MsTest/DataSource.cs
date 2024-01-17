@@ -55,7 +55,7 @@ namespace Vit.Linq.MsTest
             return list;
         }
 
-        public static IQueryable GetIQueryable() => BuildDataSource().AsQueryable();
+        public static IQueryable GetIQueryable() => GetQueryable();
         public static IQueryable<ModelA> GetQueryable() => BuildDataSource().AsQueryable();
     }
 }

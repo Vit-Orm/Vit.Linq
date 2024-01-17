@@ -12,7 +12,7 @@
     <PropertyGroup>
         <Authors>Lith</Authors>
         <Description>Linq extensions</Description>
-        <PackageProjectUrl>https://github.com/serset/Vit.Library</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/serset/Vit.Linq</PackageProjectUrl>
     </PropertyGroup>
 
     <PropertyGroup>

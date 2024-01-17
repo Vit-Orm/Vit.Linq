@@ -10,11 +10,11 @@ namespace Vit.Linq.QueryBuilder
         /// <summary>
         ///  condition - acceptable values are "and" and "or".
         /// </summary>
-        string condition { get; }
+        string condition { get; set; }
         /// <summary>
         /// could be nested, example: b1.name
         /// </summary>
-        string field { get; }
+        string field { get; set; }
 
 
         /// <summary>
@@ -27,18 +27,18 @@ namespace Vit.Linq.QueryBuilder
         ///     
         ///    //TODO [array]   "is empty", "is not empty"
         /// </summary>
-        string @operator { get; }
+        string @operator { get; set; }
 
         /// <summary>
         /// nested filter rules
         /// </summary>
         IEnumerable<IFilterRule> rules { get; }
- 
- 
+
+
 
         /// <summary>
         /// value of the filter. Supported value types are "integer", "double", "string", "date", "datetime", and "boolean".
         /// </summary>
-        object value { get; }
+        object value { get; set; }
     }
 }
