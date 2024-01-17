@@ -18,7 +18,7 @@ export NUGET_KEY=xxxxxxxxxx
 #----------------------------------------------
 echo "72.nuget-push.sh"
 
-if [ ! -d "$basePath/Publish/release/release/nuget" ]; then
+if [ ! -d "$basePath/Publish/release/release/nuget" ] then
     echo '72.nuget-push.sh -> skip for no nuget files exist'
     exit 0
 fi
