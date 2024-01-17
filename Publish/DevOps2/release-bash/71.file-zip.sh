@@ -16,6 +16,12 @@ export APPNAME=xxxxxx
 #----------------------------------------------
 echo "71.file-zip.sh"
 
+if [ -d "$basePath/Publish/release" ]; then
+    echo '71.file-zip.sh -> skip for no files exist'
+    exit 0
+fi
+
+
 docker run --rm -i \
 -v $basePath:/root/code \
 serset/filezip bash -c "
@@ -26,8 +32,7 @@ rm -rf \$releasePath/release-zip
 
 for dirname in \`ls /root/code/Publish/release/release\`
 do
-  if [ -d \$releasePath/release/\$dirname ]
-  then
+  if [ -d \$releasePath/release/\$dirname ] then
     filezip zip -p -i \$releasePath/release/\$dirname -o \$releasePath/release-zip/${APPNAME}-\${dirname}-${appVersion}.zip 
   fi
 done
