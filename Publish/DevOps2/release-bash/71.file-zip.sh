@@ -17,17 +17,16 @@ export APPNAME=xxxxxx
 echo "71.file-zip.sh"
 
 
-
+if [ ! -d "$basePath/Publish/release/release" ] 
+then
+	echo '71.file-zip.sh -> skip for no files exist'
+	exit 0
+fi
 
 docker run --rm -i \
 -v $basePath:/root/code \
 serset/filezip bash -c "
 set -e
-
-if [ ! -d \"/root/code/Publish/release/release\" ]; then
-	echo '71.file-zip.sh -> skip for no files exist'
-	exit 0
-fi
 
 releasePath=/root/code/Publish/release
 rm -rf \$releasePath/release-zip
