@@ -24,7 +24,7 @@ export DOCKER_BuildxExtArgs=
 #---------------------------------------------------------------------
 echo "73.docker-image-build-push.sh"
 
-if [ -d "$basePath/Publish/release/release/docker-image" ]; then
+if [ ! -d "$basePath/Publish/release/release/docker-image" ]; then
     echo '##73.docker-image-build-push.sh -> skip for no docker image files exist'
     exit 0
 fi
