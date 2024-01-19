@@ -8,6 +8,11 @@ namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
     [TestClass]
     public class Filter_Test_Newtonsoft2 : Filter_Test_FilterRule
     {
+        [TestMethod]
+        public void Test_FilterRule()
+        {
+            base.TestFilterRule();
+        }
 
         public override IFilterRule GetRule(string filterRule)
         {
@@ -19,11 +24,7 @@ namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
             return service;
         }
 
-        [TestMethod]
-        public void Test_FilterRule()
-        {
-            base.TestFilterRule();
-        }
+
 
     }
 }

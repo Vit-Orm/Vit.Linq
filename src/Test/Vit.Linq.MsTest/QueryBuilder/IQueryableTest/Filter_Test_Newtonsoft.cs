@@ -10,6 +10,12 @@ namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
     public class Filter_Test_Newtonsoft : Filter_Test_FilterRule
     {
 
+        [TestMethod]
+        public void Test_FilterRule()
+        {
+            base.TestFilterRule();
+        }
+
         public override IFilterRule GetRule(string filterRule)
         {
             return Json.Deserialize<FilterRule_Newtonsoft>(filterRule);
@@ -22,10 +28,5 @@ namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
         }
 
 
-        [TestMethod]
-        public void Test_FilterRule()
-        {
-            base.TestFilterRule();
-        }
     }
 }
