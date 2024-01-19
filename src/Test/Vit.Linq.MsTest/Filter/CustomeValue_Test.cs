@@ -5,7 +5,7 @@ using System.Text;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
-using Vit.Linq.QueryBuilder;
+using Vit.Linq.Filter;
 using Vit.Extensions.Linq_Extensions;
 using Newtonsoft.Json.Linq;
 
@@ -19,7 +19,7 @@ namespace Vit.Linq.MsTest.QueryBuilder
         public void Test_CustomeValue()
         {
             {
-                var service = new QueryBuilderService();
+                var service = new FilterService();
                 service.GetRuleValue = (object? value, IFilterRule rule, Type fieldType) =>
                 {
                     // to deal with null value

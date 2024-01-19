@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,12 +17,35 @@ namespace Vit.Linq.MsTest
         public ModelB b1;
 
         public ModelB[] ba;
+
+        public List<ModelB> bList;
         public ModelA BuildB()
         {
             b1 = new ModelB { name = name + "_b1", pid = pid };
 
-            ba = new[] { b1 };
+            if (id % 2 == 0)
+                ba = new[] { b1, b1 };
+            else
+                ba = new[] { b1 };
+
+            bList = ba.ToList();
+          
             return this;
+        }
+
+        public int GetBCount()
+        {
+            return bList.Count;
+        }
+        public bool BExistAtIndex(int index)
+        {
+            if (index < bList.Count) return true;
+            return false;
+        }
+        public ModelB GetBAtIndex(int index)
+        {
+            if (index < bList.Count) return bList[index];
+            return null;
         }
     }
 
@@ -29,6 +53,10 @@ namespace Vit.Linq.MsTest
     {
         public int? pid;
         public string name;
+        public string GetBName()
+        {
+            return name;
+        }
     }
 
 

@@ -5,53 +5,27 @@ using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Vit.Linq.QueryBuilder.NewtonsoftJson
+using Vit.Linq.MoreFilter;
+
+namespace Vit.Linq.NewtonsoftJson
 {
     /// <summary>
     /// This class is used to define a hierarchical filter for a given collection. This type can be serialized/deserialized by JSON.NET without needing to modify the data structure from QueryBuilder.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public class FilterRule_Newtonsoft : IFilterRule
+    public class FilterRule_Newtonsoft : FilterRuleWithMethod<FilterRule_Newtonsoft>
     {
-        /// <summary>
-        /// condition - acceptable values are "and" and "or".
-        /// </summary>
-        public string condition { get; set; }
 
-
-        public string field { get; set; }
-
-
-        public string @operator { get; set; }
-
-        /// <summary>
-        ///  nested filter rules.
-        /// </summary>
-        public List<FilterRule_Newtonsoft> rules { get; set; }
-
-
-        /// <summary>
-        /// Gets or sets the value of the filter.
-        /// </summary>
-        /// <value>
-        /// The value.
-        /// </value>
-        public object value
+        protected override object GetPrimitiveValue(Object value)
         {
-            get
+            if (value is JToken item)
             {
-                if (_value is JToken jt)
-                {
-                    return GetPrimitiveValue(jt);
-                }
-                return _value;
+                return GetPrimitiveValueFromJson(item);
             }
-            set => _value = value;
+            return value;
         }
 
-        private object _value;
 
-        IEnumerable<IFilterRule> IFilterRule.rules => rules;
 
 
         public static FilterRule_Newtonsoft FromString(string filter)
@@ -62,7 +36,7 @@ namespace Vit.Linq.QueryBuilder.NewtonsoftJson
         static readonly global::Newtonsoft.Json.JsonSerializerSettings serializeSetting = new global::Newtonsoft.Json.JsonSerializerSettings() { Converters = { new ValueConverter() } };
 
 
-        public static object GetPrimitiveValue(JToken value)
+        public static object GetPrimitiveValueFromJson(JToken value)
         {
             if (value is JValue jv)
             {
@@ -92,7 +66,7 @@ namespace Vit.Linq.QueryBuilder.NewtonsoftJson
             public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
                 JToken token = JToken.Load(reader);
-                return GetPrimitiveValue(token);
+                return GetPrimitiveValueFromJson(token);
             }
 
             public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

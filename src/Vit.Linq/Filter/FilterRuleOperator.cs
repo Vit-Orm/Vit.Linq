@@ -1,4 +1,4 @@
-﻿namespace Vit.Linq.QueryBuilder
+﻿namespace Vit.Linq.Filter
 {
     public class FilterRuleOperator
     {

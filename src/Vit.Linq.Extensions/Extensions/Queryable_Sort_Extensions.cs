@@ -5,7 +5,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using Vit.Core.Util.ComponentModel.Query;
-using Vit.Linq.QueryBuilder;
+using Vit.Linq;
+using Vit.Linq.Filter;
 
 namespace Vit.Extensions.Linq_Extensions
 {
@@ -31,7 +32,7 @@ namespace Vit.Extensions.Linq_Extensions
             foreach (var item in sort)
             {
 
-                MemberExpression memberExp = LinqHelp.GetFieldMemberExpression(paramExp, item.field);
+                var memberExp = LinqHelp.GetFieldMemberExpression(paramExp, item.field);
                 LambdaExpression exp = Expression.Lambda(memberExp, paramExp);
 
                 if (orderedQuery == null)
@@ -62,7 +63,7 @@ namespace Vit.Extensions.Linq_Extensions
             if (string.IsNullOrEmpty(field)) return query;
 
             var paramExp = Expression.Parameter(typeof(T));
-            MemberExpression memberExp = LinqHelp.GetFieldMemberExpression(paramExp, field);
+            var memberExp = LinqHelp.GetFieldMemberExpression(paramExp, field);
             LambdaExpression expr = Expression.Lambda(memberExp, paramExp);
 
             return OrderBy(query, expr, asc);

@@ -2,31 +2,32 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using Vit.Linq.QueryBuilder;
-using Vit.Linq.QueryBuilder.SystemTextJson;
+using Vit.Linq.Filter;
+using Vit.Linq.SystemTextJson;
 
 namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
 {
     [TestClass]
-    public class Filter_Test_SystemTextJson : Filter_Test
+    public class Filter_Test_SystemTextJson : Filter_Test_FilterRule
     {
+        [TestMethod]
+        public void Test_FilterRule()
+        {
+            base.TestFilterRule();
+        }
 
         public override IFilterRule GetRule(string filterRule)
         {
             return JsonSerializer.Deserialize<FilterRule_SystemTextJson>(filterRule);
         }
 
-        public override QueryBuilderService GetService()
+        public override FilterService GetService()
         {
-            QueryBuilderService service = new QueryBuilderService();
+            FilterService service = new FilterService();
             return service;
         }
 
 
-        [TestMethod]
-        public void Test_FilterRule()
-        {
-            base.TestFilterRule();
-        }
+
     }
 }

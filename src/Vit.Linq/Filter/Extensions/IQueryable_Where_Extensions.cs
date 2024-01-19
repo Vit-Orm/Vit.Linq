@@ -3,7 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
-using Vit.Linq.QueryBuilder;
+using Vit.Linq.Filter;
 
 namespace Vit.Extensions.Linq_Extensions
 {
@@ -12,9 +12,9 @@ namespace Vit.Extensions.Linq_Extensions
         #region Where
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable IQueryable_Where(this IQueryable query, IFilterRule rule, QueryBuilderService service = null)
+        public static IQueryable IQueryable_Where(this IQueryable query, IFilterRule rule, FilterService service = null)
         {
-            LambdaExpression lambda = (service ?? QueryBuilderService.Instance).ToLambdaExpression(rule, query.ElementType);
+            LambdaExpression lambda = (service ?? FilterService.Instance).ToLambdaExpression(rule, query.ElementType);
             if (lambda == null) return query;
             return query.Provider.CreateQuery(
                 Expression.Call(

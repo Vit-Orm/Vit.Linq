@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Runtime.CompilerServices;
 
-using Vit.Linq.QueryBuilder;
+using Vit.Linq.Filter;
 
 namespace Vit.Extensions.Linq_Extensions
 {
@@ -9,12 +9,12 @@ namespace Vit.Extensions.Linq_Extensions
     {
         #region Where
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable<T> Where<T>(this IQueryable<T> query, IFilterRule rule, QueryBuilderService service = null)
+        public static IQueryable<T> Where<T>(this IQueryable<T> query, IFilterRule rule, FilterService service = null)
         where T : class
         {
             if (query == null || rule == null) return query;
 
-            var predicate = (service ?? QueryBuilderService.Instance).ToExpression<T>(rule);
+            var predicate = (service ?? FilterService.Instance).ToExpression<T>(rule);
             if (predicate == null)
             {
                 return query;

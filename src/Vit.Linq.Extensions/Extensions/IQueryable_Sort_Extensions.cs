@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
 using Vit.Core.Util.ComponentModel.Query;
-using Vit.Linq.QueryBuilder;
+using Vit.Linq;
 
 namespace Vit.Extensions.Linq_Extensions
 {
@@ -42,7 +42,7 @@ namespace Vit.Extensions.Linq_Extensions
             foreach (var item in sort)
             {
                 // get memberExp
-                MemberExpression memberExp = LinqHelp.GetFieldMemberExpression(parameter, item.field);
+                Expression memberExp = LinqHelp.GetFieldMemberExpression(parameter, item.field);
 
 
                 #region (x.2)Call

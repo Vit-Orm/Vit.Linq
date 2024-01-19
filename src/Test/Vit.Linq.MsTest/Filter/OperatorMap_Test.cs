@@ -2,7 +2,7 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
-using Vit.Linq.QueryBuilder;
+using Vit.Linq.Filter;
 using Vit.Extensions.Linq_Extensions;
 
 namespace Vit.Linq.MsTest.QueryBuilder
@@ -15,7 +15,7 @@ namespace Vit.Linq.MsTest.QueryBuilder
         public void Test_OperatorMap()
         {
             {
-                var service = new QueryBuilderService();
+                var service = new FilterService();
                 var query = DataSource.GetQueryable();
                 service.AddOperatorMap("Equal", FilterRuleOperator.Equal);
 

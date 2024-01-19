@@ -1,13 +1,36 @@
 ﻿using System;
+using System.Collections;
+using System.Linq;
 using System.Linq.Expressions;
 
-namespace Vit.Linq.QueryBuilder
+namespace Vit.Linq
 {
     public partial class LinqHelp
     {
-
-        public static MemberExpression GetFieldMemberExpression_ByName(Expression parameter, string propertyOrFieldName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <param name="propertyOrFieldName"> could be array index, example:  "2"  "name"</param>
+        /// <returns></returns>
+        public static Expression GetFieldMemberExpression_ByName(Expression parameter, string propertyOrFieldName)
         {
+            var valueType = parameter.Type;
+            int index;
+            if (valueType.IsArray)
+            {
+                // Array
+                if (int.TryParse(propertyOrFieldName, out index))
+                    return Expression.ArrayAccess(parameter, Expression.Constant(index));
+            }
+            else
+            if (valueType.IsGenericType && typeof(IEnumerable).IsAssignableFrom(valueType))
+            {
+                // IEnumerable<>    List<>
+                if (int.TryParse(propertyOrFieldName, out index))
+                    return Expression.Call(typeof(Enumerable), "ElementAt", valueType.GetGenericArguments(), parameter, Expression.Constant(index));
+            }
+
             return Expression.PropertyOrField(parameter, propertyOrFieldName);
         }
 
@@ -15,16 +38,19 @@ namespace Vit.Linq.QueryBuilder
         /// 
         /// </summary>
         /// <param name="parameter"></param>
-        /// <param name="fieldPath"> could be nasted , example: "name"  "depart.name"</param>
+        /// <param name="fieldPath"> could be nasted , example: "name"  "depart.name"  "departs[1].name" "departs.1.name"</param>
         /// <returns></returns>
-        public static MemberExpression GetFieldMemberExpression(ParameterExpression parameter, string fieldPath)
+        public static Expression GetFieldMemberExpression(Expression parameter, string fieldPath)
         {
-            MemberExpression memberExp = null;
-            foreach (var fieldName in fieldPath?.Split('.'))
+            fieldPath = fieldPath?.Replace("]", "").Replace("[", ".");
+            if (!string.IsNullOrWhiteSpace(fieldPath))
             {
-                memberExp = GetFieldMemberExpression_ByName(((Expression)memberExp) ?? parameter, fieldName);
+                foreach (var fieldName in fieldPath.Split('.'))
+                {
+                    parameter = GetFieldMemberExpression_ByName(parameter, fieldName);
+                }
             }
-            return memberExp;
+            return parameter;
         }
 
 
@@ -34,7 +60,7 @@ namespace Vit.Linq.QueryBuilder
         /// <param name="type"></param>
         /// <param name="fieldPath"> could be nasted , example: "name"  "depart.name"</param>
         /// <returns></returns>
-        public static MemberExpression GetFieldMemberExpression(Type type, string fieldPath)
+        public static Expression GetFieldMemberExpression(Type type, string fieldPath)
         {
             return GetFieldMemberExpression(Expression.Parameter(type), fieldPath);
         }
@@ -44,7 +70,7 @@ namespace Vit.Linq.QueryBuilder
         public static Expression<Func<T, object>> GetFieldExpression<T>(string fieldPath)
         {
             var parammeter = Expression.Parameter(typeof(T));
-            MemberExpression memberExp = GetFieldMemberExpression(parammeter, fieldPath);
+            Expression memberExp = GetFieldMemberExpression(parammeter, fieldPath);
             var lambda = Expression.Lambda(memberExp, parammeter).Compile();
             return t => lambda.DynamicInvoke(t);
         }
