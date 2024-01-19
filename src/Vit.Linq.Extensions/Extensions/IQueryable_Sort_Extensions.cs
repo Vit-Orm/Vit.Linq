@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+
 using Vit.Core.Util.ComponentModel.Query;
 using Vit.Linq.QueryBuilder;
 
@@ -40,7 +41,7 @@ namespace Vit.Extensions.Linq_Extensions
 
             foreach (var item in sort)
             {
-                //(x.1)get memberExp     
+                // get memberExp
                 MemberExpression memberExp = LinqHelp.GetFieldMemberExpression(parameter, item.field);
 
 
@@ -60,10 +61,10 @@ namespace Vit.Extensions.Linq_Extensions
 
         /// <summary>
         /// 
-        /// </summary>      
+        /// </summary>
         /// <param name="query"></param>
-        /// <param name="field">字段名</param>
-        /// <param name="asc">是否为正向排序</param>
+        /// <param name="field"></param>
+        /// <param name="asc"> whether sort by asc</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IQueryable IQueryable_Sort(this IQueryable query, string field, bool asc = true)

@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
@@ -13,8 +12,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Vit.Linq.QueryBuilder.NewtonsoftJson\Vit.Linq.QueryBuilder.NewtonsoftJson.csproj" />
-        <ProjectReference Include="..\..\Vit.Linq.QueryBuilder.SystemTextJson\Vit.Linq.QueryBuilder.SystemTextJson.csproj" />
+        <ProjectReference Include="..\..\Vit.Linq.Extensions\Vit.Linq.Extensions.csproj" />
+        <ProjectReference Include="..\..\Vit.Linq.NewtonsoftJson\Vit.Linq.NewtonsoftJson.csproj" />
+        <ProjectReference Include="..\..\Vit.Linq.SystemTextJson\Vit.Linq.SystemTextJson.csproj" />
         <ProjectReference Include="..\..\Vit.Linq\Vit.Linq.csproj" />
     </ItemGroup>
 

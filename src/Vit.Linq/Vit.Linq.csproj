@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <pack>nuget</pack>
@@ -11,7 +11,7 @@
 
     <PropertyGroup>
         <Authors>Lith</Authors>
-        <Description>Linq extensions</Description>
+        <Description>Linq Filter</Description>
         <PackageProjectUrl>https://github.com/serset/Vit.Linq</PackageProjectUrl>
     </PropertyGroup>
 
@@ -19,12 +19,5 @@
         <DocumentationFile>bin\Debug\netstandard2.0\Vit.Linq.xml</DocumentationFile>
     </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Vit.Core" Version="2.1.19" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\Vit.Linq.QueryBuilder\Vit.Linq.QueryBuilder.csproj" />
-    </ItemGroup>
 
 </Project>
