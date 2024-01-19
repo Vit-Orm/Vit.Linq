@@ -67,12 +67,21 @@ namespace Vit.Linq.QueryBuilder
 
 
 
-        public ECondition GetCondition(IFilterRule filter)
+        public virtual ECondition GetCondition(IFilterRule filter)
         {
             return filter.condition?.ToLower() == "or" ? ECondition.or : ECondition.and;
         }
 
-        public string GetOperator(IFilterRule filter)
+
+
+        protected virtual MemberExpression GetLeftValueExpression(IFilterRule rule, ParameterExpression parameter)
+        {
+            return rule.GetLeftValueExpression(parameter);
+            //return LinqHelp.GetFieldMemberExpression(parameter, rule.field);
+        }
+
+
+        public virtual string GetOperator(IFilterRule filter)
         {
             var operate = filter.@operator ?? "";
             if (operatorIsIgnoreCase) operate = operate.ToLower();
@@ -80,18 +89,83 @@ namespace Vit.Linq.QueryBuilder
             return operate;
         }
 
-        public Func<object, IFilterRule, Type, object> GetRuleValue;
+
+        #region GetRightValueExpression
+
+        public Func<object, IFilterRule, Type, object> GetRuleValue { get; set; }
         protected virtual object GetRulePrimitiveValue(object value, IFilterRule rule, Type fieldType)
         {
             if (GetRuleValue != null) return GetRuleValue(value, rule, fieldType);
             return value;
         }
 
-        protected virtual MemberExpression GetLeftValueExpression(IFilterRule rule, ParameterExpression parameter) 
+
+
+
+        protected virtual UnaryExpression GetRightValueExpression(IFilterRule rule, ParameterExpression parameter, Type valueType)
         {
-            return rule.GetLeftValueExpression(parameter);
-            //return LinqHelp.GetFieldMemberExpression(parameter, rule.field);
+            object rightValue = rule.value;
+
+            // typeof(IEnumerable).IsAssignableFrom(valueType)
+            if (valueType.IsGenericType && typeof(IEnumerable<>).IsAssignableFrom(valueType.GetGenericTypeDefinition()))
+            {
+                // constant List
+                object value = null;
+                if (rule.value != null)
+                {
+                    //value = Vit.Core.Module.Serialization.Json.Deserialize(Vit.Core.Module.Serialization.Json.Serialize(rule.value), valueType);
+                    var leftFieldType = valueType.GetGenericArguments()[0];
+                    value = ConvertToList(rule.value, rule, leftFieldType);
+                }
+                rightValue = value;
+            }
+            else
+            {
+                // constant value
+                object value = GetRulePrimitiveValue(rule.value, rule, valueType);
+                if (value != null)
+                {
+                    Type type = Nullable.GetUnderlyingType(valueType) ?? valueType;
+                    value = Convert.ChangeType(value, type);
+                }
+                rightValue = value;
+            }
+
+            Expression<Func<object>> valueLamba = () => rightValue;
+            return Expression.Convert(valueLamba.Body, valueType);
         }
+
+        #region ConvertToList
+        internal object ConvertToList(object value, IFilterRule rule, Type fieldType)
+        {
+            if (value is string str)
+            {
+                var itemValue = GetRulePrimitiveValue(str, rule, fieldType);
+                if (itemValue is IEnumerable)
+                    return itemValue;
+            }
+            else if (value is IEnumerable values)
+            {
+                var methodInfo = typeof(QueryBuilderService).GetMethod("ConvertToListByType", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).MakeGenericMethod(fieldType);
+                return methodInfo.Invoke(this, new object[] { values, rule });
+            }
+            return null;
+        }
+        internal List<T> ConvertToListByType<T>(IEnumerable values, IFilterRule rule)
+        {
+            Type fieldType = typeof(T);
+            var list = new List<T>();
+            foreach (var item in values)
+            {
+                var itemValue = GetRulePrimitiveValue(item, rule, fieldType);
+                T value = (T)Convert.ChangeType(itemValue, fieldType);
+                list.Add(value);
+            }
+            return list;
+        }
+        #endregion
+
+        #endregion
 
 
         Expression ConvertToExpression(IFilterRule rule, ParameterExpression parameter)
@@ -225,15 +299,7 @@ namespace Vit.Linq.QueryBuilder
             #region Method ConvertValueExp
             UnaryExpression GetRightValueExpression()
             {
-                object value = GetRulePrimitiveValue(rule.value,rule,leftFieldType);
-                if (value != null)
-                {
-                    Type valueType = Nullable.GetUnderlyingType(leftFieldType) ?? leftFieldType;
-                    value = Convert.ChangeType(value, valueType);
-                }
-
-                Expression<Func<object>> valueLamba = () => value;
-                return Expression.Convert(valueLamba.Body, leftFieldType);
+                return this.GetRightValueExpression(rule, parameter, leftFieldType);
             }
 
 
@@ -252,19 +318,9 @@ namespace Vit.Linq.QueryBuilder
             Expression In()
             {
                 Expression arrayExp = null;
-                #region build arrayExp
-                {
-                    Type valueType = typeof(IEnumerable<>).MakeGenericType(leftFieldType);
-                    object value = null;
-                    if (rule.value != null)
-                    {
-                        //value = Vit.Core.Module.Serialization.Json.Deserialize(Vit.Core.Module.Serialization.Json.Serialize(rule.value), valueType);
-                        value = ConvertToList(rule.value, rule, leftFieldType);
-                    }
-                    Expression<Func<object>> valueLamba = () => value;
-                    arrayExp = Expression.Convert(valueLamba.Body, valueType);
-                }
-                #endregion
+                Type valueType = typeof(IEnumerable<>).MakeGenericType(leftFieldType);
+                arrayExp = this.GetRightValueExpression(rule, parameter, valueType);
+
                 var inCheck = Expression.Call(typeof(System.Linq.Enumerable), "Contains", new[] { leftFieldType }, arrayExp, leftValueExpression);
                 return inCheck;
             }
@@ -309,34 +365,6 @@ namespace Vit.Linq.QueryBuilder
 
         }
 
-        #region ConvertToList
-        internal object ConvertToList(object value,IFilterRule rule, Type fieldType)
-        {
-            if (value is string str)
-            {
-                var itemValue = GetRulePrimitiveValue(str, rule, fieldType);
-                if (itemValue is IEnumerable)
-                    return itemValue;
-            }
-            else if (value is IEnumerable values)
-            {
-                var methodInfo = typeof(QueryBuilderService).GetMethod("ConvertToListByType", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).MakeGenericMethod(fieldType);
-                return methodInfo.Invoke(this, new object[] { values , rule });
-            }
-            return null;
-        }
-        internal List<T> ConvertToListByType<T>(IEnumerable values, IFilterRule rule)
-        {
-            Type fieldType = typeof(T);
-            var list = new List<T>();
-            foreach (var item in values)
-            {
-                var itemValue = GetRulePrimitiveValue(item, rule, fieldType);
-                T value = (T)Convert.ChangeType(itemValue, fieldType);
-                list.Add(value);
-            }
-            return list;
-        }
-        #endregion
+
     }
 }

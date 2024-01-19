@@ -46,9 +46,5 @@ namespace Vit.Linq.QueryBuilder
             return LinqHelp.GetFieldMemberExpression(parameter, field);
         }
 
-        public virtual MemberExpression GetRightValueExpression(ParameterExpression parameter, Type valueType)
-        {
-            return LinqHelp.GetFieldMemberExpression(parameter, field);
-        }
     }
 }
