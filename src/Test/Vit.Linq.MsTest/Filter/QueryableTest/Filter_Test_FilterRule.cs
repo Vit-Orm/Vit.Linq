@@ -3,12 +3,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using Vit.Core.Module.Serialization;
-using Vit.Linq.QueryBuilder;
+using Vit.Linq.Filter;
 using System;
 using Newtonsoft.Json.Linq;
-using Queryable = System.Linq.IQueryable;
+using Queryable = System.Linq.IQueryable<Vit.Linq.MsTest.ModelA>;
 
-namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
+namespace Vit.Linq.MsTest.QueryBuilder.QueryableTest
 {
     [TestClass]
     public class Filter_Test_FilterRule : Filter_TestBase<Queryable>
@@ -30,12 +30,12 @@ namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
 
         public override List<ModelA> Filter(Queryable query, IFilterRule rule)
         {
-            return query.IQueryable_Where(rule, GetService()).IQueryable_ToList<ModelA>();
+            return query.Where(rule, GetService()).ToList<ModelA>();
         }
 
-        public virtual QueryBuilderService GetService()
+        public virtual FilterService GetService()
         {
-            QueryBuilderService service = new QueryBuilderService();
+            FilterService service = new FilterService();
             service.GetRuleValue = (object value, IFilterRule rule, Type fieldType) =>
             {
                 // to deal with null value

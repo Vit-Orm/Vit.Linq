@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
 using Vit.Core.Util.ComponentModel.Query;
-using Vit.Linq.QueryBuilder;
+using Vit.Linq;
 
 namespace Vit.Extensions.Linq_Extensions
 {

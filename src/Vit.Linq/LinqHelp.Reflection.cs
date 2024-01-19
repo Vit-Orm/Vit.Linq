@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Vit.Linq.QueryBuilder
+namespace Vit.Linq
 {
     public partial class LinqHelp
     {

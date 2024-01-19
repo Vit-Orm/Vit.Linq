@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using Vit.Linq.QueryBuilder;
-using Vit.Linq.QueryBuilder.NewtonsoftJson;
+using Vit.Linq.Filter;
+using Vit.Linq.NewtonsoftJson;
 
 namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
 {
@@ -18,9 +18,9 @@ namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
         {
             return FilterRule_Newtonsoft.FromString(filterRule);
         }
-        public override QueryBuilderService GetService()
+        public override FilterService GetService()
         {
-            QueryBuilderService service = new QueryBuilderService();
+            FilterService service = new FilterService();
             return service;
         }
 

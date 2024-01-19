@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Linq;
-using Vit.Linq.QueryBuilder;
+using Vit.Linq.Filter;
 
 namespace Vit.Linq.MoreFilter
 {

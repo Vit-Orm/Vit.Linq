@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Vit.Linq.QueryBuilder
+namespace Vit.Linq
 {
     public partial class LinqHelp
     {

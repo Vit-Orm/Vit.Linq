@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace Vit.Linq.QueryBuilder
+namespace Vit.Linq.Filter
 {
     /// <summary>
     /// This interface is used to define a hierarchical filter for a given collection.

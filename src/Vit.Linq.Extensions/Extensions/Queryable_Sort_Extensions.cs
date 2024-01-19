@@ -5,7 +5,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using Vit.Core.Util.ComponentModel.Query;
-using Vit.Linq.QueryBuilder;
+using Vit.Linq;
+using Vit.Linq.Filter;
 
 namespace Vit.Extensions.Linq_Extensions
 {

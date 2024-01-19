@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 
 using Vit.Linq.MoreFilter;
-using Vit.Linq.QueryBuilder;
+using Vit.Linq.Filter;
 
 namespace Vit.Linq.MsTest.QueryBuilder
 {

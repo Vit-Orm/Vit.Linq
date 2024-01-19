@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
-using Vit.Linq.QueryBuilder;
+using Vit.Linq.Filter;
 using Vit.Linq.MoreFilter;
 using Newtonsoft.Json.Linq;
 using System;
@@ -21,9 +21,9 @@ namespace Vit.Linq.MsTest.QueryBuilder.QueryableTest
             return Json.Deserialize<FilterRuleWithMethod>(filterRule);
         }
 
-        public virtual QueryBuilderService GetService()
+        public virtual FilterService GetService()
         {
-            QueryBuilderService service = new QueryBuilderService();
+            FilterService service = new FilterService();
             service.GetRuleValue = (object value, IFilterRule rule, Type fieldType) =>
             {
                 // to deal with null value
