@@ -87,6 +87,12 @@ namespace Vit.Linq.QueryBuilder
             return value;
         }
 
+        protected virtual MemberExpression GetLeftValueExpression(IFilterRule rule, ParameterExpression parameter) 
+        {
+            return rule.GetLeftValueExpression(parameter);
+            //return LinqHelp.GetFieldMemberExpression(parameter, rule.field);
+        }
+
 
         Expression ConvertToExpression(IFilterRule rule, ParameterExpression parameter)
         {
@@ -104,11 +110,11 @@ namespace Vit.Linq.QueryBuilder
                 return null;
             }
 
-            MemberExpression memberExp = LinqHelp.GetFieldMemberExpression(parameter, rule.field);
+            MemberExpression leftValueExpression = GetLeftValueExpression(rule, parameter);
 
             #region Get Expression
-
-            Type fieldType = memberExp.Type;
+            // left field type
+            Type leftFieldType = leftValueExpression.Type;
 
             var Operator = GetOperator(rule);
             var cmpType = operatorIsIgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
@@ -130,29 +136,29 @@ namespace Vit.Linq.QueryBuilder
                 #region ##2 number
                 if (FilterRuleOperator.Equal.Equals(Operator, cmpType))
                 {
-                    return Expression.Equal(memberExp, ConvertValueExp());
+                    return Expression.Equal(leftValueExpression, GetRightValueExpression());
                 }
                 if (FilterRuleOperator.NotEqual.Equals(Operator, cmpType))
                 {
-                    return Expression.NotEqual(memberExp, ConvertValueExp());
+                    return Expression.NotEqual(leftValueExpression, GetRightValueExpression());
                 }
 
                 if (FilterRuleOperator.GreaterThan.Equals(Operator, cmpType))
                 {
-                    return Expression.GreaterThan(memberExp, ConvertValueExp());
+                    return Expression.GreaterThan(leftValueExpression, GetRightValueExpression());
                 }
                 if (FilterRuleOperator.GreaterThanOrEqual.Equals(Operator, cmpType))
                 {
-                    return Expression.GreaterThanOrEqual(memberExp, ConvertValueExp());
+                    return Expression.GreaterThanOrEqual(leftValueExpression, GetRightValueExpression());
                 }
                 if (FilterRuleOperator.LessThan.Equals(Operator, cmpType))
                 {
-                    return Expression.LessThan(memberExp, ConvertValueExp());
+                    return Expression.LessThan(leftValueExpression, GetRightValueExpression());
 
                 }
                 if (FilterRuleOperator.LessThanOrEqual.Equals(Operator, cmpType))
                 {
-                    return Expression.LessThanOrEqual(memberExp, ConvertValueExp());
+                    return Expression.LessThanOrEqual(leftValueExpression, GetRightValueExpression());
                 }
                 #endregion
 
@@ -172,40 +178,40 @@ namespace Vit.Linq.QueryBuilder
                 #region ##4 string
                 if (FilterRuleOperator.Contains.Equals(Operator, cmpType))
                 {
-                    var nullCheck = Expression.Call(typeof(string), "IsNullOrEmpty", null, memberExp);
-                    var contains = Expression.Call(memberExp, "Contains", null, ConvertValueExp());
+                    var nullCheck = Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression);
+                    var contains = Expression.Call(leftValueExpression, "Contains", null, GetRightValueExpression());
 
                     return Expression.AndAlso(Expression.Not(nullCheck), contains);
 
                 }
                 if (FilterRuleOperator.NotContains.Equals(Operator, cmpType))
                 {
-                    var nullCheck = Expression.Call(typeof(string), "IsNullOrEmpty", null, memberExp);
-                    var contains = Expression.Call(memberExp, "Contains", null, ConvertValueExp());
+                    var nullCheck = Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression);
+                    var contains = Expression.Call(leftValueExpression, "Contains", null, GetRightValueExpression());
 
                     return Expression.OrElse(nullCheck, Expression.Not(contains));
                 }
                 if (FilterRuleOperator.StartsWith.Equals(Operator, cmpType))
                 {
-                    var nullCheck = Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, memberExp));
-                    var startsWith = Expression.Call(memberExp, "StartsWith", null, ConvertValueExp());
+                    var nullCheck = Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression));
+                    var startsWith = Expression.Call(leftValueExpression, "StartsWith", null, GetRightValueExpression());
 
                     return Expression.AndAlso(nullCheck, startsWith);
                 }
 
                 if (FilterRuleOperator.EndsWith.Equals(Operator, cmpType))
                 {
-                    var nullCheck = Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, memberExp));
-                    var endsWith = Expression.Call(memberExp, "EndsWith", null, ConvertValueExp());
+                    var nullCheck = Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression));
+                    var endsWith = Expression.Call(leftValueExpression, "EndsWith", null, GetRightValueExpression());
                     return Expression.AndAlso(nullCheck, endsWith);
                 }
                 if (FilterRuleOperator.IsNullOrEmpty.Equals(Operator, cmpType))
                 {
-                    return Expression.Call(typeof(string), "IsNullOrEmpty", null, memberExp);
+                    return Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression);
                 }
                 if (FilterRuleOperator.IsNotNullOrEmpty.Equals(Operator, cmpType))
                 {
-                    return Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, memberExp));
+                    return Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression));
                 }
                 #endregion
 
@@ -217,28 +223,28 @@ namespace Vit.Linq.QueryBuilder
 
 
             #region Method ConvertValueExp
-            UnaryExpression ConvertValueExp()
+            UnaryExpression GetRightValueExpression()
             {
-                object value = GetRulePrimitiveValue(rule.value,rule,fieldType);
+                object value = GetRulePrimitiveValue(rule.value,rule,leftFieldType);
                 if (value != null)
                 {
-                    Type valueType = Nullable.GetUnderlyingType(fieldType) ?? fieldType;
+                    Type valueType = Nullable.GetUnderlyingType(leftFieldType) ?? leftFieldType;
                     value = Convert.ChangeType(value, valueType);
                 }
 
                 Expression<Func<object>> valueLamba = () => value;
-                return Expression.Convert(valueLamba.Body, fieldType);
+                return Expression.Convert(valueLamba.Body, leftFieldType);
             }
 
 
             Expression IsNull()
             {
-                var isNullable = !fieldType.IsValueType || Nullable.GetUnderlyingType(fieldType) != null;
+                var isNullable = !leftFieldType.IsValueType || Nullable.GetUnderlyingType(leftFieldType) != null;
 
                 if (isNullable)
                 {
-                    var nullValue = Expression.Constant(null, fieldType);
-                    return Expression.Equal(memberExp, nullValue);
+                    var nullValue = Expression.Constant(null, leftFieldType);
+                    return Expression.Equal(leftValueExpression, nullValue);
                 }
                 return Expression.Constant(false, typeof(bool));
             }
@@ -248,18 +254,18 @@ namespace Vit.Linq.QueryBuilder
                 Expression arrayExp = null;
                 #region build arrayExp
                 {
-                    Type valueType = typeof(IEnumerable<>).MakeGenericType(fieldType);
+                    Type valueType = typeof(IEnumerable<>).MakeGenericType(leftFieldType);
                     object value = null;
                     if (rule.value != null)
                     {
-                        //value = Vit.Core.Module.Serialization.Json.Deserialize(Vit.Core.Module.Serialization.Json.Serialize(rule.value), valueType);                        
-                        value = ConvertToList(rule.value, rule, fieldType);
+                        //value = Vit.Core.Module.Serialization.Json.Deserialize(Vit.Core.Module.Serialization.Json.Serialize(rule.value), valueType);
+                        value = ConvertToList(rule.value, rule, leftFieldType);
                     }
                     Expression<Func<object>> valueLamba = () => value;
                     arrayExp = Expression.Convert(valueLamba.Body, valueType);
                 }
                 #endregion
-                var inCheck = Expression.Call(typeof(System.Linq.Enumerable), "Contains", new[] { fieldType }, arrayExp, memberExp);
+                var inCheck = Expression.Call(typeof(System.Linq.Enumerable), "Contains", new[] { leftFieldType }, arrayExp, leftValueExpression);
                 return inCheck;
             }
             #endregion

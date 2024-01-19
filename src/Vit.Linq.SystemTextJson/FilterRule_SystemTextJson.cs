@@ -11,32 +11,15 @@ namespace Vit.Linq.QueryBuilder.SystemTextJson
     /// This class is used to define a hierarchical filter for a given collection. This type can be serialized/deserialized by JSON.NET without needing to modify the data structure from QueryBuilder.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public class FilterRule_SystemTextJson : IFilterRule
+    public class FilterRule_SystemTextJson : FilterRuleBase<FilterRule_SystemTextJson>
     {
-        /// <summary>
-        /// condition - acceptable values are "and" and "or".
-        /// </summary>
-        public string condition { get; set; }
-
-
-        public string field { get; set; }
-
-
-        public string @operator { get; set; }
-
-        /// <summary>
-        ///  nested filter rules.
-        /// </summary>
-        public List<FilterRule_SystemTextJson> rules { get; set; }
-
-
         /// <summary>
         /// Gets or sets the value of the filter.
         /// </summary>
         /// <value>
         /// The value.
         /// </value>
-        public object value
+        public override object value
         {
             get
             {
@@ -51,26 +34,24 @@ namespace Vit.Linq.QueryBuilder.SystemTextJson
 
         private object _value;
 
-        IEnumerable<IFilterRule> IFilterRule.rules => rules;
-
 
         public static FilterRule_SystemTextJson FromString(string filter)
         {
-            return JsonSerializer.Deserialize<FilterRule_SystemTextJson>(filter, options); 
+            return JsonSerializer.Deserialize<FilterRule_SystemTextJson>(filter, options);
         }
 
         static readonly JsonSerializerOptions options = GetDefaultOptions();
 
 
-        public static JsonSerializerOptions GetDefaultOptions(  )
+        public static JsonSerializerOptions GetDefaultOptions()
         {
-          var options=  new JsonSerializerOptions
+            var options = new JsonSerializerOptions
             {
                 // avoid transfer chinese character, for example {"title":"\u4ee3\u7801\u6539\u53d8\u4e16\u754c"}
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(UnicodeRanges.All),
                 IncludeFields = true,
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-            }; 
+            };
 
             return options;
         }
@@ -95,6 +76,6 @@ namespace Vit.Linq.QueryBuilder.SystemTextJson
         }
 
 
-        
+
     }
 }

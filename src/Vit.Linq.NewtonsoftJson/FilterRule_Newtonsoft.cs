@@ -11,32 +11,15 @@ namespace Vit.Linq.QueryBuilder.NewtonsoftJson
     /// This class is used to define a hierarchical filter for a given collection. This type can be serialized/deserialized by JSON.NET without needing to modify the data structure from QueryBuilder.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public class FilterRule_Newtonsoft : IFilterRule
+    public class FilterRule_Newtonsoft : FilterRuleBase<FilterRule_Newtonsoft>
     {
-        /// <summary>
-        /// condition - acceptable values are "and" and "or".
-        /// </summary>
-        public string condition { get; set; }
-
-
-        public string field { get; set; }
-
-
-        public string @operator { get; set; }
-
-        /// <summary>
-        ///  nested filter rules.
-        /// </summary>
-        public List<FilterRule_Newtonsoft> rules { get; set; }
-
-
         /// <summary>
         /// Gets or sets the value of the filter.
         /// </summary>
         /// <value>
         /// The value.
         /// </value>
-        public object value
+        public override object value
         {
             get
             {
@@ -51,7 +34,7 @@ namespace Vit.Linq.QueryBuilder.NewtonsoftJson
 
         private object _value;
 
-        IEnumerable<IFilterRule> IFilterRule.rules => rules;
+ 
 
 
         public static FilterRule_Newtonsoft FromString(string filter)

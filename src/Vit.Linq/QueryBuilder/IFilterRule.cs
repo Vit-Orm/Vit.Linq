@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace Vit.Linq.QueryBuilder
 {
@@ -40,5 +41,8 @@ namespace Vit.Linq.QueryBuilder
         /// value of the filter. Supported value types are "integer", "double", "string", "date", "datetime", and "boolean".
         /// </summary>
         object value { get; set; }
+
+
+        MemberExpression GetLeftValueExpression(ParameterExpression parameter);
     }
 }
