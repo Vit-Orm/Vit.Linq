@@ -11,17 +11,15 @@
 
     <PropertyGroup>
         <Authors>Lith</Authors>
-        <Description>Linq extensions (QueryBuilder)</Description>
+        <Description>Linq Filter</Description>
         <PackageProjectUrl>https://github.com/serset/Vit.Linq</PackageProjectUrl>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Vit.Linq.QueryBuilder\Vit.Linq.QueryBuilder.csproj" />
+        <ProjectReference Include="..\Vit.Linq\Vit.Linq.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Text.Json" Version="6.0.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
-
-
 </Project>

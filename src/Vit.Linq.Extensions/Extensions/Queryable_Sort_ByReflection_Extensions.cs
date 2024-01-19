@@ -62,8 +62,8 @@ namespace Vit.Extensions.Linq_Extensions
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
-        /// <param name="field">字段名</param>
-        /// <param name="asc">是否为正向排序</param>
+        /// <param name="field"></param>
+        /// <param name="asc"> whether sort by asc</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IQueryable<T> Sort_ByReflection<T>(this IQueryable<T> query, string field, bool asc = true)

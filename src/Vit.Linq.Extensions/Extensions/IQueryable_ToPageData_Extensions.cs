@@ -34,7 +34,7 @@ namespace Vit.Extensions.Linq_Extensions
 
         #region IQueryable_ToPageData  with selector
         /// <summary>
-        /// 注：先查询，后调用selector
+        ///  filter first, then ToList, then invoke selector
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="TResult"></typeparam>
@@ -55,7 +55,7 @@ namespace Vit.Extensions.Linq_Extensions
         }
 
         /// <summary>
-        /// 注：先查询，后调用selector
+        ///  filter first, then ToList, then invoke selector
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="TResult"></typeparam>

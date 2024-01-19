@@ -23,8 +23,8 @@ namespace Vit.Extensions.Linq_Extensions
         /// 
         /// </summary>
         /// <param name="query"></param>
-        /// <param name="pageIndex">页码，从1开始</param>
-        /// <param name="pageSize">每页数据个数</param>
+        /// <param name="pageIndex">start from 1</param>
+        /// <param name="pageSize"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IQueryable IQueryable_Page(this IQueryable query, int pageIndex, int pageSize)
