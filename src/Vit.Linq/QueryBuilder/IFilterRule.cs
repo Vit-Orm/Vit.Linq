@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Vit.Linq.QueryBuilder
@@ -42,7 +43,6 @@ namespace Vit.Linq.QueryBuilder
         /// </summary>
         object value { get; set; }
 
-
-        MemberExpression GetLeftValueExpression(ParameterExpression parameter);
+        Expression GetLeftValueExpression(Expression valueExpression);
     }
 }

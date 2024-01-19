@@ -9,5 +9,6 @@ namespace Vit.Linq.QueryBuilder
     [ExcludeFromCodeCoverage]
     public class FilterRule : FilterRuleBase<FilterRule>
     {
+
     }
 }

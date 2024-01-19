@@ -64,9 +64,6 @@ namespace Vit.Linq.QueryBuilder
         }
 
 
-
-
-
         public virtual ECondition GetCondition(IFilterRule filter)
         {
             return filter.condition?.ToLower() == "or" ? ECondition.or : ECondition.and;
@@ -74,10 +71,9 @@ namespace Vit.Linq.QueryBuilder
 
 
 
-        protected virtual MemberExpression GetLeftValueExpression(IFilterRule rule, ParameterExpression parameter)
+        protected virtual Expression GetLeftValueExpression(IFilterRule rule, ParameterExpression valueExpression)
         {
-            return rule.GetLeftValueExpression(parameter);
-            //return LinqHelp.GetFieldMemberExpression(parameter, rule.field);
+            return rule.GetLeftValueExpression(valueExpression); 
         }
 
 
@@ -102,7 +98,7 @@ namespace Vit.Linq.QueryBuilder
 
 
 
-        protected virtual UnaryExpression GetRightValueExpression(IFilterRule rule, ParameterExpression parameter, Type valueType)
+        protected virtual Expression GetRightValueExpression(IFilterRule rule, ParameterExpression parameter, Type valueType)
         {
             object rightValue = rule.value;
 
@@ -179,16 +175,15 @@ namespace Vit.Linq.QueryBuilder
             }
 
             // #2 simple rule
-            if (string.IsNullOrWhiteSpace(rule.field))
+            if (string.IsNullOrWhiteSpace(rule.@operator))
             {
                 return null;
             }
 
-            MemberExpression leftValueExpression = GetLeftValueExpression(rule, parameter);
+            Expression leftValueExpression = GetLeftValueExpression(rule, parameter);
+            Type leftFieldType = leftValueExpression.Type;
 
             #region Get Expression
-            // left field type
-            Type leftFieldType = leftValueExpression.Type;
 
             var Operator = GetOperator(rule);
             var cmpType = operatorIsIgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
@@ -296,12 +291,11 @@ namespace Vit.Linq.QueryBuilder
             return null;
 
 
-            #region Method ConvertValueExp
-            UnaryExpression GetRightValueExpression()
+            #region inner Method
+            Expression GetRightValueExpression()
             {
                 return this.GetRightValueExpression(rule, parameter, leftFieldType);
             }
-
 
             Expression IsNull()
             {

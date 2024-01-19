@@ -8,7 +8,7 @@ using Vit.Linq.QueryBuilder.SystemTextJson;
 namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
 {
     [TestClass]
-    public class Filter_Test_SystemTextJson : Filter_Test
+    public class Filter_Test_SystemTextJson : Filter_Test_FilterRule
     {
 
         public override IFilterRule GetRule(string filterRule)

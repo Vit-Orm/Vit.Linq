@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using Vit.Linq.MoreFilter;
 using Vit.Linq.QueryBuilder;
 
 namespace Vit.Linq.MsTest.QueryBuilder
@@ -528,6 +529,116 @@ namespace Vit.Linq.MsTest.QueryBuilder
 
                 Assert.AreEqual(1, result.Count);
                 Assert.AreEqual(987, result[0].id);
+            }
+            #endregion
+
+            #region #7 Array
+            {
+                var query = GetQueryable();
+                var strRule = "{'field':'ba[0].name',  'operator': '=',  'value': 'name987_b1' }".Replace("'", "\"");
+                var rule = GetRule(strRule);
+
+                var result = Filter(ToQuery(query), rule);
+
+                Assert.AreEqual(1, result.Count);
+                Assert.AreEqual(987, result[0].id);
+            }
+            {
+                var query = GetQueryable();
+                var strRule = "{'field':'ba.0.name',  'operator': '=',  'value': 'name987_b1' }".Replace("'", "\"");
+                var rule = GetRule(strRule);
+
+                var result = Filter(ToQuery(query), rule);
+
+                Assert.AreEqual(1, result.Count);
+                Assert.AreEqual(987, result[0].id);
+            }
+            {
+                var query = GetQueryable();
+                var strRule = "{'field':'ba.Length',  'operator': '=',  'value': 1 }".Replace("'", "\"");
+                var rule = GetRule(strRule);
+
+                var result = Filter(ToQuery(query), rule);
+
+                Assert.AreEqual(500, result.Count);
+            }
+            #endregion
+
+            #region #8 List
+            {
+                var query = GetQueryable();
+                var strRule = "{'field':'bList[0].name',  'operator': '=',  'value': 'name987_b1' }".Replace("'", "\"");
+                var rule = GetRule(strRule);
+
+                var result = Filter(ToQuery(query), rule);
+
+                Assert.AreEqual(1, result.Count);
+                Assert.AreEqual(987, result[0].id);
+            }
+            {
+                var query = GetQueryable();
+                var strRule = "{'field':'bList.0.name',  'operator': '=',  'value': 'name987_b1' }".Replace("'", "\"");
+                var rule = GetRule(strRule);
+
+                var result = Filter(ToQuery(query), rule);
+
+                Assert.AreEqual(1, result.Count);
+                Assert.AreEqual(987, result[0].id);
+            }
+            {
+                var query = GetQueryable();
+                var strRule = "{'field':'bList.Count',  'operator': '=',  'value': 1 }".Replace("'", "\"");
+                var rule = GetRule(strRule);
+
+                var result = Filter(ToQuery(query), rule);
+
+                Assert.AreEqual(500, result.Count);
+            }
+            #endregion
+
+            #region #9  method in fields
+            if (FilterRuleWithMethod.SupportFieldMethod(GetRule("{}")))
+            {
+                {
+                    var query = GetQueryable();
+                    var strRule = "{'field':'bList[0]', 'fields':[ {'method':'GetBName' }] ,  'operator': '=',  'value': 'name987_b1' }".Replace("'", "\"");
+                    var rule = GetRule(strRule);
+
+                    var result = Filter(ToQuery(query), rule);
+
+                    Assert.AreEqual(1, result.Count);
+                    Assert.AreEqual(987, result[0].id);
+                }
+                {
+                    var query = GetQueryable();
+                    var strRule = "{'fields':[ { 'method':'GetBCount'}] ,    'operator': '=',  'value': 1 }".Replace("'", "\"");
+                    var rule = GetRule(strRule);
+
+                    var result = Filter(ToQuery(query), rule);
+
+                    Assert.AreEqual(500, result.Count);
+                }
+
+                {
+                    var query = GetQueryable();
+                    var strRule = "{ 'fields':[ {'method':'GetBAtIndex', 'methodParameters':[0] }, {'field':'name'}] ,  'operator': '=',  'value': 'name987_b1' }".Replace("'", "\"");
+                    var rule = GetRule(strRule);
+
+                    var result = Filter(ToQuery(query), rule);
+
+                    Assert.AreEqual(1, result.Count);
+                    Assert.AreEqual(987, result[0].id);
+                }
+
+                {
+                    var query = GetQueryable();
+                    var strRule = "{ 'fields':[ {'method':'GetBAtIndex', 'methodParameters':[1] }] ,  'operator': 'IsNull' }".Replace("'", "\"");
+                    var rule = GetRule(strRule);
+
+                    var result = Filter(ToQuery(query), rule);
+
+                    Assert.AreEqual(500, result.Count);
+                }
             }
             #endregion
 

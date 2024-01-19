@@ -11,7 +11,7 @@ using Queryable = System.Linq.IQueryable;
 namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
 {
     [TestClass]
-    public class Filter_Test : Filter_TestBase<Queryable>
+    public class Filter_Test_FilterRule : Filter_TestBase<Queryable>
     {
 
         [TestMethod]

@@ -8,8 +8,13 @@ using Vit.Linq.QueryBuilder.SystemTextJson;
 namespace Vit.Linq.MsTest.QueryBuilder.QueryableTest
 {
     [TestClass]
-    public class Filter_Test_SystemTextJson : Filter_Test
+    public class Filter_Test_SystemTextJson : Filter_Test_FilterRule
     {
+        [TestMethod]
+        public void Test_FilterRule()
+        {
+            base.TestFilterRule();
+        }
 
         public override IFilterRule GetRule(string filterRule)
         {
@@ -23,10 +28,6 @@ namespace Vit.Linq.MsTest.QueryBuilder.QueryableTest
         }
 
 
-        [TestMethod]
-        public void Test_FilterRule()
-        {
-            base.TestFilterRule();
-        }
+
     }
 }

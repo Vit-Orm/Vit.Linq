@@ -7,7 +7,7 @@ using Vit.Linq.QueryBuilder.NewtonsoftJson;
 namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
 {
     [TestClass]
-    public class Filter_Test_Newtonsoft : Filter_Test
+    public class Filter_Test_Newtonsoft : Filter_Test_FilterRule
     {
 
         public override IFilterRule GetRule(string filterRule)

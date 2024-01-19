@@ -41,9 +41,11 @@ namespace Vit.Linq.QueryBuilder
         IEnumerable<IFilterRule> IFilterRule.rules => rules?.Select(r => (IFilterRule)r);
 
 
-        public virtual MemberExpression GetLeftValueExpression(ParameterExpression parameter)
+        public virtual Expression GetLeftValueExpression(Expression valueExpression)
         {
-            return LinqHelp.GetFieldMemberExpression(parameter, field);
+            if (!string.IsNullOrWhiteSpace(field))
+                valueExpression = LinqHelp.GetFieldMemberExpression(valueExpression, field);
+            return valueExpression;
         }
 
     }
