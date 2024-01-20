@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
@@ -9,18 +7,18 @@ using Vit.Linq.Filter;
 using Vit.Extensions.Linq_Extensions;
 using Newtonsoft.Json.Linq;
 
-namespace Vit.Linq.MsTest.QueryBuilder
+namespace Vit.Linq.MsTest.Filter
 {
 
     [TestClass]
-    public class CustomeValue_Test
+    public class PrimitiveValue_Test
     {
         [TestMethod]
-        public void Test_CustomeValue()
+        public void Test_PrimitiveValue()
         {
             {
                 var service = new FilterService();
-                service.GetRuleValue = (object? value, IFilterRule rule, Type fieldType) =>
+                service.GetPrimitiveValue = (object? value, IFilterRule rule, Type fieldType) =>
                 {
                     // to deal with null value
                     if (value is JValue jv) value = jv.Value;

@@ -5,7 +5,7 @@ using Vit.Linq.MoreFilter;
 using Newtonsoft.Json.Linq;
 using System;
 
-namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
+namespace Vit.Linq.MsTest.Filter.IQueryableTest
 {
     [TestClass]
     public class Filter_Test_FilterRuleWithMethod : Filter_Test_FilterRule
@@ -24,7 +24,7 @@ namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
         public virtual FilterService GetService()
         {
             FilterService service = new FilterService();
-            service.GetRuleValue = (object value, IFilterRule rule, Type fieldType) =>
+            service.GetPrimitiveValue = (object value, IFilterRule rule, Type fieldType) =>
             {
                 // to deal with null value
                 if (value is JValue jv) return jv.Value;

@@ -3,7 +3,7 @@
 using Vit.Linq.Filter;
 using Vit.Linq.NewtonsoftJson;
 
-namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
+namespace Vit.Linq.MsTest.Filter.IQueryableTest
 {
     [TestClass]
     public class Filter_Test_Newtonsoft2 : Filter_Test_FilterRule
