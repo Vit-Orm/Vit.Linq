@@ -8,8 +8,8 @@ Compatible with QueryBuilder , ref DynamicQueryable
  
 
 | Build | NuGet |
-|--|--|--|
-|![](https://github.com/serset/Vit.Linq/workflows/CI/badge.svg) | [![](https://img.shields.io/nuget/v/Vit.Linq.svg)](https://www.nuget.org/packages/Vit.Linq/) ![](https://img.shields.io/nuget/dt/Vit.Linq.svg)
+| -------- | -------- |
+|![](https://github.com/serset/Vit.Linq/workflows/ki_multibranch/badge.svg) | [![](https://img.shields.io/nuget/v/Vit.Linq.svg)](https://www.nuget.org/packages/Vit.Linq/) ![](https://img.shields.io/nuget/dt/Vit.Linq.svg) |
 
  
 Examples:  
