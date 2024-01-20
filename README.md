@@ -14,5 +14,5 @@ Compatible with QueryBuilder ( ref to DynamicQueryable )
  
 Examples:  
 - [Filter](src/Test/Vit.Linq.MsTest/Filter/Filter_TestBase.cs)  
-- [CustomeOperator](src/Test/Vit.Linq.MsTest/Filter/CustomeOperator_Test.cs)  
+- [CustomOperator](src/Test/Vit.Linq.MsTest/Filter/CustomOperator_Test.cs)  
 

@@ -11,10 +11,10 @@ namespace Vit.Linq.MsTest.Filter
 {
 
     [TestClass]
-    public class CustomeOperator_Test
+    public class CustomOperator_Test
     {
         [TestMethod]
-        public void Test_CustomeOperator()
+        public void Test_CustomOperator()
         {
 
             // #1 no arguments
@@ -27,7 +27,7 @@ namespace Vit.Linq.MsTest.Filter
                     var operatorExpression = Expression.Call(typeof(TestExtensions), "IsEven", null, args.leftValue);
                     return operatorExpression;
                 };
-                service.CustomeOperator_Add("IsEven", operatorBuilder);
+                service.CustomOperator_Add("IsEven", operatorBuilder);
                 #endregion
 
 
@@ -59,7 +59,7 @@ namespace Vit.Linq.MsTest.Filter
                     var operatorExpression = Expression.Call(null, method, new[] { args.leftValue, rightValueExpression });
                     return operatorExpression;
                 };
-                service.CustomeOperator_Add("IsEvenOrOdd", operatorBuilder);
+                service.CustomOperator_Add("IsEvenOrOdd", operatorBuilder);
                 #endregion
 
 
@@ -86,7 +86,7 @@ namespace Vit.Linq.MsTest.Filter
                     var operatorExpression = Expression.Call(typeof(TestExtensions), "IsDivisibleBy", null, args.leftValue, args.GetRightValueExpression(typeof(int)));
                     return operatorExpression;
                 };
-                service.CustomeOperator_Add("IsDivisibleBy", operatorBuilder);
+                service.CustomOperator_Add("IsDivisibleBy", operatorBuilder);
 
                 operatorBuilder = (OperatorBuilderArgs args) =>
                 {
@@ -94,7 +94,7 @@ namespace Vit.Linq.MsTest.Filter
                     var operatorExpression = Expression.Call(null, method, new[] { args.leftValue, args.GetRightValueExpression(typeof(int)) });
                     return operatorExpression;
                 };
-                service.CustomeOperator_Add("IsDivisibleBy2", operatorBuilder);
+                service.CustomOperator_Add("IsDivisibleBy2", operatorBuilder);
                 #endregion
 
 
@@ -135,7 +135,7 @@ namespace Vit.Linq.MsTest.Filter
                     var rightValueExpression = LinqHelp.GetFieldMemberExpression(args.parameter, (string)args.rule.value);
                     return Expression.Equal(args.leftValue, rightValueExpression);
                 };
-                service.CustomeOperator_Add("EqualTo", operatorBuilder);
+                service.CustomOperator_Add("EqualTo", operatorBuilder);
                 #endregion
 
                 // EqualTo another field

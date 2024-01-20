@@ -176,11 +176,11 @@ namespace Vit.Linq.Filter
         #endregion
 
 
-        #region Custome Operator
+        #region Custom Operator
 
         Dictionary<string, Func<OperatorBuilderArgs, Expression>> customOperator = new Dictionary<string, Func<OperatorBuilderArgs, Expression>>();
 
-        Expression CustomeOperator_GetExpression(OperatorBuilderArgs args)
+        Expression CustomOperator_GetExpression(OperatorBuilderArgs args)
         {
             if (customOperator.TryGetValue(args.Operator, out var operatorBuilder) && operatorBuilder != null)
             {
@@ -189,7 +189,7 @@ namespace Vit.Linq.Filter
             return default;
         }
 
-        public virtual void CustomeOperator_Add(string Operator, Func<OperatorBuilderArgs, Expression> operatorBuilder)
+        public virtual void CustomOperator_Add(string Operator, Func<OperatorBuilderArgs, Expression> operatorBuilder)
         {
             if (operatorIsIgnoreCase) Operator = Operator.ToLower();
             customOperator[Operator] = operatorBuilder;
@@ -323,7 +323,7 @@ namespace Vit.Linq.Filter
             #endregion
 
 
-            #region CustomeOperator
+            #region CustomOperator
             var operatorBuilderArgs = new OperatorBuilderArgs
             {
                 rule = rule,
@@ -332,7 +332,7 @@ namespace Vit.Linq.Filter
                 Operator = Operator,
                 GetRightValueExpression = (Type rightValueType) => this.GetRightValueExpression(rule, parameter, rightValueType)
             };
-            var operatorExpression = CustomeOperator_GetExpression(operatorBuilderArgs);
+            var operatorExpression = CustomOperator_GetExpression(operatorBuilderArgs);
             if (operatorExpression != default) return operatorExpression;
             #endregion
 
