@@ -1,5 +1,5 @@
 ﻿# Vit.Linq
-Compatible with QueryBuilder , ref DynamicQueryable
+Compatible with QueryBuilder ( ref to DynamicQueryable )
 >source address: [https://github.com/serset/Vit.Linq](https://github.com/serset/Vit.Linq "https://github.com/serset/Vit.Linq")    
 
 ![](https://img.shields.io/github/license/Serset/Vit.Linq.svg)  
