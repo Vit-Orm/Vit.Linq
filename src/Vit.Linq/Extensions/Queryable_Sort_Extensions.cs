@@ -4,9 +4,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-using Vit.Core.Util.ComponentModel.Query;
 using Vit.Linq;
-using Vit.Linq.Filter;
+using Vit.Linq.ComponentModel;
 
 namespace Vit.Extensions.Linq_Extensions
 {

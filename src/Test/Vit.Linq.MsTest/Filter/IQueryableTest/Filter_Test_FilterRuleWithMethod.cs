@@ -4,6 +4,7 @@ using Vit.Linq.Filter;
 using Vit.Linq.MoreFilter;
 using Newtonsoft.Json.Linq;
 using System;
+using Vit.Linq.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter.IQueryableTest
 {

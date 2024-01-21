@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
+using Vit.Linq.ComponentModel;
 using Vit.Linq.Filter;
 using Vit.Linq.NewtonsoftJson;
 
