@@ -1,4 +1,4 @@
-﻿namespace Vit.Linq.Filter
+﻿namespace Vit.Linq.ComponentModel
 {
     public enum ECondition
     {

@@ -7,6 +7,7 @@ using Vit.Linq.Filter;
 using System;
 using Newtonsoft.Json.Linq;
 using Queryable = System.Linq.IQueryable;
+using Vit.Linq.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter.IQueryableTest
 {

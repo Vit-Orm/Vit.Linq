@@ -3,36 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-using Vit.Core.Util.ComponentModel.Data;
-using Vit.Core.Util.ComponentModel.Query;
+using Vit.Linq.ComponentModel;
+
 
 namespace Vit.Extensions.Linq_Extensions
 {
 
-    public static partial class IQueryable_ToPageData_Extensions
+    public static partial class Queryable_ToPageData_Extensions
     {
-        #region IQueryable_ToPageData       
+
+        #region ToPageData
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PageData<T> IQueryable_ToPageData<T>(this IQueryable query, PageInfo page)
+        public static PageData<T> ToPageData<T>(this IQueryable<T> query, PageInfo page)
+            where T : class
         {
             if (query == null) return null;
 
             var queryPaged = query;
             if (page != null)
-                queryPaged = queryPaged.IQueryable_Page(page);
+                queryPaged = queryPaged.Page(page);
 
-            return new PageData<T>(page) { totalCount = query.IQueryable_Count(), rows = queryPaged.IQueryable_ToList<T>() };
+            return new PageData<T>(page) { totalCount = query.Count(), rows = queryPaged.ToList() };
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PageData<T> IQueryable_ToPageData<T>(this IQueryable query, IEnumerable<SortItem> sort, PageInfo page)
+        public static PageData<T> ToPageData<T>(this IQueryable<T> query, IEnumerable<SortItem> sort, PageInfo page
+        ) where T : class
         {
-            return query?.IQueryable_Sort(sort).IQueryable_ToPageData<T>(page);
+            return query?.Sort(sort).ToPageData(page);
         }
         #endregion
 
 
-        #region IQueryable_ToPageData  with selector
+        #region ToPageData with selector
         /// <summary>
         ///  filter first, then ToList, then invoke selector
         /// </summary>
@@ -43,15 +45,16 @@ namespace Vit.Extensions.Linq_Extensions
         /// <param name="selector"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PageData<TResult> IQueryable_ToPageData<T, TResult>(this IQueryable query, PageInfo page, Func<T, TResult> selector)
+        public static PageData<TResult> ToPageData<T, TResult>(this IQueryable<T> query, PageInfo page, Func<T, TResult> selector)
+            where T : class
         {
             if (query == null) return null;
 
             var queryPaged = query;
             if (page != null)
-                queryPaged = queryPaged.IQueryable_Page(page);
+                queryPaged = queryPaged.Page(page);
 
-            return new PageData<TResult>(page) { totalCount = query.IQueryable_Count(), rows = queryPaged.IQueryable_ToList<T>().Select(selector).ToList() };
+            return new PageData<TResult>(page) { totalCount = query.Count(), rows = queryPaged.ToList().Select(selector).ToList() };
         }
 
         /// <summary>
@@ -65,12 +68,13 @@ namespace Vit.Extensions.Linq_Extensions
         /// <param name="selector"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PageData<TResult> IQueryable_ToPageData<T, TResult>(this IQueryable query, IEnumerable<SortItem> sort, PageInfo page, Func<T, TResult> selector)
-            where T : class
+        public static PageData<TResult> ToPageData<T, TResult>(this IQueryable<T> query, IEnumerable<SortItem> sort, PageInfo page, Func<T, TResult> selector
+        ) where T : class
         {
-            return query?.IQueryable_Sort(sort).IQueryable_ToPageData(page, selector);
+            return query?.Sort(sort).ToPageData(page, selector);
         }
         #endregion
+
 
 
     }

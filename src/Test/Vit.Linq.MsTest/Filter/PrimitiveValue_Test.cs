@@ -6,6 +6,7 @@ using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter;
 using Vit.Extensions.Linq_Extensions;
 using Newtonsoft.Json.Linq;
+using Vit.Linq.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter
 {
