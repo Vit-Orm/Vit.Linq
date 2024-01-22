@@ -1,7 +1,6 @@
 ﻿using Vit.Extensions.Linq_Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Vit.Core.Util.ComponentModel.Data;
-using Vit.Core.Util.ComponentModel.Query;
+using Vit.Linq.ComponentModel;
 
 
 namespace Vit.Linq.MsTest.Extensions

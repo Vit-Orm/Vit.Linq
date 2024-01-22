@@ -6,9 +6,9 @@ using System.Linq;
 using System.Reflection;
 
 using Vit.Linq.MoreFilter;
-using Vit.Linq.Filter;
+using Vit.Linq.ComponentModel;
 
-namespace Vit.Linq.MsTest.QueryBuilder
+namespace Vit.Linq.MsTest.Filter
 {
 
     public abstract class Filter_TestBase<Query>

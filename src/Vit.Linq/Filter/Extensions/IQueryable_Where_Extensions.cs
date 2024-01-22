@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-
+using Vit.Linq.ComponentModel;
 using Vit.Linq.Filter;
 
 namespace Vit.Extensions.Linq_Extensions

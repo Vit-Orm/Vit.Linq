@@ -5,7 +5,7 @@ using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter;
 using Vit.Extensions.Linq_Extensions;
 
-namespace Vit.Linq.MsTest.QueryBuilder
+namespace Vit.Linq.MsTest.Filter
 {
 
     [TestClass]

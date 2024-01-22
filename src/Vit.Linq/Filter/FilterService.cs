@@ -3,10 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Vit.Linq.ComponentModel;
 
 
 namespace Vit.Linq.Filter
 {
+    public class OperatorBuilderArgs
+    {
+        public IFilterRule rule { get; set; }
+        public ParameterExpression parameter { get; set; }
+        public Expression leftValue { get; set; }
+        public string Operator { get; set; }
+        public Func<Type, Expression> GetRightValueExpression { get; set; }
+    }
+
+
+
     public class FilterService
     {
         public static FilterService Instance = new FilterService();
@@ -14,7 +26,7 @@ namespace Vit.Linq.Filter
         /// <summary>
         /// operatorName -> operatorType(in class FilterRuleOperator)
         /// </summary>
-        public Dictionary<string, string> operatorMap = new Dictionary<string, string>();
+        protected Dictionary<string, string> operatorMap = new Dictionary<string, string>();
         public bool operatorIsIgnoreCase = true;
         public bool ignoreError = false;
 
@@ -64,41 +76,41 @@ namespace Vit.Linq.Filter
         }
 
 
+
         public virtual ECondition GetCondition(IFilterRule filter)
         {
             return filter.condition?.ToLower() == "or" ? ECondition.or : ECondition.and;
         }
 
 
+        #region GetPrimitiveValue
+        public Func<object, IFilterRule, Type, object> GetPrimitiveValue { get; set; }
+        protected virtual object GetRulePrimitiveValue(object value, IFilterRule rule, Type fieldType)
+        {
+            if (GetPrimitiveValue != null) return GetPrimitiveValue(value, rule, fieldType);
+            return value;
+        }
+        #endregion
+
+
 
         protected virtual Expression GetLeftValueExpression(IFilterRule rule, ParameterExpression valueExpression)
         {
-            return rule.GetLeftValueExpression(valueExpression); 
+            return rule.GetLeftValueExpression(valueExpression);
         }
 
 
         public virtual string GetOperator(IFilterRule filter)
         {
-            var operate = filter.@operator ?? "";
-            if (operatorIsIgnoreCase) operate = operate.ToLower();
-            if (operatorMap.TryGetValue(operate, out var op2)) return operatorIsIgnoreCase ? op2?.ToLower() : op2;
-            return operate;
+            var Operator = filter.@operator ?? "";
+            if (operatorIsIgnoreCase) Operator = Operator.ToLower();
+            if (operatorMap.TryGetValue(Operator, out var op2)) return operatorIsIgnoreCase ? op2?.ToLower() : op2;
+            return Operator;
         }
 
 
         #region GetRightValueExpression
-
-        public Func<object, IFilterRule, Type, object> GetRuleValue { get; set; }
-        protected virtual object GetRulePrimitiveValue(object value, IFilterRule rule, Type fieldType)
-        {
-            if (GetRuleValue != null) return GetRuleValue(value, rule, fieldType);
-            return value;
-        }
-
-
-
-
-        protected virtual Expression GetRightValueExpression(IFilterRule rule, ParameterExpression parameter, Type valueType)
+        protected virtual Expression GetRightValueExpression(IFilterRule rule, ParameterExpression valueExpression, Type valueType)
         {
             object rightValue = rule.value;
 
@@ -130,6 +142,7 @@ namespace Vit.Linq.Filter
             Expression<Func<object>> valueLamba = () => rightValue;
             return Expression.Convert(valueLamba.Body, valueType);
         }
+
 
         #region ConvertToList
         internal object ConvertToList(object value, IFilterRule rule, Type fieldType)
@@ -164,6 +177,30 @@ namespace Vit.Linq.Filter
         #endregion
 
 
+        #region Custom Operator
+
+        Dictionary<string, Func<OperatorBuilderArgs, Expression>> customOperator = new Dictionary<string, Func<OperatorBuilderArgs, Expression>>();
+
+        Expression CustomOperator_GetExpression(OperatorBuilderArgs args)
+        {
+            if (customOperator.TryGetValue(args.Operator, out var operatorBuilder) && operatorBuilder != null)
+            {
+                return operatorBuilder(args);
+            }
+            return default;
+        }
+
+        public virtual void CustomOperator_Add(string Operator, Func<OperatorBuilderArgs, Expression> operatorBuilder)
+        {
+            if (operatorIsIgnoreCase) Operator = Operator.ToLower();
+            customOperator[Operator] = operatorBuilder;
+        }
+
+        #endregion
+
+
+        #region ConvertToExpression       
+
         Expression ConvertToExpression(IFilterRule rule, ParameterExpression parameter)
         {
             if (rule == null) return null;
@@ -183,8 +220,7 @@ namespace Vit.Linq.Filter
             Expression leftValueExpression = GetLeftValueExpression(rule, parameter);
             Type leftFieldType = leftValueExpression.Type;
 
-            #region Get Expression
-
+            #region Get System Expression
             var Operator = GetOperator(rule);
             var cmpType = operatorIsIgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
@@ -287,6 +323,21 @@ namespace Vit.Linq.Filter
             }
             #endregion
 
+
+            #region CustomOperator
+            var operatorBuilderArgs = new OperatorBuilderArgs
+            {
+                rule = rule,
+                parameter = parameter,
+                leftValue = leftValueExpression,
+                Operator = Operator,
+                GetRightValueExpression = (Type rightValueType) => this.GetRightValueExpression(rule, parameter, rightValueType)
+            };
+            var operatorExpression = CustomOperator_GetExpression(operatorBuilderArgs);
+            if (operatorExpression != default) return operatorExpression;
+            #endregion
+
+
             if (!ignoreError) throw new Exception("unrecognized operator : " + rule.@operator);
             return null;
 
@@ -359,6 +410,6 @@ namespace Vit.Linq.Filter
 
         }
 
-
+        #endregion
     }
 }

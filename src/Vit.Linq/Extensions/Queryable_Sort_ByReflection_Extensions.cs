@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-using Vit.Core.Util.ComponentModel.Query;
 using Vit.Linq;
+using Vit.Linq.ComponentModel;
 
 namespace Vit.Extensions.Linq_Extensions
 {

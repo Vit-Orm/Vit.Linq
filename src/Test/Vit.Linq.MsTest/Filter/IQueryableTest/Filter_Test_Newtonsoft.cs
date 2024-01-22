@@ -1,10 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vit.Core.Module.Serialization;
+using Vit.Linq.ComponentModel;
 using Vit.Linq.Filter;
 using Vit.Linq.NewtonsoftJson;
 
-namespace Vit.Linq.MsTest.QueryBuilder.IQueryableTest
+namespace Vit.Linq.MsTest.Filter.IQueryableTest
 {
     [TestClass]
     public class Filter_Test_Newtonsoft : Filter_Test_FilterRule

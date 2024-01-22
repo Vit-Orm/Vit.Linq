@@ -5,17 +5,20 @@ VisualStudioVersion = 17.0.31606.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{0062F400-558C-4084-8004-3C8D4CBBFDE4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.MsTest", "Test\Vit.Linq.MsTest\Vit.Linq.MsTest.csproj", "{5801E323-C03D-48D2-BEFF-DE060B3293B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.MsTest", "src\Test\Vit.Linq.MsTest\Vit.Linq.MsTest.csproj", "{5801E323-C03D-48D2-BEFF-DE060B3293B0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq", "Vit.Linq\Vit.Linq.csproj", "{A27EF8DC-2284-43BF-98E7-CE3C35E296CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq", "src\Vit.Linq\Vit.Linq.csproj", "{A27EF8DC-2284-43BF-98E7-CE3C35E296CD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.MsTest31", "Test\Vit.Linq.MsTest31\Vit.Linq.MsTest31.csproj", "{7E513E2C-BF52-4662-AD8F-5910F283178D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.MsTest31", "src\Test\Vit.Linq.MsTest31\Vit.Linq.MsTest31.csproj", "{7E513E2C-BF52-4662-AD8F-5910F283178D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.Extensions", "Vit.Linq.Extensions\Vit.Linq.Extensions.csproj", "{7644C85D-F136-4654-8422-F4C3AEE9A22F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.NewtonsoftJson", "src\Vit.Linq.NewtonsoftJson\Vit.Linq.NewtonsoftJson.csproj", "{BC843F69-5ED6-44C2-8A41-0F5826CC1911}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.NewtonsoftJson", "Vit.Linq.NewtonsoftJson\Vit.Linq.NewtonsoftJson.csproj", "{BC843F69-5ED6-44C2-8A41-0F5826CC1911}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.SystemTextJson", "src\Vit.Linq.SystemTextJson\Vit.Linq.SystemTextJson.csproj", "{6C1BC7F7-5C2C-425B-90EC-96D2B94F6C1B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.SystemTextJson", "Vit.Linq.SystemTextJson\Vit.Linq.SystemTextJson.csproj", "{6C1BC7F7-5C2C-425B-90EC-96D2B94F6C1B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{75C25D0B-8529-4E3F-AF43-6EC1E9E40828}"
+	ProjectSection(SolutionItems) = preProject
+		readme.md = readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +38,6 @@ Global
 		{7E513E2C-BF52-4662-AD8F-5910F283178D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E513E2C-BF52-4662-AD8F-5910F283178D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E513E2C-BF52-4662-AD8F-5910F283178D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7644C85D-F136-4654-8422-F4C3AEE9A22F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7644C85D-F136-4654-8422-F4C3AEE9A22F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7644C85D-F136-4654-8422-F4C3AEE9A22F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7644C85D-F136-4654-8422-F4C3AEE9A22F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BC843F69-5ED6-44C2-8A41-0F5826CC1911}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BC843F69-5ED6-44C2-8A41-0F5826CC1911}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC843F69-5ED6-44C2-8A41-0F5826CC1911}.Release|Any CPU.ActiveCfg = Release|Any CPU

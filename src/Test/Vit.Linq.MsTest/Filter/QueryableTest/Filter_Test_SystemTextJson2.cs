@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
+using Vit.Linq.ComponentModel;
 using Vit.Linq.Filter;
 using Vit.Linq.SystemTextJson;
 
-namespace Vit.Linq.MsTest.QueryBuilder.QueryableTest
+namespace Vit.Linq.MsTest.Filter.QueryableTest
 {
     [TestClass]
     public class Filter_Test_SystemTextJson2 : Filter_Test_FilterRule
