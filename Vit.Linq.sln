@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{75C25D0B-852
 		readme.md = readme.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Orm.ElasticSearch", "src\Vit.Orm.ElasticSearch\Vit.Orm.ElasticSearch.csproj", "{4787C99E-089A-4F93-93C3-FA30AA069B02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{6C1BC7F7-5C2C-425B-90EC-96D2B94F6C1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C1BC7F7-5C2C-425B-90EC-96D2B94F6C1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C1BC7F7-5C2C-425B-90EC-96D2B94F6C1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4787C99E-089A-4F93-93C3-FA30AA069B02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4787C99E-089A-4F93-93C3-FA30AA069B02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4787C99E-089A-4F93-93C3-FA30AA069B02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4787C99E-089A-4F93-93C3-FA30AA069B02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

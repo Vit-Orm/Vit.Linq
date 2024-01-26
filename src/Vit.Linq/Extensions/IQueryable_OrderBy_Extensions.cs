@@ -10,19 +10,18 @@ using Vit.Linq.ComponentModel;
 namespace Vit.Extensions.Linq_Extensions
 {
 
-    public static partial class IQueryable_Sort_Extensions
+    public static partial class IQueryable_OrderBy_Extensions
     {
 
         #region Sort
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable IQueryable_Sort(this IQueryable source, IEnumerable<SortItem> sort)
+        public static IQueryable IQueryable_OrderBy(this IQueryable source, IEnumerable<OrderParam> orders)
         {
+            if (source == null || orders?.Any() != true) return source;
 
-            if (sort == null || sort.Count() == 0) return source;
-
-            #region GetSortMethodName
+            #region GetOrderByMethodName
             bool isFirst = true;
-            string GetSortMethodName(bool asc)
+            string GetOrderByMethodName(bool asc)
             {
                 if (isFirst)
                 {
@@ -39,15 +38,15 @@ namespace Vit.Extensions.Linq_Extensions
 
             Expression queryExpr = source.Expression;
 
-            foreach (var item in sort)
+            foreach (var item in orders)
             {
-                // get memberExp
+                // #1 get memberExp
                 Expression memberExp = LinqHelp.GetFieldMemberExpression(parameter, item.field);
 
 
-                #region (x.2)Call
+                #region #2 call
                 queryExpr = Expression.Call(
-                  typeof(Queryable), GetSortMethodName(item.asc),
+                  typeof(Queryable), GetOrderByMethodName(item.asc),
                   new Type[] { source.ElementType, memberExp.Type },
                   queryExpr, Expression.Quote(Expression.Lambda(memberExp, parameter)));
                 #endregion
@@ -67,9 +66,9 @@ namespace Vit.Extensions.Linq_Extensions
         /// <param name="asc"> whether sort by asc</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable IQueryable_Sort(this IQueryable query, string field, bool asc = true)
+        public static IQueryable IQueryable_OrderBy(this IQueryable query, string field, bool asc = true)
         {
-            return query.IQueryable_Sort(new[] { new SortItem { field = field, asc = asc } });
+            return query.IQueryable_OrderBy(new[] { new OrderParam { field = field, asc = asc } });
         }
 
     }

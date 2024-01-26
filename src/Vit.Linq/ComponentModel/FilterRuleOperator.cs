@@ -1,4 +1,4 @@
-﻿namespace Vit.Linq.Filter
+﻿namespace Vit.Linq.ComponentModel
 {
     public class FilterRuleOperator
     {
@@ -13,7 +13,7 @@
         public const string LessThanOrEqual = "<=";
         public const string GreaterThan = ">";
         public const string GreaterThanOrEqual = ">=";
-       
+
 
 
         public const string In = "In";
