@@ -5,55 +5,60 @@ using System.Linq;
 
 namespace Vit.Linq.MsTest
 {
-    public class ModelA
+    public class Person
     {
         public int id;
-        public int? pid;
+        public int? departmentId;
         public string name { get; set; }
         public DateTime addTime;
         public string ext;
         public bool isEven;
 
-        public ModelB b1;
+        public Job job;
 
-        public ModelB[] ba;
+        public Job[] jobArray;
 
-        public List<ModelB> bList;
-        public ModelA BuildB()
+        public List<Job> jobList;
+
+        public Person PopulateJob()
         {
-            b1 = new ModelB { name = name + "_b1", pid = pid };
+            job = new Job { departmentId = departmentId, personId = id, name = name + "_job1" };
+            var job2 = new Job { departmentId = departmentId, personId = id, name = name + "_job2" };
+
 
             if (id % 2 == 0)
-                ba = new[] { b1, b1 };
+                jobArray = new[] { job, job2 };
             else
-                ba = new[] { b1 };
+                jobArray = new[] { job };
 
-            bList = ba.ToList();
-          
+            jobList = jobArray.ToList();
+
             return this;
         }
 
-        public int GetBCount()
+        public int GetJobCount()
         {
-            return bList.Count;
+            return jobList.Count;
         }
-        public bool BExistAtIndex(int index)
+        public bool JobExistAtIndex(int index)
         {
-            if (index < bList.Count) return true;
+            if (index < jobList.Count) return true;
             return false;
         }
-        public ModelB GetBAtIndex(int index)
+        public Job GetJobAtIndex(int index)
         {
-            if (index < bList.Count) return bList[index];
+            if (index < jobList.Count) return jobList[index];
             return null;
         }
     }
 
-    public class ModelB
+    public class Job
     {
-        public int? pid;
+        public int? departmentId;
+ 
+        public int? personId;
         public string name;
-        public string GetBName()
+        public string GetJobName()
         {
             return name;
         }
@@ -63,27 +68,27 @@ namespace Vit.Linq.MsTest
 
     public class DataSource
     {
-        public static List<ModelA> BuildDataSource(int count = 1000)
+        public static List<Person> BuildDataSource(int count = 1000)
         {
             var Now = DateTime.Now;
-            var list = new List<ModelA>(count);
+            var list = new List<Person>(count);
             for (int i = 0; i < count; i++)
             {
-                list.Add(new ModelA
+                list.Add(new Person
                 {
                     id = i,
-                    pid = i / 10,
+                    departmentId = i / 10,
                     name = "name" + i,
                     addTime = Now.AddSeconds(i),
                     ext = "ext" + i,
-                    isEven = i%2 == 0
-                }.BuildB());
+                    isEven = i % 2 == 0
+                }.PopulateJob());
 
             }
             return list;
         }
 
         public static IQueryable GetIQueryable() => GetQueryable();
-        public static IQueryable<ModelA> GetQueryable() => BuildDataSource().AsQueryable();
+        public static IQueryable<Person> GetQueryable() => BuildDataSource().AsQueryable();
     }
 }

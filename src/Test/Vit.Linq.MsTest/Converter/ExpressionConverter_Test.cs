@@ -4,13 +4,13 @@ using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
-using Vit.Linq.Convertor;
+using Vit.Linq.Converter;
 using Vit.Linq.Filter;
 
-namespace Vit.Linq.MsTest.Convertor
+namespace Vit.Linq.MsTest.Converter
 {
     [TestClass]
-    public class ExpressionConvertor_Test
+    public class ExpressionConverter_Test
     {
         [TestMethod]
         public void Test()
@@ -18,7 +18,7 @@ namespace Vit.Linq.MsTest.Convertor
             {
                 Expression<Func<Person, bool>> predicate = x => (x.Age > 5 || x.Name.Contains("lith")) && (x.Age < 10 || x.Name == "lith2");
 
-                var rule = new ExpressionConvertor().ConvertToFilterRule(predicate);
+                var rule = new ExpressionConverter().ConvertToFilterRule(predicate);
                 var str = Json.Serialize(rule);
                 rule = Json.Deserialize<FilterRule>(str);
 
@@ -38,7 +38,7 @@ namespace Vit.Linq.MsTest.Convertor
                 Expression<Func<Person, bool>> predicate = FilterService.Instance.ToExpression<Person>(expectedRule);
 
 
-                var rule = new ExpressionConvertor().ConvertToFilterRule(predicate);
+                var rule = new ExpressionConverter().ConvertToFilterRule(predicate);
                 var str = Json.Serialize(rule);
                 rule = Json.Deserialize<FilterRule>(str);
 

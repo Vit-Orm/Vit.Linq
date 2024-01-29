@@ -4,7 +4,7 @@ using System.Collections;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Vit.Linq.Convertor
+namespace Vit.Linq.Converter
 {
     public static class QueryableBuilder
     {
@@ -13,12 +13,6 @@ namespace Vit.Linq.Convertor
             var queryProvider = new QueryProvider(QueryExecutor);
             var query = new OrderedQueryable<Model>(queryProvider);
             return query;
-        }
-
-        public static IQueryable<Model> Build<Model>(Func<Expression, IQueryable<Model>> QueryExecutor)
-        {
-            Func<Expression, Type, object> QueryExecutor2 = (exp, type) => QueryExecutor(exp);
-            return Build<Model>(QueryExecutor2);
         }
 
 

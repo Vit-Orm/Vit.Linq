@@ -15,7 +15,7 @@ namespace Vit.Extensions.Linq_Extensions
 
         #region Sort
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable IQueryable_OrderBy(this IQueryable source, IEnumerable<OrderParam> orders)
+        public static IQueryable IQueryable_OrderBy(this IQueryable source, IEnumerable<OrderField> orders)
         {
             if (source == null || orders?.Any() != true) return source;
 
@@ -68,7 +68,7 @@ namespace Vit.Extensions.Linq_Extensions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IQueryable IQueryable_OrderBy(this IQueryable query, string field, bool asc = true)
         {
-            return query.IQueryable_OrderBy(new[] { new OrderParam { field = field, asc = asc } });
+            return query.IQueryable_OrderBy(new[] { new OrderField { field = field, asc = asc } });
         }
 
     }

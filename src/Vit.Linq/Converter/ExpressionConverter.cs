@@ -4,40 +4,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
+using Vit.Extensions.Linq_Extensions;
 using Vit.Linq.ComponentModel;
 using Vit.Linq.Filter;
 
-namespace Vit.Linq.Convertor
+namespace Vit.Linq.Converter
 {
-    public class ExpressionConvertor
+    public class ExpressionConverter
     {
-        public class ConvertArg
-        {
-            public QueryParam query = new QueryParam();
-
-            public bool gettedOrder = false;
-        }
-
         public virtual IFilterRule ConvertToFilterRule<T>(Expression<Func<T, bool>> predicate)
         {
-            return ConvertToQueryParam(predicate.Body).filter;
+            return ConvertToQueryAction(predicate.Body).filter;
         }
 
 
         public virtual IFilterRule ConvertToFilterRule(Expression expression)
         {
-            return ConvertToQueryParam(expression).filter;
+            return ConvertToQueryAction(expression).filter;
         }
 
-        public virtual QueryParam ConvertToQueryParam(Expression expression)
+        public virtual QueryAction ConvertToQueryAction(Expression expression)
         {
-            var arg = new ConvertArg();
-            arg.query.filter = ConvertToFilterRule(arg, expression);
-            return arg.query;
+            var queryAction = new QueryAction();
+            queryAction.filter = ConvertToFilterRule(queryAction, expression);
+            queryAction.RemoveKey("_gettedOrder");
+            return queryAction;
         }
 
 
-        protected virtual FilterRule ConvertToFilterRule(ConvertArg arg, Expression expression)
+        protected virtual FilterRule ConvertToFilterRule(QueryAction queryAction, Expression expression)
         {
             if (expression is ConstantExpression constant && constant.Value is bool v)
             {
@@ -45,35 +40,35 @@ namespace Vit.Linq.Convertor
             }
             else if (expression is BinaryExpression binary)
             {
-                return ConvertBinaryExpressionToFilterRule(arg, binary);
+                return ConvertBinaryExpressionToFilterRule(queryAction, binary);
             }
             else if (expression is UnaryExpression unary)
             {
-                return ConvertUnaryExpressionToFilterRule(arg, unary);
+                return ConvertUnaryExpressionToFilterRule(queryAction, unary);
             }
             else if (expression is LambdaExpression lambda)
             {
-                return ConvertLambdaExpressionToFilterRule(arg, lambda);
+                return ConvertLambdaExpressionToFilterRule(queryAction, lambda);
             }
             else if (expression is MethodCallExpression methodExp)
             {
-                return ConvertMethodExpressionToFilterRule(arg, methodExp);
+                return ConvertMethodExpressionToFilterRule(queryAction, methodExp);
             }
 
             throw new NotSupportedException($"Unsupported expression type: {expression.GetType()}");
         }
 
-        protected virtual FilterRule ConvertLambdaExpressionToFilterRule(ConvertArg arg, LambdaExpression lambda) 
+        protected virtual FilterRule ConvertLambdaExpressionToFilterRule(QueryAction queryAction, LambdaExpression lambda)
         {
-            return ConvertToFilterRule(arg, lambda.Body);
+            return ConvertToFilterRule(queryAction, lambda.Body);
         }
 
-        protected virtual FilterRule ConvertUnaryExpressionToFilterRule(ConvertArg arg, UnaryExpression unary)
+        protected virtual FilterRule ConvertUnaryExpressionToFilterRule(QueryAction queryAction, UnaryExpression unary)
         {
             switch (unary.NodeType)
             {
                 case ExpressionType.Not:
-                    var rule = ConvertToFilterRule(arg, unary.Operand);
+                    var rule = ConvertToFilterRule(queryAction, unary.Operand);
                     if (rule.condition?.StartsWith(FilterRuleCondition.Not, StringComparison.OrdinalIgnoreCase) == true)
                     {
                         rule.condition = rule.condition.Substring(3);
@@ -85,12 +80,12 @@ namespace Vit.Linq.Convertor
                     return rule;
                 case ExpressionType.Quote:
                     var exp = unary.Operand;
-                    return ConvertToFilterRule(arg, exp);
+                    return ConvertToFilterRule(queryAction, exp);
             }
             throw new NotSupportedException($"Unsupported binary operator: {unary.NodeType}");
         }
 
-        protected virtual FilterRule ConvertBinaryExpressionToFilterRule(ConvertArg arg, BinaryExpression binary)
+        protected virtual FilterRule ConvertBinaryExpressionToFilterRule(QueryAction queryAction, BinaryExpression binary)
         {
             switch (binary.NodeType)
             {
@@ -115,10 +110,10 @@ namespace Vit.Linq.Convertor
                     return new FilterRule { field = left?.ToString(), @operator = opt, value = right };
 
                 case ExpressionType.AndAlso:
-                    return new FilterRule { condition = "and", rules = new List<FilterRule> { ConvertToFilterRule(arg, binary.Left), ConvertToFilterRule(arg, binary.Right) } };
+                    return new FilterRule { condition = "and", rules = new List<FilterRule> { ConvertToFilterRule(queryAction, binary.Left), ConvertToFilterRule(queryAction, binary.Right) } };
 
                 case ExpressionType.OrElse:
-                    return new FilterRule { condition = "or", rules = new List<FilterRule> { ConvertToFilterRule(arg, binary.Left), ConvertToFilterRule(arg, binary.Right) } };
+                    return new FilterRule { condition = "or", rules = new List<FilterRule> { ConvertToFilterRule(queryAction, binary.Left), ConvertToFilterRule(queryAction, binary.Right) } };
             }
             throw new NotSupportedException($"Unsupported binary operator: {binary.NodeType}");
         }
@@ -135,6 +130,15 @@ namespace Vit.Linq.Convertor
                 if (ExpressionType.Convert == unary.NodeType)
                 {
                     var del = Expression.Lambda(unary).Compile();
+                    var value = del.DynamicInvoke();
+                    return value;
+                }
+            }
+            else if (expression is MemberExpression member)
+            {
+                if (ExpressionType.MemberAccess == member.NodeType)
+                {
+                    var del = Expression.Lambda(member).Compile();
                     var value = del.DynamicInvoke();
                     return value;
                 }
@@ -176,22 +180,22 @@ namespace Vit.Linq.Convertor
 
 
 
-        #region MethodConvertor
-        protected class MethodConvertor
+        #region MethodConverter
+        protected class MethodConverter
         {
             //public int? order;
-            public Func<ConvertArg, MethodCallExpression, bool> predicate;
-            public Func<ConvertArg, MethodCallExpression, FilterRule> convert;
+            public Func<QueryAction, MethodCallExpression, bool> predicate;
+            public Func<QueryAction, MethodCallExpression, FilterRule> converter;
         }
-        protected List<MethodConvertor> methodConvertors = new List<MethodConvertor>();
+        protected List<MethodConverter> methodConvertors = new List<MethodConverter>();
 
-        public virtual void RegisterMethodConvertor(Func<ConvertArg, MethodCallExpression, bool> predicate, Func<ConvertArg, MethodCallExpression, FilterRule> convertor)
+        public virtual void RegisterMethodConvertor(Func<QueryAction, MethodCallExpression, bool> predicate, Func<QueryAction, MethodCallExpression, FilterRule> converter)
         {
-            methodConvertors.Add(new MethodConvertor { predicate = predicate, convert = convertor });
+            methodConvertors.Add(new MethodConverter { predicate = predicate, converter = converter });
         }
-        public virtual void RegisterMethodConvertor(Type operatorType, string operatorName, Func<ConvertArg, MethodCallExpression, FilterRule> convertor)
+        public virtual void RegisterMethodConvertor(Type operatorType, string operatorName, Func<QueryAction, MethodCallExpression, FilterRule> convertor)
         {
-            Func<ConvertArg, MethodCallExpression, bool> predicate = (arg, methodExp) =>
+            Func<QueryAction, MethodCallExpression, bool> predicate = (arg, methodExp) =>
             {
                 var type = methodExp.Method.DeclaringType;
                 var name = methodExp.Method.Name;
@@ -200,9 +204,9 @@ namespace Vit.Linq.Convertor
             RegisterMethodConvertor(predicate, convertor);
         }
 
-        public virtual void RegisterMethodsConvertor(Type operatorType, string operatorName, Func<ConvertArg, MethodCallExpression, FilterRule> convertor)
+        public virtual void RegisterMethodsConvertor(Type operatorType, string operatorName, Func<QueryAction, MethodCallExpression, FilterRule> convertor)
         {
-            Func<ConvertArg, MethodCallExpression, bool> predicate = (arg, methodExp) =>
+            Func<QueryAction, MethodCallExpression, bool> predicate = (queryAction, methodExp) =>
             {
                 var type = methodExp.Method.DeclaringType;
                 var name = methodExp.Method.Name;
@@ -211,124 +215,164 @@ namespace Vit.Linq.Convertor
             RegisterMethodConvertor(predicate, convertor);
         }
 
-        public ExpressionConvertor()
+        public ExpressionConverter()
         {
-            Func<ConvertArg, MethodCallExpression, FilterRule> convertor;
+            Func<QueryAction, MethodCallExpression, FilterRule> converter;
+            Func<QueryAction, MethodCallExpression, bool> predicate;
 
 
             // #1 string.Contains
-            convertor = (arg, method) =>
+            converter = (queryAction, method) =>
             {
                 var left = GetMemberName(method.Object);
                 var right = GetValue(method.Arguments[0]);
                 return new FilterRule { field = left?.ToString(), @operator = "Contains", value = right };
             };
-            RegisterMethodsConvertor(typeof(string), "Contains", convertor);
+            RegisterMethodsConvertor(typeof(string), "Contains", converter);
 
 
             // #2 string.IsNullOrEmpty
-            convertor = (arg, method) =>
+            converter = (queryAction, method) =>
             {
                 string left = GetMemberName(method.Arguments[0]);
                 return new FilterRule { field = left, @operator = "IsNull" };
             };
-            RegisterMethodsConvertor(typeof(string), "IsNullOrEmpty", convertor);
+            RegisterMethodsConvertor(typeof(string), "IsNullOrEmpty", converter);
 
 
-            // #3 IEnumerable.Contains
-            convertor = (arg, method) =>
+            // #3 Enumerable.Contains
+            converter = (queryAction, method) =>
             {
-                var left = GetMemberName(method.Object);
+                var left = GetMemberName(method.Arguments[1]);
                 var right = GetValue(method.Arguments[0]);
-                return new FilterRule { field = left?.ToString(), @operator = "In", value = right };
+                return new FilterRule { field = left, @operator = "In", value = right };
             };
-            RegisterMethodsConvertor(typeof(IEnumerable), "Contains", convertor);
+            RegisterMethodConvertor(typeof(Enumerable), "Contains", converter);
+
 
             #region #4 Queryable.Take Queryable.Skip
             // # Queryable.Take
-            convertor = (arg, method) =>
+            converter = (queryAction, method) =>
             {
                 // method.Arguments   [0]: expression       [1]: takeCount
                 var expression = method.Arguments[0];
                 var take = (int)GetValue(method.Arguments[1]);
-                arg.query.take = take;
+                queryAction.take = take;
 
-                return ConvertToFilterRule(arg, expression);
+                return ConvertToFilterRule(queryAction, expression);
             };
-            RegisterMethodConvertor(typeof(Queryable), "Take", convertor);
+            RegisterMethodConvertor(typeof(Queryable), "Take", converter);
 
             // # Queryable.Skip
-            convertor = (arg, method) =>
+            converter = (queryAction, method) =>
             {
                 // method.Arguments   [0]: expression       [1]: skipCount
                 var expression = method.Arguments[0];
                 var skip = (int)GetValue(method.Arguments[1]);
-                arg.query.skip = skip;
+                queryAction.skip = skip;
 
-                return ConvertToFilterRule(arg, expression);
+                return ConvertToFilterRule(queryAction, expression);
             };
-            RegisterMethodConvertor(typeof(Queryable), "Skip", convertor);
+            RegisterMethodConvertor(typeof(Queryable), "Skip", converter);
             #endregion
 
             #region #5 Queryable   OrderBy OrderByDescending  ThenBy  ThenByDescending
             // # Queryable.OrderBy
-            convertor = (arg, method) =>
+            converter = (queryAction, method) =>
             {
                 // method.Arguments   [0]: expression       [1]: takeCount
                 var expression = method.Arguments[0];
                 var memberName = GetMemberName(method.Arguments[1]);
 
-                if (!arg.gettedOrder)
+                if (!"true".Equals(queryAction.GetValue("_gettedOrder")))
                 {
                     var methodName = method.Method.Name;
-                    var orderParam = new OrderParam(memberName, !methodName.EndsWith("Descending"));
+                    var orderParam = new OrderField(memberName, !methodName.EndsWith("Descending"));
 
                     if (methodName.StartsWith("Order"))
                     {
-                        arg.gettedOrder = true;
+                        queryAction.SetValue("_gettedOrder", "true");
                     }
 
-                    if (arg.query.orders == null)
-                        arg.query.orders = new List<OrderParam> { orderParam };
+                    if (queryAction.orders == null)
+                        queryAction.orders = new List<OrderField> { orderParam };
                     else
-                        arg.query.orders.Insert(0, orderParam);
+                        queryAction.orders.Insert(0, orderParam);
                 }
 
-                return ConvertToFilterRule(arg, expression);
+                return ConvertToFilterRule(queryAction, expression);
             };
-            RegisterMethodConvertor(typeof(Queryable), "OrderBy", convertor);
-            RegisterMethodConvertor(typeof(Queryable), "OrderByDescending", convertor);
-            RegisterMethodConvertor(typeof(Queryable), "ThenBy", convertor);
-            RegisterMethodConvertor(typeof(Queryable), "ThenByDescending", convertor);
+            RegisterMethodConvertor(typeof(Queryable), "OrderBy", converter);
+            RegisterMethodConvertor(typeof(Queryable), "OrderByDescending", converter);
+            RegisterMethodConvertor(typeof(Queryable), "ThenBy", converter);
+            RegisterMethodConvertor(typeof(Queryable), "ThenByDescending", converter);
             #endregion
 
 
 
             #region #6 Queryable.Where
-            convertor = (arg, method) =>
+            converter = (queryAction, method) =>
             {
                 // method.Arguments   [0]: expression       [1]: Where
                 var expression = method.Arguments[0];
                 var where = method.Arguments[1];
                 if (expression is ConstantExpression)
                 {
-                    return ConvertToFilterRule(arg, where);
+                    return ConvertToFilterRule(queryAction, where);
                 }
 
-                return new FilterRule { condition = "and", rules = new List<FilterRule> { ConvertToFilterRule(arg, expression), ConvertToFilterRule(arg, where) } };
+                return new FilterRule { condition = "and", rules = new List<FilterRule> { ConvertToFilterRule(queryAction, expression), ConvertToFilterRule(queryAction, where) } };
             };
-            RegisterMethodConvertor(typeof(Queryable), "Where", convertor);
+            RegisterMethodConvertor(typeof(Queryable), "Where", converter);
+            #endregion
+
+
+            #region #7 Queryable    Count / First / FirstOrDefault / Last / LastOrDefault
+            predicate = (arg, methodExp) =>
+            {
+                var type = methodExp.Method.DeclaringType;
+                var name = methodExp.Method.Name;
+
+                if (type != typeof(Queryable)) return false;
+
+                var methods = new[] { "Count", "First", "FirstOrDefault", "Last", "LastOrDefault" };
+
+                return methods.Contains(name);
+            };
+            converter = (queryAction, method) =>
+            {
+                // method.Arguments   [0]: expression
+                var expression = method.Arguments[0];
+                queryAction.method = method.Method.Name;
+
+                return ConvertToFilterRule(queryAction, expression);
+            };
+            RegisterMethodConvertor(predicate, converter);
+            #endregion
+
+
+
+            #region #8 IQueryable_Extensions.TotalCount
+            converter = (queryAction, method) =>
+            {
+                // method.Arguments   [0]: expression
+                var expression = method.Arguments[0];
+                queryAction.method = "TotalCount";
+
+                return ConvertToFilterRule(queryAction, expression);
+            };
+            RegisterMethodConvertor(typeof(IQueryable_Extensions), "TotalCount", converter);
             #endregion
 
 
         }
         #endregion
 
-        protected virtual FilterRule ConvertMethodExpressionToFilterRule(ConvertArg arg, MethodCallExpression methodExp)
+        protected virtual FilterRule ConvertMethodExpressionToFilterRule(QueryAction queryAction, MethodCallExpression methodExp)
         {
-            var convertor = methodConvertors.FirstOrDefault(m => m.predicate(arg, methodExp));
+            var convertor = methodConvertors.FirstOrDefault(m => m.predicate(queryAction, methodExp));
 
-            return convertor?.convert(arg, methodExp) ?? throw new NotSupportedException($"Unsupported method call: {methodExp.Method.Name}");
+            return convertor?.converter(queryAction, methodExp) ?? throw new NotSupportedException($"Unsupported method call: {methodExp.Method.Name}");
         }
     }
 }

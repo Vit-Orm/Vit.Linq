@@ -26,7 +26,7 @@ namespace Vit.Extensions.Linq_Extensions
             return new PageData<T>(page) { totalCount = query.Count(), rows = queryPaged.ToList() };
         }
 
-        public static PageData<T> ToPageData<T>(this IQueryable<T> query, IEnumerable<OrderParam> sort, PageInfo page
+        public static PageData<T> ToPageData<T>(this IQueryable<T> query, IEnumerable<OrderField> sort, PageInfo page
         ) where T : class
         {
             return query?.OrderBy(sort).ToPageData(page);
@@ -68,7 +68,7 @@ namespace Vit.Extensions.Linq_Extensions
         /// <param name="selector"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PageData<TResult> ToPageData<T, TResult>(this IQueryable<T> query, IEnumerable<OrderParam> sort, PageInfo page, Func<T, TResult> selector
+        public static PageData<TResult> ToPageData<T, TResult>(this IQueryable<T> query, IEnumerable<OrderField> sort, PageInfo page, Func<T, TResult> selector
         ) where T : class
         {
             return query?.OrderBy(sort).ToPageData(page, selector);

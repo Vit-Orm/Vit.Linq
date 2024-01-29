@@ -12,7 +12,7 @@ namespace Vit.Extensions.Linq_Extensions
     {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable<T> OrderBy_Reflection<T>(this IQueryable<T> query, IEnumerable<OrderParam> sort)
+        public static IQueryable<T> OrderBy_Reflection<T>(this IQueryable<T> query, IEnumerable<OrderField> sort)
             where T : class
         {
             if (query == null || sort?.Any() != true) return query;
@@ -67,7 +67,7 @@ namespace Vit.Extensions.Linq_Extensions
         {
             if (query == null || string.IsNullOrEmpty(field)) return query;
 
-            return OrderBy_Reflection(query, new[] { new OrderParam(field, asc) });
+            return OrderBy_Reflection(query, new[] { new OrderField(field, asc) });
         }
 
     }

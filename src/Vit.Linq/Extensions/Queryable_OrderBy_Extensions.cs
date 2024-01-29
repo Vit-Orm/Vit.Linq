@@ -16,7 +16,7 @@ namespace Vit.Extensions.Linq_Extensions
     {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, IEnumerable<OrderParam> orders)
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, IEnumerable<OrderField> orders)
         {
             if (query == null || orders?.Any() != true) return query;
 
@@ -54,7 +54,7 @@ namespace Vit.Extensions.Linq_Extensions
         {
             if (query == null || string.IsNullOrEmpty(field)) return query;
 
-            return OrderBy(query, new[] { new OrderParam(field, asc) });
+            return OrderBy(query, new[] { new OrderField(field, asc) });
         }
 
 

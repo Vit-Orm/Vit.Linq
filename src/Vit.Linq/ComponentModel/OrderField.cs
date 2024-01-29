@@ -1,7 +1,7 @@
 ﻿
 namespace Vit.Linq.ComponentModel
 {
-    public class OrderParam
+    public class OrderField
     {
         /// <summary>
         /// field name(can be cascaded). demo "parent.id"
@@ -13,8 +13,8 @@ namespace Vit.Linq.ComponentModel
         /// </summary>
         public bool asc;
 
-        public OrderParam() { }
-        public OrderParam(string field, bool asc)
+        public OrderField() { }
+        public OrderField(string field, bool asc)
         {
             this.field = field;
             this.asc = asc;

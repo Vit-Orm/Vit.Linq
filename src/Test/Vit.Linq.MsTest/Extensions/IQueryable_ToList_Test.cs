@@ -20,17 +20,17 @@ namespace Vit.Linq.MsTest.Extensions
                 Assert.AreEqual(1000, count);
 
 
-                var list1 = query.IQueryable_ToList<ModelA>();
+                var list1 = query.IQueryable_ToList<Person>();
                 Assert.AreEqual(1000, list1.Count);
 
-                var list2 = query.IQueryable_ToList() as List<ModelA>;
+                var list2 = query.IQueryable_ToList() as List<Person>;
                 Assert.AreEqual(1000, list2.Count);
 
 
-                var array1 = query.IQueryable_ToArray<ModelA>();
+                var array1 = query.IQueryable_ToArray<Person>();
                 Assert.AreEqual(1000, array1.Length);
 
-                var array2 = query.IQueryable_ToArray() as ModelA[];
+                var array2 = query.IQueryable_ToArray() as Person[];
                 Assert.AreEqual(1000, array2.Length);
             }
             #endregion

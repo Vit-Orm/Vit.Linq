@@ -19,8 +19,8 @@ namespace Vit.Linq.MsTest.Extensions
             {
                 var result = query
                     .OrderBy_Reflection(new[] {
-                        new OrderParam { field = "b1.pid", asc = false },
-                        new OrderParam { field = "id", asc = true }
+                        new OrderField { field = "job.departmentId", asc = false },
+                        new OrderField { field = "id", asc = true }
                     })
                     .Page(new PageInfo { pageIndex = 1, pageSize = 10 })
                     .ToList();
@@ -46,8 +46,8 @@ namespace Vit.Linq.MsTest.Extensions
             {
                 var result = query
                     .OrderBy_Reflection(new[] {
-                        new OrderParam { field = "b1.pid", asc = false },
-                        new OrderParam { field = "id", asc = true }
+                        new OrderField { field = "job.departmentId", asc = false },
+                        new OrderField { field = "id", asc = true }
                     })
                     .ToPageData(new PageInfo { pageIndex = 1, pageSize = 10 });
 
