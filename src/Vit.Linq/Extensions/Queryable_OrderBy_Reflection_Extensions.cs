@@ -8,17 +8,14 @@ using Vit.Linq.ComponentModel;
 namespace Vit.Extensions.Linq_Extensions
 {
 
-    public static partial class Queryable_Sort_ByReflection_Extensions
+    public static partial class Queryable_OrderBy_Reflection_Extensions
     {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable<T> Sort_ByReflection<T>(this IQueryable<T> query, IEnumerable<SortItem> sort)
+        public static IQueryable<T> OrderBy_Reflection<T>(this IQueryable<T> query, IEnumerable<OrderField> sort)
             where T : class
         {
-            if (query == null || sort == null) return query;
-
-            var sortCount = sort.Count();
-            if (sortCount == 0) return query;
+            if (query == null || sort?.Any() != true) return query;
 
             IOrderedQueryable<T> orderedQuery = null;
             foreach (var item in sort)
@@ -52,7 +49,7 @@ namespace Vit.Extensions.Linq_Extensions
                     }
                 }
             }
-            return orderedQuery ?? query;
+            return orderedQuery;
         }
 
 
@@ -65,28 +62,12 @@ namespace Vit.Extensions.Linq_Extensions
         /// <param name="asc"> whether sort by asc</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable<T> Sort_ByReflection<T>(this IQueryable<T> query, string field, bool asc = true)
+        public static IQueryable<T> OrderBy_Reflection<T>(this IQueryable<T> query, string field, bool asc = true)
            where T : class
         {
-            if (query == null) return query;
+            if (query == null || string.IsNullOrEmpty(field)) return query;
 
-            var keySelector = LinqHelp.GetFieldExpression_ByReflection<T>(field);
-
-            if (keySelector == null)
-            {
-                return query;
-            }
-
-            if (asc)
-            {
-                query = query.OrderBy(keySelector);
-            }
-            else
-            {
-                query = query.OrderByDescending(keySelector);
-            }
-
-            return query;
+            return OrderBy_Reflection(query, new[] { new OrderField(field, asc) });
         }
 
     }

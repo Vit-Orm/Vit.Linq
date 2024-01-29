@@ -22,14 +22,14 @@ namespace Vit.Linq.MsTest.Extensions
                 Assert.AreEqual(1000, count);
 
 
-                var list1 = query.ToList<ModelA>();
+                var list1 = query.ToList<Person>();
                 Assert.AreEqual(1000, list1.Count);
 
                 var list2 = query.ToList();
                 Assert.AreEqual(1000, list2.Count);
 
 
-                var array1 = query.ToArray<ModelA>();
+                var array1 = query.ToArray<Person>();
                 Assert.AreEqual(1000, array1.Length);
 
                 var array2 = query.ToArray();

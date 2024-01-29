@@ -12,25 +12,19 @@ namespace Vit.Extensions.Linq_Extensions
     /// <summary>
     /// ref https://www.cnblogs.com/Extnet/p/9848272.html
     /// </summary>
-    public static partial class Queryable_Sort_Extensions
+    public static partial class Queryable_OrderBy_Extensions
     {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable<T> Sort<T>(this IQueryable<T> query, IEnumerable<SortItem> sort)
-            where T : class
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, IEnumerable<OrderField> orders)
         {
-            if (query == null || sort == null) return query;
-
-            var sortCount = sort.Count();
-            if (sortCount == 0) return query;
-
+            if (query == null || orders?.Any() != true) return query;
 
             var paramExp = Expression.Parameter(typeof(T));
             IOrderedQueryable<T> orderedQuery = null;
 
-            foreach (var item in sort)
+            foreach (var item in orders)
             {
-
                 var memberExp = LinqHelp.GetFieldMemberExpression(paramExp, item.field);
                 LambdaExpression exp = Expression.Lambda(memberExp, paramExp);
 
@@ -43,7 +37,7 @@ namespace Vit.Extensions.Linq_Extensions
                     orderedQuery = ThenBy(orderedQuery, exp, item.asc);
                 }
             }
-            return orderedQuery ?? query;
+            return orderedQuery;
         }
 
 
@@ -56,16 +50,11 @@ namespace Vit.Extensions.Linq_Extensions
         /// <param name="asc"> whether sort by asc</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable<T> Sort<T>(this IQueryable<T> query, string field, bool asc = true)
-           where T : class
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, string field, bool asc = true)
         {
-            if (string.IsNullOrEmpty(field)) return query;
+            if (query == null || string.IsNullOrEmpty(field)) return query;
 
-            var paramExp = Expression.Parameter(typeof(T));
-            var memberExp = LinqHelp.GetFieldMemberExpression(paramExp, field);
-            LambdaExpression expr = Expression.Lambda(memberExp, paramExp);
-
-            return OrderBy(query, expr, asc);
+            return OrderBy(query, new[] { new OrderField(field, asc) });
         }
 
 
@@ -73,7 +62,7 @@ namespace Vit.Extensions.Linq_Extensions
 
 
         #region OrderBy
-        public static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> query, LambdaExpression exp, bool asc = true)
+        internal static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> query, LambdaExpression exp, bool asc = true)
         {
             if (asc)
             {
@@ -87,7 +76,7 @@ namespace Vit.Extensions.Linq_Extensions
             }
         }
 
-        public static IOrderedQueryable<T> ThenBy<T>(this IOrderedQueryable<T> query, LambdaExpression exp, bool asc = true)
+        internal static IOrderedQueryable<T> ThenBy<T>(this IOrderedQueryable<T> query, LambdaExpression exp, bool asc = true)
         {
             if (asc)
             {

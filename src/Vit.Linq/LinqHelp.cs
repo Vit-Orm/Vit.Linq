@@ -16,18 +16,18 @@ namespace Vit.Linq
         public static Expression GetFieldMemberExpression_ByName(Expression parameter, string propertyOrFieldName)
         {
             var valueType = parameter.Type;
-            int index;
+  
             if (valueType.IsArray)
             {
                 // Array
-                if (int.TryParse(propertyOrFieldName, out index))
+                if (int.TryParse(propertyOrFieldName, out var index))
                     return Expression.ArrayAccess(parameter, Expression.Constant(index));
             }
             else
             if (valueType.IsGenericType && typeof(IEnumerable).IsAssignableFrom(valueType))
             {
                 // IEnumerable<>    List<>
-                if (int.TryParse(propertyOrFieldName, out index))
+                if (int.TryParse(propertyOrFieldName, out var index))
                     return Expression.Call(typeof(Enumerable), "ElementAt", valueType.GetGenericArguments(), parameter, Expression.Constant(index));
             }
 
@@ -42,13 +42,12 @@ namespace Vit.Linq
         /// <returns></returns>
         public static Expression GetFieldMemberExpression(Expression parameter, string fieldPath)
         {
-            fieldPath = fieldPath?.Replace("]", "").Replace("[", ".");
-            if (!string.IsNullOrWhiteSpace(fieldPath))
+            if (string.IsNullOrWhiteSpace(fieldPath)) return parameter;
+
+            fieldPath = fieldPath.Replace("]", "").Replace("[", ".");
+            foreach (var fieldName in fieldPath.Split('.'))
             {
-                foreach (var fieldName in fieldPath.Split('.'))
-                {
-                    parameter = GetFieldMemberExpression_ByName(parameter, fieldName);
-                }
+                parameter = GetFieldMemberExpression_ByName(parameter, fieldName);
             }
             return parameter;
         }

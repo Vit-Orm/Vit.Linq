@@ -24,9 +24,9 @@ namespace Vit.Extensions.Linq_Extensions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PageData<T> IQueryable_ToPageData<T>(this IQueryable query, IEnumerable<SortItem> sort, PageInfo page)
+        public static PageData<T> IQueryable_ToPageData<T>(this IQueryable query, IEnumerable<OrderField> sort, PageInfo page)
         {
-            return query?.IQueryable_Sort(sort).IQueryable_ToPageData<T>(page);
+            return query?.IQueryable_OrderBy(sort).IQueryable_ToPageData<T>(page);
         }
         #endregion
 
@@ -64,10 +64,10 @@ namespace Vit.Extensions.Linq_Extensions
         /// <param name="selector"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PageData<TResult> IQueryable_ToPageData<T, TResult>(this IQueryable query, IEnumerable<SortItem> sort, PageInfo page, Func<T, TResult> selector)
+        public static PageData<TResult> IQueryable_ToPageData<T, TResult>(this IQueryable query, IEnumerable<OrderField> sort, PageInfo page, Func<T, TResult> selector)
             where T : class
         {
-            return query?.IQueryable_Sort(sort).IQueryable_ToPageData(page, selector);
+            return query?.IQueryable_OrderBy(sort).IQueryable_ToPageData(page, selector);
         }
         #endregion
 

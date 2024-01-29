@@ -6,7 +6,7 @@ using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter;
 using System;
 using Newtonsoft.Json.Linq;
-using Queryable = System.Linq.IQueryable<Vit.Linq.MsTest.ModelA>;
+using Queryable = System.Linq.IQueryable<Vit.Linq.MsTest.Person>;
 using Vit.Linq.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter.QueryableTest
@@ -27,11 +27,11 @@ namespace Vit.Linq.MsTest.Filter.QueryableTest
             return Json.Deserialize<FilterRule>(filterRule);
         }
 
-        public override Queryable ToQuery(IQueryable<ModelA> query) => query;
+        public override Queryable ToQuery(IQueryable<Person> query) => query;
 
-        public override List<ModelA> Filter(Queryable query, IFilterRule rule)
+        public override List<Person> Filter(Queryable query, IFilterRule rule)
         {
-            return query.Where(rule, GetService()).ToList<ModelA>();
+            return query.Where(rule, GetService()).ToList<Person>();
         }
 
         public virtual FilterService GetService()

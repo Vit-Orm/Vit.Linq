@@ -6,24 +6,24 @@ using Vit.Linq.ComponentModel;
 namespace Vit.Linq.MsTest.Extensions
 {
     [TestClass]
-    public class IQueryable_SortAndPage_Test
+    public class IQueryable_OrderByAndPage_Test
     {
 
-        #region TestSortAndPage
+        #region Test
         [TestMethod]
-        public void TestSortAndPage()
+        public void Test()
         {
             var query = DataSource.GetIQueryable();
 
             #region #1
             {
                 var result = query
-                    .IQueryable_Sort(new[] {
-                        new SortItem { field = "b1.pid", asc = false },
-                        new SortItem { field = "id", asc = true }
+                    .IQueryable_OrderBy(new[] {
+                        new OrderField { field = "job.departmentId", asc = false },
+                        new OrderField { field = "id", asc = true }
                     })
                     .IQueryable_Page(new PageInfo { pageIndex = 1, pageSize = 10 })
-                    .IQueryable_ToList<ModelA>();
+                    .IQueryable_ToList<Person>();
                 Assert.AreEqual(result.Count, 10);
                 Assert.AreEqual(result[0].id, 990);
             }
@@ -33,9 +33,9 @@ namespace Vit.Linq.MsTest.Extensions
             #region #2
             {
                 var result = query
-                    .IQueryable_Sort("id", false)
+                    .IQueryable_OrderBy("id", false)
                     .IQueryable_Page(2, 10)
-                    .IQueryable_ToList<ModelA>();
+                    .IQueryable_ToList<Person>();
                 Assert.AreEqual(result.Count, 10);
                 Assert.AreEqual(result[0].id, 989);
             }
@@ -45,11 +45,11 @@ namespace Vit.Linq.MsTest.Extensions
             #region #3
             {
                 var result = query
-                    .IQueryable_Sort(new[] {
-                        new SortItem { field = "b1.pid", asc = false },
-                        new SortItem { field = "id", asc = true }
+                    .IQueryable_OrderBy(new[] {
+                        new OrderField { field = "job.departmentId", asc = false },
+                        new OrderField { field = "id", asc = true }
                     })
-                    .IQueryable_ToPageData<ModelA>(new PageInfo { pageIndex = 1, pageSize = 10 });
+                    .IQueryable_ToPageData<Person>(new PageInfo { pageIndex = 1, pageSize = 10 });
 
                 Assert.AreEqual(result.totalCount, 1000);
                 Assert.AreEqual(result.rows.Count, 10);

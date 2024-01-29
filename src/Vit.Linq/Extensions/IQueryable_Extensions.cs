@@ -115,7 +115,19 @@ namespace Vit.Extensions.Linq_Extensions
         #endregion
 
 
+        #region Count 
+        public static int TotalCount(this IQueryable  source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
 
+            return source.Provider.Execute<int>(
+                Expression.Call(
+                    null,
+                    new Func<IQueryable,int>(TotalCount).Method
+                    , source.Expression));
+        }
+        #endregion
 
 
 

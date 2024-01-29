@@ -5,15 +5,15 @@ namespace Vit.Linq.ComponentModel
 {
     public class PageData : PageData<object>
     {
-        public PageData(PageInfo pageInfo = null):base(pageInfo)
-        {            
+        public PageData(PageInfo pageInfo = null) : base(pageInfo)
+        {
         }
     }
 
     public class PageData<T> : PageInfo
     {
 
-        public PageData(PageInfo pageInfo=null)
+        public PageData(PageInfo pageInfo = null)
         {
             if (null != pageInfo)
             {

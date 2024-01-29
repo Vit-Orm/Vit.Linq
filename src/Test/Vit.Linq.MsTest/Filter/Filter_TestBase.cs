@@ -13,13 +13,13 @@ namespace Vit.Linq.MsTest.Filter
 
     public abstract class Filter_TestBase<Query>
     {
-        IQueryable<ModelA> GetQueryable() => DataSource.GetQueryable();
+        IQueryable<Person> GetQueryable() => DataSource.GetQueryable();
 
 
         public abstract IFilterRule GetRule(string filterRule);
-        public abstract Query ToQuery(IQueryable<ModelA> query);
+        public abstract Query ToQuery(IQueryable<Person> query);
 
-        public abstract List<ModelA> Filter(Query query, IFilterRule rule);
+        public abstract List<Person> Filter(Query query, IFilterRule rule);
 
 
 
@@ -117,9 +117,9 @@ namespace Vit.Linq.MsTest.Filter
                     var query = GetQueryable();
 
                     var item = query.Skip(10).FirstOrDefault();
-                    item.pid = null;
+                    item.departmentId = null;
 
-                    var strRule = "{'field':'pid',  'operator': '=',  'value': null }".Replace("'", "\"");
+                    var strRule = "{'field':'departmentId',  'operator': '=',  'value': null }".Replace("'", "\"");
                     var rule = GetRule(strRule);
                     var result = Filter(ToQuery(query), rule);
                     Assert.AreEqual(10, result.FirstOrDefault().id);
@@ -172,9 +172,9 @@ namespace Vit.Linq.MsTest.Filter
                     var query = GetQueryable();
 
                     var item = query.Skip(10).FirstOrDefault();
-                    item.pid = null;
+                    item.departmentId = null;
 
-                    var strRule = "{'field':'pid',  'operator': '!=',  'value': null }".Replace("'", "\"");
+                    var strRule = "{'field':'departmentId',  'operator': '!=',  'value': null }".Replace("'", "\"");
                     var rule = GetRule(strRule);
                     var result = Filter(ToQuery(query), rule);
                     Assert.AreEqual(999, result.Count);
@@ -214,7 +214,7 @@ namespace Vit.Linq.MsTest.Filter
                 {
                     var query = GetQueryable();
 
-                    var strRule = @"{'condition':'and', 'rules':[   
+                    var strRule = @"{'condition':'and', 'rules':[  
                                         {'field':'id',  'operator': '>',  'value':10  },
                                         {'field':'id',  'operator': '<',  'value': '20' } 
                                     ]}".Replace("'", "\"");
@@ -522,7 +522,7 @@ namespace Vit.Linq.MsTest.Filter
             #region #6  nested field
             {
                 var query = GetQueryable();
-                var strRule = "{'field':'b1.name',  'operator': '=',  'value': 'name987_b1' }".Replace("'", "\"");
+                var strRule = "{'field':'job.name',  'operator': '=',  'value': 'name987_job1' }".Replace("'", "\"");
                 var rule = GetRule(strRule);
 
                 var result = Filter(ToQuery(query), rule);
@@ -535,7 +535,7 @@ namespace Vit.Linq.MsTest.Filter
             #region #7 Array
             {
                 var query = GetQueryable();
-                var strRule = "{'field':'ba[0].name',  'operator': '=',  'value': 'name987_b1' }".Replace("'", "\"");
+                var strRule = "{'field':'jobArray[0].name',  'operator': '=',  'value': 'name987_job1' }".Replace("'", "\"");
                 var rule = GetRule(strRule);
 
                 var result = Filter(ToQuery(query), rule);
@@ -545,7 +545,7 @@ namespace Vit.Linq.MsTest.Filter
             }
             {
                 var query = GetQueryable();
-                var strRule = "{'field':'ba.0.name',  'operator': '=',  'value': 'name987_b1' }".Replace("'", "\"");
+                var strRule = "{'field':'jobArray.0.name',  'operator': '=',  'value': 'name987_job1' }".Replace("'", "\"");
                 var rule = GetRule(strRule);
 
                 var result = Filter(ToQuery(query), rule);
@@ -555,7 +555,7 @@ namespace Vit.Linq.MsTest.Filter
             }
             {
                 var query = GetQueryable();
-                var strRule = "{'field':'ba.Length',  'operator': '=',  'value': 1 }".Replace("'", "\"");
+                var strRule = "{'field':'jobArray.Length',  'operator': '=',  'value': 1 }".Replace("'", "\"");
                 var rule = GetRule(strRule);
 
                 var result = Filter(ToQuery(query), rule);
@@ -567,7 +567,7 @@ namespace Vit.Linq.MsTest.Filter
             #region #8 List
             {
                 var query = GetQueryable();
-                var strRule = "{'field':'bList[0].name',  'operator': '=',  'value': 'name987_b1' }".Replace("'", "\"");
+                var strRule = "{'field':'jobList[0].name',  'operator': '=',  'value': 'name987_job1' }".Replace("'", "\"");
                 var rule = GetRule(strRule);
 
                 var result = Filter(ToQuery(query), rule);
@@ -577,7 +577,7 @@ namespace Vit.Linq.MsTest.Filter
             }
             {
                 var query = GetQueryable();
-                var strRule = "{'field':'bList.0.name',  'operator': '=',  'value': 'name987_b1' }".Replace("'", "\"");
+                var strRule = "{'field':'jobList.0.name',  'operator': '=',  'value': 'name987_job1' }".Replace("'", "\"");
                 var rule = GetRule(strRule);
 
                 var result = Filter(ToQuery(query), rule);
@@ -587,7 +587,7 @@ namespace Vit.Linq.MsTest.Filter
             }
             {
                 var query = GetQueryable();
-                var strRule = "{'field':'bList.Count',  'operator': '=',  'value': 1 }".Replace("'", "\"");
+                var strRule = "{'field':'jobList.Count',  'operator': '=',  'value': 1 }".Replace("'", "\"");
                 var rule = GetRule(strRule);
 
                 var result = Filter(ToQuery(query), rule);
@@ -601,7 +601,7 @@ namespace Vit.Linq.MsTest.Filter
             {
                 {
                     var query = GetQueryable();
-                    var strRule = "{'field':'bList[0]', 'fields':[ {'method':'GetBName' }] ,  'operator': '=',  'value': 'name987_b1' }".Replace("'", "\"");
+                    var strRule = "{'field':'jobList[0]', 'fields':[ {'method':'GetJobName' }] ,  'operator': '=',  'value': 'name987_job1' }".Replace("'", "\"");
                     var rule = GetRule(strRule);
 
                     var result = Filter(ToQuery(query), rule);
@@ -611,7 +611,7 @@ namespace Vit.Linq.MsTest.Filter
                 }
                 {
                     var query = GetQueryable();
-                    var strRule = "{'fields':[ { 'method':'GetBCount'}] ,    'operator': '=',  'value': 1 }".Replace("'", "\"");
+                    var strRule = "{'fields':[ { 'method':'GetJobCount'}] ,    'operator': '=',  'value': 1 }".Replace("'", "\"");
                     var rule = GetRule(strRule);
 
                     var result = Filter(ToQuery(query), rule);
@@ -621,7 +621,7 @@ namespace Vit.Linq.MsTest.Filter
 
                 {
                     var query = GetQueryable();
-                    var strRule = "{ 'fields':[ {'method':'GetBAtIndex', 'methodParameters':[0] }, {'field':'name'}] ,  'operator': '=',  'value': 'name987_b1' }".Replace("'", "\"");
+                    var strRule = "{ 'fields':[ {'method':'GetJobAtIndex', 'methodParameters':[0] }, {'field':'name'}] ,  'operator': '=',  'value': 'name987_job1' }".Replace("'", "\"");
                     var rule = GetRule(strRule);
 
                     var result = Filter(ToQuery(query), rule);
@@ -632,7 +632,7 @@ namespace Vit.Linq.MsTest.Filter
 
                 {
                     var query = GetQueryable();
-                    var strRule = "{ 'fields':[ {'method':'GetBAtIndex', 'methodParameters':[1] }] ,  'operator': 'IsNull' }".Replace("'", "\"");
+                    var strRule = "{ 'fields':[ {'method':'GetJobAtIndex', 'methodParameters':[1] }] ,  'operator': 'IsNull' }".Replace("'", "\"");
                     var rule = GetRule(strRule);
 
                     var result = Filter(ToQuery(query), rule);
