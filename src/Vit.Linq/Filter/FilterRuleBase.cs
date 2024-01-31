@@ -49,5 +49,33 @@ namespace Vit.Linq.Filter
             return valueExpression;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is FilterRuleBase<RuleType> rule)
+            {
+                // TODO: what if types are not same but values are same
+                if (condition != rule.condition || field != rule.field || @operator != rule.@operator || value?.Equals(rule.value) == false)
+                    return false;
+
+                if (condition == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    if ((rules?.Count ?? 0) != (rule.rules?.Count ?? 0))
+                        return false;
+
+                    for (int i = 0; i < rules.Count; i++)
+                    {
+                        if (!rules[i].Equals(rule.rules[i]))
+                            return false;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 }

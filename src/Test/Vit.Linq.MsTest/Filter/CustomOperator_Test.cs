@@ -142,7 +142,7 @@ namespace Vit.Linq.MsTest.Filter
                 {
                     var query = DataSource.GetQueryable();
 
-                    var strRule = "{'field':'id',  'operator': 'EqualTo',  'value':'bList.Count' }".Replace("'", "\"");
+                    var strRule = "{'field':'id',  'operator': 'EqualTo',  'value':'jobList.Count' }".Replace("'", "\"");
                     var rule = Json.Deserialize<FilterRule>(strRule);
                     var result = query.Where(rule, service).ToList();
                     Assert.AreEqual(2, result.Count);

@@ -77,9 +77,32 @@ namespace Vit.Linq.Filter
 
 
 
-        public virtual ECondition GetCondition(IFilterRule filter)
+        public virtual ECondition? GetCondition(IFilterRule filter)
         {
-            return filter.condition?.ToLower() == "or" ? ECondition.or : ECondition.and;
+            var condition = filter.condition;
+            if (string.IsNullOrEmpty(condition)) return default;
+
+            if (FilterRuleCondition.And.Equals(condition, StringComparison.OrdinalIgnoreCase))
+            {
+                return ECondition.And;
+            }
+            if (FilterRuleCondition.Or.Equals(condition, StringComparison.OrdinalIgnoreCase))
+            {
+                return ECondition.Or;
+            }
+            if (FilterRuleCondition.Not.Equals(condition, StringComparison.OrdinalIgnoreCase))
+            {
+                return ECondition.Not;
+            }
+            if (FilterRuleCondition.NotAnd.Equals(condition, StringComparison.OrdinalIgnoreCase))
+            {
+                return ECondition.NotAnd;
+            }
+            if (FilterRuleCondition.NotOr.Equals(condition, StringComparison.OrdinalIgnoreCase))
+            {
+                return ECondition.NotOr;
+            }
+            return default;
         }
 
 
@@ -112,12 +135,14 @@ namespace Vit.Linq.Filter
         #region GetRightValueExpression
         protected virtual Expression GetRightValueExpression(IFilterRule rule, ParameterExpression valueExpression, Type valueType)
         {
-            object rightValue = rule.value;
+            object rightValue;
 
-            // typeof(IEnumerable).IsAssignableFrom(valueType)
-            if (valueType.IsGenericType && typeof(IEnumerable<>).IsAssignableFrom(valueType.GetGenericTypeDefinition()))
+            //  List
+            if (valueType.IsGenericType && (
+                typeof(IEnumerable<>).IsAssignableFrom(valueType.GetGenericTypeDefinition())
+                || typeof(List<>).IsAssignableFrom(valueType.GetGenericTypeDefinition())
+                ))
             {
-                // constant List
                 object value = null;
                 if (rule.value != null)
                 {
@@ -129,7 +154,7 @@ namespace Vit.Linq.Filter
             }
             else
             {
-                // constant value
+                //  value
                 object value = GetRulePrimitiveValue(rule.value, rule, valueType);
                 if (value != null)
                 {
@@ -139,8 +164,10 @@ namespace Vit.Linq.Filter
                 rightValue = value;
             }
 
-            Expression<Func<object>> valueLamba = () => rightValue;
-            return Expression.Convert(valueLamba.Body, valueType);
+            return Expression.Constant(rightValue, valueType);
+
+            //Expression<Func<object>> valueLamba = () => rightValue;
+            //return Expression.Convert(valueLamba.Body, valueType);
         }
 
 
@@ -155,7 +182,8 @@ namespace Vit.Linq.Filter
             }
             else if (value is IEnumerable values)
             {
-                var methodInfo = typeof(FilterService).GetMethod("ConvertToListByType", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).MakeGenericMethod(fieldType);
+                //var methodInfo = typeof(FilterService).GetMethod("ConvertToListByType", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).MakeGenericMethod(fieldType);
+                var methodInfo = new Func<IEnumerable, IFilterRule, List<object>>(ConvertToListByType<object>).Method.GetGenericMethodDefinition().MakeGenericMethod(fieldType);
                 return methodInfo.Invoke(this, new object[] { values, rule });
             }
             return null;
@@ -199,23 +227,43 @@ namespace Vit.Linq.Filter
         #endregion
 
 
-        #region ConvertToExpression       
+        #region ConvertToExpression
 
         Expression ConvertToExpression(IFilterRule rule, ParameterExpression parameter)
         {
             if (rule == null) return null;
 
-            // #1 nested filter rules
-            if (rule.rules?.Any() == true)
-            {
-                return ConvertToExpression(rule.rules, parameter, GetCondition(rule));
-            }
+            return ConvertToExpression(rule, parameter, GetCondition(rule));
+        }
+        Expression ConvertToExpression(IFilterRule rule, ParameterExpression parameter, ECondition? condition)
+        {
+            if (condition == null)
+                return ConvertToExpressionNonNested(rule, parameter);
 
-            // #2 simple rule
-            if (string.IsNullOrWhiteSpace(rule.@operator))
+            //  nested filter rules
+            switch (condition.Value)
             {
-                return null;
+                case ECondition.And:
+                case ECondition.Or:
+                    if (rule.rules?.Any() == true)
+                        return ConvertToExpression(rule.rules, parameter, condition.Value);
+                    else
+                        return ConvertToExpressionNonNested(rule, parameter);
+                case ECondition.Not:
+                    return Expression.Not(ConvertToExpression(rule, parameter, null));
+                case ECondition.NotAnd:
+                    return Expression.Not(ConvertToExpression(rule, parameter, ECondition.And));
+                case ECondition.NotOr:
+                    return Expression.Not(ConvertToExpression(rule, parameter, ECondition.Or));
+                default: throw new Exception("unrecognized condition : " + rule.condition);
             }
+        }
+
+
+
+        Expression ConvertToExpressionNonNested(IFilterRule rule, ParameterExpression parameter)
+        {
+            // non-nested rule
 
             Expression leftValueExpression = GetLeftValueExpression(rule, parameter);
             Type leftFieldType = leftValueExpression.Type;
@@ -372,8 +420,14 @@ namespace Vit.Linq.Filter
             #endregion
         }
 
-
-        Expression ConvertToExpression(IEnumerable<IFilterRule> rules, ParameterExpression parameter, ECondition condition = ECondition.and)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rules"></param>
+        /// <param name="parameter"></param>
+        /// <param name="condition"> only could be And or Or</param>
+        /// <returns></returns>
+        Expression ConvertToExpression(IEnumerable<IFilterRule> rules, ParameterExpression parameter, ECondition condition = ECondition.And)
         {
             if (rules?.Any() != true)
             {
@@ -404,7 +458,7 @@ namespace Vit.Linq.Filter
                 {
                     return exp1;
                 }
-                return condition == ECondition.or ? Expression.OrElse(exp1, exp2) : Expression.AndAlso(exp1, exp2);
+                return condition == ECondition.And ? Expression.AndAlso(exp1, exp2) : Expression.OrElse(exp1, exp2);
             }
             #endregion
 

@@ -6,21 +6,21 @@ using Vit.Linq.ComponentModel;
 namespace Vit.Linq.MsTest.Extensions
 {
     [TestClass]
-    public class Queryable_SortAndPage_Test
+    public class Queryable_OrderBy_Reflection_Test
     {
 
-        #region TestSortAndPage
+        #region Test
         [TestMethod]
-        public void TestSortAndPage()
+        public void Test()
         {
             var query = DataSource.GetQueryable();
 
             #region #1
             {
                 var result = query
-                    .Sort(new[] {
-                        new SortItem { field = "b1.pid", asc = false },
-                        new SortItem { field = "id", asc = true }
+                    .OrderBy_Reflection(new[] {
+                        new OrderField { field = "job.departmentId", asc = false },
+                        new OrderField { field = "id", asc = true }
                     })
                     .Page(new PageInfo { pageIndex = 1, pageSize = 10 })
                     .ToList();
@@ -33,7 +33,7 @@ namespace Vit.Linq.MsTest.Extensions
             #region #2
             {
                 var result = query
-                    .Sort("id", false)
+                    .OrderBy_Reflection("id", false)
                     .Page(2, 10)
                     .ToList();
                 Assert.AreEqual(result.Count, 10);
@@ -45,9 +45,9 @@ namespace Vit.Linq.MsTest.Extensions
             #region #3
             {
                 var result = query
-                    .Sort(new[] {
-                        new SortItem { field = "b1.pid", asc = false },
-                        new SortItem { field = "id", asc = true }
+                    .OrderBy_Reflection(new[] {
+                        new OrderField { field = "job.departmentId", asc = false },
+                        new OrderField { field = "id", asc = true }
                     })
                     .ToPageData(new PageInfo { pageIndex = 1, pageSize = 10 });
 

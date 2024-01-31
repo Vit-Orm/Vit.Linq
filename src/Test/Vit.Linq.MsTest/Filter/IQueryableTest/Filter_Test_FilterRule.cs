@@ -27,11 +27,11 @@ namespace Vit.Linq.MsTest.Filter.IQueryableTest
             return Json.Deserialize<FilterRule>(filterRule);
         }
 
-        public override Queryable ToQuery(IQueryable<ModelA> query) => query;
+        public override Queryable ToQuery(IQueryable<Person> query) => query;
 
-        public override List<ModelA> Filter(Queryable query, IFilterRule rule)
+        public override List<Person> Filter(Queryable query, IFilterRule rule)
         {
-            return query.IQueryable_Where(rule, GetService()).IQueryable_ToList<ModelA>();
+            return query.IQueryable_Where(rule, GetService()).IQueryable_ToList<Person>();
         }
 
         public virtual FilterService GetService()

@@ -10,9 +10,10 @@ namespace Vit.Linq.ComponentModel
     public interface IFilterRule
     {
         /// <summary>
-        ///  condition - acceptable values are "and" and "or".
+        ///  condition - acceptable values are "And" , "Or" , "Not" , "NotAnd" , "NotOr" .
         /// </summary>
         string condition { get; set; }
+
         /// <summary>
         /// could be nested, example: b1.name
         /// </summary>

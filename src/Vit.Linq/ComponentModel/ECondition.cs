@@ -2,7 +2,10 @@
 {
     public enum ECondition
     {
-        or = 1,
-        and = 2
+        And,
+        Or,
+        Not,
+        NotAnd,
+        NotOr
     }
 }
