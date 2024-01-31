@@ -135,12 +135,14 @@ namespace Vit.Linq.Filter
         #region GetRightValueExpression
         protected virtual Expression GetRightValueExpression(IFilterRule rule, ParameterExpression valueExpression, Type valueType)
         {
-            object rightValue = rule.value;
+            object rightValue;
 
-            // typeof(IEnumerable).IsAssignableFrom(valueType)
-            if (valueType.IsGenericType && typeof(IEnumerable<>).IsAssignableFrom(valueType.GetGenericTypeDefinition()))
+            //  List
+            if (valueType.IsGenericType && (
+                typeof(IEnumerable<>).IsAssignableFrom(valueType.GetGenericTypeDefinition())
+                || typeof(List<>).IsAssignableFrom(valueType.GetGenericTypeDefinition())
+                ))
             {
-                // constant List
                 object value = null;
                 if (rule.value != null)
                 {
@@ -152,7 +154,7 @@ namespace Vit.Linq.Filter
             }
             else
             {
-                // constant value
+                //  value
                 object value = GetRulePrimitiveValue(rule.value, rule, valueType);
                 if (value != null)
                 {
@@ -162,8 +164,10 @@ namespace Vit.Linq.Filter
                 rightValue = value;
             }
 
-            Expression<Func<object>> valueLamba = () => rightValue;
-            return Expression.Convert(valueLamba.Body, valueType);
+            return Expression.Constant(rightValue, valueType);
+
+            //Expression<Func<object>> valueLamba = () => rightValue;
+            //return Expression.Convert(valueLamba.Body, valueType);
         }
 
 
@@ -178,7 +182,8 @@ namespace Vit.Linq.Filter
             }
             else if (value is IEnumerable values)
             {
-                var methodInfo = typeof(FilterService).GetMethod("ConvertToListByType", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).MakeGenericMethod(fieldType);
+                //var methodInfo = typeof(FilterService).GetMethod("ConvertToListByType", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).MakeGenericMethod(fieldType);
+                var methodInfo = new Func<IEnumerable, IFilterRule, List<object>>(ConvertToListByType<object>).Method.GetGenericMethodDefinition().MakeGenericMethod(fieldType);
                 return methodInfo.Invoke(this, new object[] { values, rule });
             }
             return null;
@@ -222,7 +227,7 @@ namespace Vit.Linq.Filter
         #endregion
 
 
-        #region ConvertToExpression       
+        #region ConvertToExpression
 
         Expression ConvertToExpression(IFilterRule rule, ParameterExpression parameter)
         {
