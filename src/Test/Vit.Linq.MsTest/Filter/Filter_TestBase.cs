@@ -7,6 +7,7 @@ using System.Reflection;
 
 using Vit.Linq.MoreFilter;
 using Vit.Linq.ComponentModel;
+using Vit.Core.Module.Serialization;
 
 namespace Vit.Linq.MsTest.Filter
 {
@@ -645,7 +646,12 @@ namespace Vit.Linq.MsTest.Filter
         }
 
 
-
+        protected (bool success, object value) GetPrimitiveValue(object valueInRule, IFilterRule rule, Type valueType)
+        {
+            if (valueInRule == null) return (true, null);
+            if (valueType.IsAssignableFrom(valueInRule.GetType())) return (true, valueInRule);
+            return (true, Json.Deserialize(Json.Serialize(valueInRule), valueType));
+        }
     }
 }
 

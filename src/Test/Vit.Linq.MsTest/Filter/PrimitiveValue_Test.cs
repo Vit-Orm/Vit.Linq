@@ -19,15 +19,15 @@ namespace Vit.Linq.MsTest.Filter
         {
             {
                 var service = new FilterService();
-                service.GetPrimitiveValue = (object? value, IFilterRule rule, Type fieldType) =>
+                service.GetPrimitiveValue = (object? valueInRule, IFilterRule rule, Type valueType) =>
                 {
                     // to deal with null value
-                    if (value is JValue jv) value = jv.Value;
-                    if (value is string str && rule.@operator?.Contains("in", StringComparison.OrdinalIgnoreCase) == true)
+                    if (valueInRule is JValue jv) return (true, jv.Value);
+                    if (valueInRule is string str && rule.@operator?.Contains("in", StringComparison.OrdinalIgnoreCase) == true)
                     {
-                        return str.Split(',');
+                        return (true, str.Split(',').ToList());
                     }
-                    return value;
+                    return (false, null);
                 };
 
                 var query = DataSource.GetQueryable();

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+
 using Vit.Linq.ComponentModel;
 
 
@@ -14,6 +15,10 @@ namespace Vit.Linq.Filter
         public ParameterExpression parameter { get; set; }
         public Expression leftValue { get; set; }
         public string Operator { get; set; }
+
+        /// <summary>
+        /// Type rightValueType
+        /// </summary>
         public Func<Type, Expression> GetRightValueExpression { get; set; }
     }
 
@@ -107,12 +112,74 @@ namespace Vit.Linq.Filter
 
 
         #region GetPrimitiveValue
-        public Func<object, IFilterRule, Type, object> GetPrimitiveValue { get; set; }
-        protected virtual object GetRulePrimitiveValue(object value, IFilterRule rule, Type fieldType)
+        /// <summary>
+        /// (bool success, object value)GetPrimitiveValue(object valueInRule, IFilterRule rule, Type valueType)
+        /// </summary>
+        public Func<object, IFilterRule, Type, (bool success, object value)> GetPrimitiveValue { get; set; }
+        protected virtual object GetRulePrimitiveValue(object valueInRule, IFilterRule rule, Type valueType)
         {
-            if (GetPrimitiveValue != null) return GetPrimitiveValue(value, rule, fieldType);
+            if (GetPrimitiveValue != null)
+            {
+                var result = GetPrimitiveValue(valueInRule, rule, valueType);
+                if (result.success) return result.value;
+            }
+
+            //if (valueInRule == null) return null;
+            //if (valueType.IsAssignableFrom(valueInRule.GetType())) return valueInRule;
+            //return  Vit.Core.Module.Serialization.Json.Deserialize(Vit.Core.Module.Serialization.Json.Serialize(valueInRule), valueType);
+
+            object value = null;
+
+            //  List
+            if (valueType.IsGenericType && (
+                typeof(IEnumerable<>).IsAssignableFrom(valueType.GetGenericTypeDefinition())
+                || typeof(List<>).IsAssignableFrom(valueType.GetGenericTypeDefinition())
+                ))
+            {
+                //if (valueInRule != null)
+                {
+                    value = ConvertToList(valueInRule, rule, valueType);
+                }
+            }
+            else
+            {
+                //  value
+                if (valueInRule != null)
+                {
+                    Type type = Nullable.GetUnderlyingType(valueType) ?? valueType;
+                    value = Convert.ChangeType(valueInRule, type);
+                }
+            }
             return value;
         }
+
+
+        #region ConvertToList
+        internal object ConvertToList(object value, IFilterRule rule, Type valueType)
+        {
+            if (!(value is string) && value is IEnumerable values)
+            {
+                Type fieldType = valueType.GetGenericArguments()[0];
+
+                var methodInfo = new Func<IEnumerable, IFilterRule, List<object>>(ConvertToListByType<object>)
+                    .Method.GetGenericMethodDefinition().MakeGenericMethod(fieldType);
+                return methodInfo.Invoke(this, new object[] { values, rule });
+            }
+            return null;
+        }
+        internal List<T> ConvertToListByType<T>(IEnumerable values, IFilterRule rule)
+        {
+            Type fieldType = typeof(T);
+            var list = new List<T>();
+            foreach (var itemValue in values)
+            {
+                T value = (T)Convert.ChangeType(itemValue, fieldType);
+                list.Add(value);
+            }
+            return list;
+        }
+        #endregion
+
         #endregion
 
 
@@ -131,39 +198,9 @@ namespace Vit.Linq.Filter
             return Operator;
         }
 
-
-        #region GetRightValueExpression
         protected virtual Expression GetRightValueExpression(IFilterRule rule, ParameterExpression valueExpression, Type valueType)
         {
-            object rightValue;
-
-            //  List
-            if (valueType.IsGenericType && (
-                typeof(IEnumerable<>).IsAssignableFrom(valueType.GetGenericTypeDefinition())
-                || typeof(List<>).IsAssignableFrom(valueType.GetGenericTypeDefinition())
-                ))
-            {
-                object value = null;
-                if (rule.value != null)
-                {
-                    //value = Vit.Core.Module.Serialization.Json.Deserialize(Vit.Core.Module.Serialization.Json.Serialize(rule.value), valueType);
-                    var leftFieldType = valueType.GetGenericArguments()[0];
-                    value = ConvertToList(rule.value, rule, leftFieldType);
-                }
-                rightValue = value;
-            }
-            else
-            {
-                //  value
-                object value = GetRulePrimitiveValue(rule.value, rule, valueType);
-                if (value != null)
-                {
-                    Type type = Nullable.GetUnderlyingType(valueType) ?? valueType;
-                    value = Convert.ChangeType(value, type);
-                }
-                rightValue = value;
-            }
-
+            var rightValue = GetRulePrimitiveValue(rule.value, rule, valueType);
             return Expression.Constant(rightValue, valueType);
 
             //Expression<Func<object>> valueLamba = () => rightValue;
@@ -171,38 +208,6 @@ namespace Vit.Linq.Filter
         }
 
 
-        #region ConvertToList
-        internal object ConvertToList(object value, IFilterRule rule, Type fieldType)
-        {
-            if (value is string str)
-            {
-                var itemValue = GetRulePrimitiveValue(str, rule, fieldType);
-                if (itemValue is IEnumerable)
-                    return itemValue;
-            }
-            else if (value is IEnumerable values)
-            {
-                //var methodInfo = typeof(FilterService).GetMethod("ConvertToListByType", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).MakeGenericMethod(fieldType);
-                var methodInfo = new Func<IEnumerable, IFilterRule, List<object>>(ConvertToListByType<object>).Method.GetGenericMethodDefinition().MakeGenericMethod(fieldType);
-                return methodInfo.Invoke(this, new object[] { values, rule });
-            }
-            return null;
-        }
-        internal List<T> ConvertToListByType<T>(IEnumerable values, IFilterRule rule)
-        {
-            Type fieldType = typeof(T);
-            var list = new List<T>();
-            foreach (var item in values)
-            {
-                var itemValue = GetRulePrimitiveValue(item, rule, fieldType);
-                T value = (T)Convert.ChangeType(itemValue, fieldType);
-                list.Add(value);
-            }
-            return list;
-        }
-        #endregion
-
-        #endregion
 
 
         #region Custom Operator
@@ -410,11 +415,21 @@ namespace Vit.Linq.Filter
 
             Expression In()
             {
+                // #1 using Enumerable<>.Contains
+                //Expression arrayExp = null;
+                //Type valueType = typeof(IEnumerable<>).MakeGenericType(leftFieldType);
+                //arrayExp = this.GetRightValueExpression(rule, parameter, valueType);
+
+                //var inCheck = Expression.Call(typeof(System.Linq.Enumerable), "Contains", new[] { leftFieldType }, arrayExp, leftValueExpression);
+                //return inCheck;
+
+                //-------------------------------------
+                // #2 using List<>.Contains
                 Expression arrayExp = null;
-                Type valueType = typeof(IEnumerable<>).MakeGenericType(leftFieldType);
+                Type valueType = typeof(List<>).MakeGenericType(leftFieldType);
                 arrayExp = this.GetRightValueExpression(rule, parameter, valueType);
 
-                var inCheck = Expression.Call(typeof(System.Linq.Enumerable), "Contains", new[] { leftFieldType }, arrayExp, leftValueExpression);
+                var inCheck = Expression.Call(arrayExp, "Contains", null, leftValueExpression);
                 return inCheck;
             }
             #endregion

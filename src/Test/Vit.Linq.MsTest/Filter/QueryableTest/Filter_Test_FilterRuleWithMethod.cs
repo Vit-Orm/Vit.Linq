@@ -25,12 +25,7 @@ namespace Vit.Linq.MsTest.Filter.QueryableTest
         public virtual FilterService GetService()
         {
             FilterService service = new FilterService();
-            service.GetPrimitiveValue = (object value, IFilterRule rule, Type fieldType) =>
-            {
-                // to deal with null value
-                if (value is JValue jv) return jv.Value;
-                return value;
-            };
+            service.GetPrimitiveValue = GetPrimitiveValue;
             return service;
         }
 
