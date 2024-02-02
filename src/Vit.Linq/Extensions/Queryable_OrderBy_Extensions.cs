@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -15,7 +16,6 @@ namespace Vit.Extensions.Linq_Extensions
     public static partial class Queryable_OrderBy_Extensions
     {
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, IEnumerable<OrderField> orders)
         {
             if (query == null || orders?.Any() != true) return query;
@@ -66,13 +66,11 @@ namespace Vit.Extensions.Linq_Extensions
         {
             if (asc)
             {
-                var genericMethod = MethodInfo_OrderBy.MakeGenericMethod(typeof(T), exp.ReturnType);
-                return (IOrderedQueryable<T>)genericMethod.Invoke(null, new object[] { query, exp });
+                return (IOrderedQueryable<T>)MethodInfo_OrderBy(typeof(T), exp.ReturnType).Invoke(null, new object[] { query, exp });
             }
             else
             {
-                var genericMethod = MethodInfo_OrderByDescending.MakeGenericMethod(typeof(T), exp.ReturnType);
-                return (IOrderedQueryable<T>)genericMethod.Invoke(null, new object[] { query, exp });
+                return (IOrderedQueryable<T>)MethodInfo_OrderByDescending(typeof(T), exp.ReturnType).Invoke(null, new object[] { query, exp });
             }
         }
 
@@ -80,20 +78,47 @@ namespace Vit.Extensions.Linq_Extensions
         {
             if (asc)
             {
-                var genericMethod = MethodInfo_ThenBy.MakeGenericMethod(typeof(T), exp.ReturnType);
-                return (IOrderedQueryable<T>)genericMethod.Invoke(null, new object[] { query, exp });
+                return (IOrderedQueryable<T>)MethodInfo_ThenBy(typeof(T), exp.ReturnType).Invoke(null, new object[] { query, exp });
             }
             else
             {
-                var genericMethod = MethodInfo_ThenByDescending.MakeGenericMethod(typeof(T), exp.ReturnType);
-                return (IOrderedQueryable<T>)genericMethod.Invoke(null, new object[] { query, exp });
+                return (IOrderedQueryable<T>)MethodInfo_ThenByDescending(typeof(T), exp.ReturnType).Invoke(null, new object[] { query, exp });
             }
         }
+        #endregion
 
-        static readonly MethodInfo MethodInfo_OrderBy = typeof(Queryable).GetMethods().FirstOrDefault(m => m.Name == "OrderBy" && m.GetParameters().Length == 2);
-        static readonly MethodInfo MethodInfo_OrderByDescending = typeof(Queryable).GetMethods().FirstOrDefault(m => m.Name == "OrderByDescending" && m.GetParameters().Length == 2);
-        static readonly MethodInfo MethodInfo_ThenBy = typeof(Queryable).GetMethods().FirstOrDefault(m => m.Name == "ThenBy" && m.GetParameters().Length == 2);
-        static readonly MethodInfo MethodInfo_ThenByDescending = typeof(Queryable).GetMethods().FirstOrDefault(m => m.Name == "ThenByDescending" && m.GetParameters().Length == 2);
+
+        #region  CachedMethodInfo
+
+        private static   MethodInfo MethodInfo_OrderBy_;
+        static MethodInfo MethodInfo_OrderBy(Type sourceType, Type returnType) =>
+            (MethodInfo_OrderBy_ ??=
+                new Func<IQueryable<object>, Expression<Func<object, object>>, IOrderedQueryable<object>>(Queryable.OrderBy<object, object>)
+                .GetMethodInfo().GetGenericMethodDefinition())
+            .MakeGenericMethod(sourceType, returnType);
+
+
+        private static MethodInfo MethodInfo_OrderByDescending_;
+        static MethodInfo MethodInfo_OrderByDescending(Type sourceType, Type returnType) =>
+            (MethodInfo_OrderByDescending_ ??=
+                new Func<IQueryable<object>, Expression<Func<object, object>>, IOrderedQueryable<object>>(Queryable.OrderByDescending<object, object>)
+                .GetMethodInfo().GetGenericMethodDefinition())
+            .MakeGenericMethod(sourceType, returnType);
+
+
+        private static MethodInfo MethodInfo_ThenBy_;
+        static MethodInfo MethodInfo_ThenBy(Type sourceType, Type returnType) =>
+            (MethodInfo_ThenBy_ ??=
+                new Func<IOrderedQueryable<object>, Expression<Func<object, object>>, IOrderedQueryable<object>>(Queryable.ThenBy<object, object>)
+                .GetMethodInfo().GetGenericMethodDefinition())
+            .MakeGenericMethod(sourceType, returnType);
+
+        private static MethodInfo MethodInfo_ThenByDescending_;
+        static MethodInfo MethodInfo_ThenByDescending(Type sourceType, Type returnType) =>
+            (MethodInfo_ThenByDescending_ ??=
+                new Func<IOrderedQueryable<object>, Expression<Func<object, object>>, IOrderedQueryable<object>>(Queryable.ThenByDescending<object, object>)
+                .GetMethodInfo().GetGenericMethodDefinition())
+            .MakeGenericMethod(sourceType, returnType); 
 
         #endregion
 

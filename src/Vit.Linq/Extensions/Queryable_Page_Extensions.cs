@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Runtime.CompilerServices;
 
 using Vit.Linq.ComponentModel;
 
@@ -9,14 +8,9 @@ namespace Vit.Extensions.Linq_Extensions
     public static partial class Queryable_Page_Extensions
     {
 
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IQueryable<T> Page<T>(this IQueryable<T> query, PageInfo page)
-            where T : class
         {
-            if (query == null || page == null) return query;
-
-            return query.Page(page.pageIndex, page.pageSize);
+            return query.Range(page.ToRange());
         }
 
 
@@ -25,14 +19,12 @@ namespace Vit.Extensions.Linq_Extensions
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
-        /// <param name="pageIndex">start from 1</param>
         /// <param name="pageSize"></param>
+        /// <param name="pageIndex"> the index of the page (starting from 1) </param>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable<T> Page<T>(this IQueryable<T> query, int pageIndex, int pageSize)
-          where T : class
+        public static IQueryable<T> Page<T>(this IQueryable<T> query, int pageSize, int pageIndex = 1)
         {
-            return query.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+            return query.Page(new PageInfo(pageSize: pageSize, pageIndex: pageIndex));
         }
     }
 }
