@@ -15,7 +15,7 @@ namespace Vit.Linq.ComponentModel
 
 
         /// <summary>
-        /// default is ToList, could be :  Count / First / FirstOrDefault / Last / LastOrDefault / TotalCount
+        /// default is ToList, could be :  Count | First | FirstOrDefault | Last | LastOrDefault | TotalCount
         /// </summary>
         public string method { get; set; }
 
@@ -25,7 +25,6 @@ namespace Vit.Linq.ComponentModel
         protected IDictionary<string, object> extension { get; set; }
 
 
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void SetValue<T>(string key, T value)
         {
             (extension ??= new Dictionary<string, object>())[key] = value;

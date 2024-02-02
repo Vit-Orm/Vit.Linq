@@ -114,6 +114,14 @@ namespace Vit.Linq.Filter
         #region GetPrimitiveValue
         /// <summary>
         /// (bool success, object value)GetPrimitiveValue(object valueInRule, IFilterRule rule, Type valueType)
+        ///
+        ///  <para>   var GetPrimitiveValue = (object valueInRule, IFilterRule rule, Type valueType) =>           </para>
+        ///  <para>   {                                                                                           </para>
+        ///  <para>       if (valueInRule == null) return (true, null);                                           </para>
+        ///  <para>       if (valueType.IsAssignableFrom(valueInRule.GetType())) return (true, valueInRule);      </para>
+        ///  <para>       return (true, Json.Deserialize(Json.Serialize(valueInRule), valueType));                </para>
+        ///  <para>   };                                                                                          </para>        /// 
+        /// 
         /// </summary>
         public Func<object, IFilterRule, Type, (bool success, object value)> GetPrimitiveValue { get; set; }
         protected virtual object GetRulePrimitiveValue(object valueInRule, IFilterRule rule, Type valueType)

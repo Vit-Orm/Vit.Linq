@@ -22,7 +22,7 @@ namespace Vit.Linq.MsTest.Extensions
                         new OrderField { field = "job.departmentId", asc = false },
                         new OrderField { field = "id", asc = true }
                     })
-                    .Page(new PageInfo { pageIndex = 1, pageSize = 10 })
+                    .Page(new PageInfo { pageSize = 10, pageIndex = 1 })
                     .ToList();
                 Assert.AreEqual(result.Count, 10);
                 Assert.AreEqual(result[0].id, 990);
@@ -34,7 +34,7 @@ namespace Vit.Linq.MsTest.Extensions
             {
                 var result = query
                     .OrderBy("id", false)
-                    .Page(2, 10)
+                    .Page(pageSize: 10, pageIndex: 2)
                     .ToList();
                 Assert.AreEqual(result.Count, 10);
                 Assert.AreEqual(result[0].id, 989);
@@ -49,11 +49,11 @@ namespace Vit.Linq.MsTest.Extensions
                         new OrderField { field = "job.departmentId", asc = false },
                         new OrderField { field = "id", asc = true }
                     })
-                    .ToPageData(new PageInfo { pageIndex = 1, pageSize = 10 });
+                    .ToPageData(new PageInfo { pageSize = 10, pageIndex = 1 });
 
                 Assert.AreEqual(result.totalCount, 1000);
-                Assert.AreEqual(result.rows.Count, 10);
-                Assert.AreEqual(result.rows[0].id, 990);
+                Assert.AreEqual(result.items.Count, 10);
+                Assert.AreEqual(result.items[0].id, 990);
             }
             #endregion
 

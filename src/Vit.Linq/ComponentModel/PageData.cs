@@ -5,31 +5,31 @@ namespace Vit.Linq.ComponentModel
 {
     public class PageData : PageData<object>
     {
-        public PageData(PageInfo pageInfo = null) : base(pageInfo)
-        {
-        }
+        public PageData() { }
+        public PageData(int pageSize, int pageIndex = 1) : base(pageSize, pageIndex) { }
+
+        public PageData(PageInfo pageInfo = null) : base(pageInfo) { }
     }
 
     public class PageData<T> : PageInfo
     {
 
-        public PageData(PageInfo pageInfo = null)
-        {
-            if (null != pageInfo)
-            {
-                pageSize = pageInfo.pageSize;
-                pageIndex = pageInfo.pageIndex;
-            }
-        }
+        public PageData() { }
+
+        public PageData(int pageSize, int pageIndex = 1) : base(pageSize, pageIndex) { }
+
+
+        public PageData(PageInfo pageInfo) : base(pageInfo.pageSize, pageInfo.pageIndex) { }
+
 
         /// <summary>
-        /// rows
+        /// data items for the current page
         /// </summary>
-        public List<T> rows;
+        public List<T> items;
 
 
         /// <summary>
-        /// totalCount
+        /// total count of records
         /// </summary>
         public int totalCount;
     }
