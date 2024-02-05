@@ -279,7 +279,7 @@ namespace Vit.Linq.Filter
             // non-nested rule
 
             Expression leftValueExpression = GetLeftValueExpression(rule, parameter);
-            Type leftFieldType = leftValueExpression.Type;
+            Type leftValueType = leftValueExpression.Type;
 
             var Operator = GetOperator(rule);
 
@@ -409,16 +409,16 @@ namespace Vit.Linq.Filter
             #region inner Method
             Expression GetRightValueExpression()
             {
-                return this.GetRightValueExpression(rule, parameter, leftFieldType);
+                return this.GetRightValueExpression(rule, parameter, leftValueType);
             }
 
             Expression IsNull()
             {
-                var isNullable = !leftFieldType.IsValueType || Nullable.GetUnderlyingType(leftFieldType) != null;
+                var isNullable = !leftValueType.IsValueType || Nullable.GetUnderlyingType(leftValueType) != null;
 
                 if (isNullable)
                 {
-                    var nullValue = Expression.Constant(null, leftFieldType);
+                    var nullValue = Expression.Constant(null, leftValueType);
                     return Expression.Equal(leftValueExpression, nullValue);
                 }
                 return Expression.Constant(false, typeof(bool));
@@ -427,21 +427,17 @@ namespace Vit.Linq.Filter
             Expression In()
             {
                 // #1 using Enumerable<>.Contains
-                //Expression arrayExp = null;
-                //Type valueType = typeof(IEnumerable<>).MakeGenericType(leftFieldType);
-                //arrayExp = this.GetRightValueExpression(rule, parameter, valueType);
+                //Type valueType = typeof(IEnumerable<>).MakeGenericType(leftValueType);
+                //var rightValueExpression = this.GetRightValueExpression(rule, parameter, valueType);
 
-                //var inCheck = Expression.Call(typeof(System.Linq.Enumerable), "Contains", new[] { leftFieldType }, arrayExp, leftValueExpression);
-                //return inCheck;
+                //return Expression.Call(typeof(System.Linq.Enumerable), "Contains", new[] { leftValueType }, rightValueExpression, leftValueExpression);
 
                 //-------------------------------------
                 // #2 using List<>.Contains
-                Expression arrayExp = null;
-                Type valueType = typeof(List<>).MakeGenericType(leftFieldType);
-                arrayExp = this.GetRightValueExpression(rule, parameter, valueType);
+                Type valueType = typeof(List<>).MakeGenericType(leftValueType);
+                var rightValueExpression = this.GetRightValueExpression(rule, parameter, valueType);
 
-                var inCheck = Expression.Call(arrayExp, "Contains", null, leftValueExpression);
-                return inCheck;
+                return Expression.Call(rightValueExpression, "Contains", null, leftValueExpression);
             }
             #endregion
         }

@@ -6,6 +6,11 @@ using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter;
 using Vit.Extensions.Linq_Extensions;
 using System.Linq.Expressions;
+using System.Data;
+using System.Reflection.Metadata;
+using System.Data.Common;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace Vit.Linq.MsTest.Filter
 {
@@ -186,6 +191,79 @@ namespace Vit.Linq.MsTest.Filter
 
                     Assert.AreEqual(1, result.Count);
                     Assert.AreEqual(987, result.First().id);
+                }
+            }
+
+
+
+
+            // #6 In OrdinalIgnoreCase
+            {
+                #region Get FilterService
+                var service = new FilterService();
+
+
+                List<string> a = new List<string>();
+                var stringListContainsMethod = new Func<IEnumerable<string>, string, IEqualityComparer<string>, bool>(Enumerable.Contains<string>).GetMethodInfo();
+                Expression GetInExp(OperatorBuilderArgs args)
+                {
+                    Type leftValueType = args.leftValue.Type;
+                    if (leftValueType == typeof(string))
+                    {
+                        // #1 List<string>.Contains
+                        Type valueType = typeof(List<>).MakeGenericType(leftValueType);
+                        var rightValueExpression = args.GetRightValueExpression(valueType);
+                        var comparison = Expression.Constant(StringComparer.OrdinalIgnoreCase);
+                        return Expression.Call(stringListContainsMethod, rightValueExpression, args.leftValue, comparison);
+                    }
+                    else
+                    {
+                        // #2 List<>.Contains
+                        Type valueType = typeof(List<>).MakeGenericType(leftValueType);
+                        var rightValueExpression = args.GetRightValueExpression(valueType);
+
+                        return Expression.Call(rightValueExpression, "Contains", null, args.leftValue);
+                    }
+                }
+
+                Func<OperatorBuilderArgs, Expression> operatorBuilder;
+                operatorBuilder = GetInExp;
+                service.CustomOperator_Add("In", operatorBuilder);
+                operatorBuilder = (OperatorBuilderArgs args) => Expression.Not(GetInExp(args));
+                service.CustomOperator_Add("NotIn", operatorBuilder);
+                #endregion
+
+
+                {
+                    var query = DataSource.GetQueryable();
+
+                    var strRule = "{'field':'name',  'operator': 'In',  'value': ['Name987','nAme988'] }".Replace("'", "\"");
+                    var rule = Json.Deserialize<FilterRule>(strRule);
+                    var result = query.Where(rule, service).ToList();
+
+                    Assert.AreEqual(2, result.Count);
+                    Assert.AreEqual(987, result.First().id);
+                }
+
+
+                {
+                    var query = DataSource.GetQueryable();
+
+                    var strRule = "{'field':'name',  'operator': 'NotIn',  'value': ['Name987','nAme988'] }".Replace("'", "\"");
+                    var rule = Json.Deserialize<FilterRule>(strRule);
+                    var result = query.Where(rule, service).ToList();
+
+                    Assert.AreEqual(998, result.Count); 
+                }
+
+                {
+                    var query = DataSource.GetQueryable();
+
+                    var strRule = "{'field':'id',  'operator': 'In',  'value': [3,4,5] }".Replace("'", "\"");
+                    var rule = Json.Deserialize<FilterRule>(strRule);
+                    var result = query.Where(rule, service).ToList();
+                    Assert.AreEqual(3, result.Count);
+                    Assert.AreEqual(5, result[2].id);
                 }
             }
 
