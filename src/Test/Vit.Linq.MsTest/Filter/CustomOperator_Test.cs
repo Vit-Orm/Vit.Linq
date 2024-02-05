@@ -202,8 +202,6 @@ namespace Vit.Linq.MsTest.Filter
                 #region Get FilterService
                 var service = new FilterService();
 
-
-                List<string> a = new List<string>();
                 var stringListContainsMethod = new Func<IEnumerable<string>, string, IEqualityComparer<string>, bool>(Enumerable.Contains<string>).GetMethodInfo();
                 Expression GetInExp(OperatorBuilderArgs args)
                 {
