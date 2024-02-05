@@ -281,8 +281,24 @@ namespace Vit.Linq.Filter
             Expression leftValueExpression = GetLeftValueExpression(rule, parameter);
             Type leftFieldType = leftValueExpression.Type;
 
-            #region Get System Expression
             var Operator = GetOperator(rule);
+
+            #region CustomOperator
+            var operatorBuilderArgs = new OperatorBuilderArgs
+            {
+                rule = rule,
+                parameter = parameter,
+                leftValue = leftValueExpression,
+                Operator = Operator,
+                GetRightValueExpression = (Type rightValueType) => this.GetRightValueExpression(rule, parameter, rightValueType)
+            };
+            var operatorExpression = CustomOperator_GetExpression(operatorBuilderArgs);
+            if (operatorExpression != default) return operatorExpression;
+            #endregion
+
+
+            #region Get System Expression
+
             var cmpType = operatorIsIgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
 
@@ -384,19 +400,6 @@ namespace Vit.Linq.Filter
             }
             #endregion
 
-
-            #region CustomOperator
-            var operatorBuilderArgs = new OperatorBuilderArgs
-            {
-                rule = rule,
-                parameter = parameter,
-                leftValue = leftValueExpression,
-                Operator = Operator,
-                GetRightValueExpression = (Type rightValueType) => this.GetRightValueExpression(rule, parameter, rightValueType)
-            };
-            var operatorExpression = CustomOperator_GetExpression(operatorBuilderArgs);
-            if (operatorExpression != default) return operatorExpression;
-            #endregion
 
 
             if (!ignoreError) throw new Exception("unrecognized operator : " + rule.@operator);

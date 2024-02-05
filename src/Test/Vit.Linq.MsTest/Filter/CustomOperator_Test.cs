@@ -150,6 +150,45 @@ namespace Vit.Linq.MsTest.Filter
                     Assert.AreEqual(2, result[1].id);
                 }
             }
+
+
+
+
+            // #5 String.Contains OrdinalIgnoreCase
+            {
+                #region Get FilterService
+                var service = new FilterService();
+                Func<OperatorBuilderArgs, Expression> operatorBuilder;
+                operatorBuilder = (OperatorBuilderArgs args) =>
+                {
+                    //"string".Contains("Str",StringComparison.OrdinalIgnoreCase)
+
+                    var leftValueExpression = args.leftValue;
+                    var valueType = typeof(string);
+                    var rightValueExpression = args.GetRightValueExpression(valueType);
+                    var comparison = Expression.Constant(StringComparison.OrdinalIgnoreCase);
+
+                    var nullCheck = Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression);
+                    var contains = Expression.Call(leftValueExpression, "Contains", null, rightValueExpression, comparison);
+
+                    return Expression.AndAlso(Expression.Not(nullCheck), contains);
+                };
+                service.CustomOperator_Add("Contains", operatorBuilder);
+                #endregion
+
+
+                {
+                    var query = DataSource.GetQueryable();
+
+                    var strRule = "{'field':'name',  'operator': 'Contains',  'value': 'Name987' }".Replace("'", "\"");
+                    var rule = Json.Deserialize<FilterRule>(strRule);
+                    var result = query.Where(rule, service).ToList();
+
+                    Assert.AreEqual(1, result.Count);
+                    Assert.AreEqual(987, result.First().id);
+                }
+            }
+
         }
     }
 
