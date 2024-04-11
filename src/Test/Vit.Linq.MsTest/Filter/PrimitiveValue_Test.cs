@@ -6,7 +6,7 @@ using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter;
 using Vit.Extensions.Linq_Extensions;
 using Newtonsoft.Json.Linq;
-using Vit.Linq.ComponentModel;
+using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter
 {
@@ -19,8 +19,10 @@ namespace Vit.Linq.MsTest.Filter
         {
             {
                 var service = new FilterService();
-                service.GetPrimitiveValue = (object? valueInRule, IFilterRule rule, Type valueType) =>
+                service.getRightValue = ( IFilterRule rule, Type valueType) =>
                 {
+                    var valueInRule = rule.value;
+
                     // to deal with null value
                     if (valueInRule is JValue jv) return (true, jv.Value);
                     if (valueInRule is string str && rule.@operator?.Contains("in", StringComparison.OrdinalIgnoreCase) == true)

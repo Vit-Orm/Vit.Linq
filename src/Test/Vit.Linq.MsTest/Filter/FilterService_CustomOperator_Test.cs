@@ -16,7 +16,7 @@ namespace Vit.Linq.MsTest.Filter
 {
 
     [TestClass]
-    public class CustomOperator_Test
+    public class FilterService_CustomOperator_Test
     {
         [TestMethod]
         public void Test_CustomOperator()

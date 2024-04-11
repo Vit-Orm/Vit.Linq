@@ -5,7 +5,7 @@ using System.Linq;
 using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter;
 
-namespace Vit.Linq.MsTest.Extensions
+namespace Vit.Linq.MsTest.Filter.Extensions
 {
     [TestClass]
     public class FilterRule_Test

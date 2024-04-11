@@ -9,10 +9,15 @@ namespace Vit.Extensions.Linq_Extensions
 
 
     /// <summary>
-    /// ref DynamicQueryable
+    ///  IQueryable_Count
+    ///  IQueryable_Skip IQueryable_Take
+    ///  IQueryable_ToList
+    ///  IQueryable_ToArray
+    ///  IQueryable_FirstOrDefault IQueryable_First
     /// </summary>
     public static partial class IQueryable_Extensions
     {
+        // ref DynamicQueryable
 
 
         #region Count
@@ -115,21 +120,25 @@ namespace Vit.Extensions.Linq_Extensions
         #endregion
 
 
-        #region Count 
-        public static int TotalCount(this IQueryable  source)
+        #region First
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static object IQueryable_First(this IQueryable source)
         {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
+            return source.Provider.Execute<object>(
+                Expression.Call(typeof(Queryable), "First",
+                new Type[] { source.ElementType },
+                source.Expression)
+                );
+        }
 
-            return source.Provider.Execute<int>(
-                Expression.Call(
-                    null,
-                    new Func<IQueryable,int>(TotalCount).Method
-                    , source.Expression));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T IQueryable_First<T>(this IQueryable source)
+        {
+            return source.Provider.Execute<T>(
+                Expression.Call(typeof(Queryable), "First", new Type[] { source.ElementType }, source.Expression)
+                );
         }
         #endregion
-
-
 
 
     }

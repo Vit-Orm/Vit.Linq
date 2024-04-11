@@ -4,7 +4,7 @@ using System.Collections;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Vit.Linq.Converter
+namespace Vit.Linq
 {
     public static class QueryableBuilder
     {
@@ -109,7 +109,7 @@ namespace Vit.Linq.Converter
 
     internal class QueryProvider : IQueryProvider
     {
-        Func<Expression, Type,object> QueryExecutor;
+        Func<Expression, Type, object> QueryExecutor;
 
         public QueryProvider(Func<Expression, Type, object> QueryExecutor)
         {

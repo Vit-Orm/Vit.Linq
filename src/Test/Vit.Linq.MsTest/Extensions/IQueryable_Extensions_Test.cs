@@ -1,38 +1,36 @@
 ﻿using Vit.Extensions.Linq_Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Vit.Linq.MsTest.Extensions
 {
     [TestClass]
-    public class Queryable_ToList_Test
+    public class IQueryable_Extensions_Test
     {
-
 
         [TestMethod]
         public void Test_ToList()
         {
-            var query = DataSource.GetQueryable();
+            var query = DataSource.GetIQueryable();
 
             #region Count ToList ToArray
             {
 
-                int count = query.Count();
+                int count = query.IQueryable_Count();
                 Assert.AreEqual(1000, count);
 
 
-                var list1 = query.ToList<Person>();
+                var list1 = query.IQueryable_ToList<Person>();
                 Assert.AreEqual(1000, list1.Count);
 
-                var list2 = query.ToList();
+                var list2 = query.IQueryable_ToList() as List<Person>;
                 Assert.AreEqual(1000, list2.Count);
 
 
-                var array1 = query.ToArray<Person>();
+                var array1 = query.IQueryable_ToArray<Person>();
                 Assert.AreEqual(1000, array1.Length);
 
-                var array2 = query.ToArray();
+                var array2 = query.IQueryable_ToArray() as Person[];
                 Assert.AreEqual(1000, array2.Length);
             }
             #endregion

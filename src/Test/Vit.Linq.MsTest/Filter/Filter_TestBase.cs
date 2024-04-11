@@ -1,13 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
-using Vit.Linq.MoreFilter;
-using Vit.Linq.ComponentModel;
-using Vit.Core.Module.Serialization;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Vit.Linq.Filter;
+using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter
 {
@@ -17,10 +15,11 @@ namespace Vit.Linq.MsTest.Filter
         IQueryable<Person> GetQueryable() => DataSource.GetQueryable();
 
 
-        public abstract IFilterRule GetRule(string filterRule);
+        public abstract FilterRule GetRule(string filterRule);
         public abstract Query ToQuery(IQueryable<Person> query);
 
         public abstract List<Person> Filter(Query query, IFilterRule rule);
+
 
 
 
@@ -597,61 +596,8 @@ namespace Vit.Linq.MsTest.Filter
             }
             #endregion
 
-            #region #9  method in fields
-            if (FilterRuleWithMethod.SupportFieldMethod(GetRule("{}")))
-            {
-                {
-                    var query = GetQueryable();
-                    var strRule = "{'field':'jobList[0]', 'fields':[ {'method':'GetJobName' }] ,  'operator': '=',  'value': 'name987_job1' }".Replace("'", "\"");
-                    var rule = GetRule(strRule);
-
-                    var result = Filter(ToQuery(query), rule);
-
-                    Assert.AreEqual(1, result.Count);
-                    Assert.AreEqual(987, result[0].id);
-                }
-                {
-                    var query = GetQueryable();
-                    var strRule = "{'fields':[ { 'method':'GetJobCount'}] ,    'operator': '=',  'value': 1 }".Replace("'", "\"");
-                    var rule = GetRule(strRule);
-
-                    var result = Filter(ToQuery(query), rule);
-
-                    Assert.AreEqual(500, result.Count);
-                }
-
-                {
-                    var query = GetQueryable();
-                    var strRule = "{ 'fields':[ {'method':'GetJobAtIndex', 'methodParameters':[0] }, {'field':'name'}] ,  'operator': '=',  'value': 'name987_job1' }".Replace("'", "\"");
-                    var rule = GetRule(strRule);
-
-                    var result = Filter(ToQuery(query), rule);
-
-                    Assert.AreEqual(1, result.Count);
-                    Assert.AreEqual(987, result[0].id);
-                }
-
-                {
-                    var query = GetQueryable();
-                    var strRule = "{ 'fields':[ {'method':'GetJobAtIndex', 'methodParameters':[1] }] ,  'operator': 'IsNull' }".Replace("'", "\"");
-                    var rule = GetRule(strRule);
-
-                    var result = Filter(ToQuery(query), rule);
-
-                    Assert.AreEqual(500, result.Count);
-                }
-            }
-            #endregion
-
         }
 
-
-        protected (bool success, object value) GetPrimitiveValue(object valueInRule, IFilterRule rule, Type valueType)
-        {
-            if (valueInRule == null) return (true, null);
-            if (valueType.IsAssignableFrom(valueInRule.GetType())) return (true, valueInRule);
-            return (true, Json.Deserialize(Json.Serialize(valueInRule), valueType));
-        }
     }
 }
 
