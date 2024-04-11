@@ -17,9 +17,36 @@ namespace Vit.Linq.MsTest.Filter
         [TestMethod]
         public void Test_PrimitiveValue()
         {
+            // getPrimitiveValue
             {
                 var service = new FilterService();
-                service.getRightValue = ( IFilterRule rule, Type valueType) =>
+                service.getPrimitiveValue = (object value) =>
+                {
+                    if (value is JValue jv)
+                    {
+                        return jv.Value;
+                    }
+                    if (value is JArray ja)
+                    {
+                        return ja.Select(token => (token as JValue)?.Value).ToList();
+                    }
+                    return value;
+                };
+
+                var query = DataSource.GetQueryable();
+
+                var strRule = "{'field':'name',  'operator': 'in',  'value':['name3','name4',12.5,true] }".Replace("'", "\"");
+                var rule = Json.Deserialize<FilterRule>(strRule);
+                var result = query.Where(rule, service).ToList();
+                Assert.AreEqual(2, result.Count);
+                Assert.AreEqual("name3", result[0].name);
+                Assert.AreEqual("name4", result[1].name);
+            }
+
+            // getRightValue
+            {
+                var service = new FilterService();
+                service.getRightValue = (IFilterRule rule, Type valueType) =>
                 {
                     var valueInRule = rule.value;
 

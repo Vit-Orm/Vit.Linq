@@ -15,7 +15,7 @@ namespace Vit.Linq.MsTest.Extensions
         {
             var query = DataSource.GetIQueryable();
 
-            #region #1
+            #region #1 OrderBy Range
             {
                 var result = query
                     .IQueryable_OrderBy(new[] {
@@ -24,25 +24,27 @@ namespace Vit.Linq.MsTest.Extensions
                     })
                     .IQueryable_Range(new PageInfo { pageSize = 10, pageIndex = 1 })
                     .IQueryable_ToList<Person>();
-                Assert.AreEqual(result.Count, 10);
-                Assert.AreEqual(result[0].id, 990);
+
+                Assert.AreEqual(10, result.Count);
+                Assert.AreEqual(990, result[0].id);
             }
             #endregion
 
 
-            #region #2
+            #region #2 OrderBy Range
             {
                 var result = query
                     .IQueryable_OrderBy("id", false)
                     .IQueryable_Range(skip: 10, take: 10)
                     .IQueryable_ToList<Person>();
-                Assert.AreEqual(result.Count, 10);
-                Assert.AreEqual(result[0].id, 989);
+
+                Assert.AreEqual(10, result.Count);
+                Assert.AreEqual(989, result[0].id);
             }
             #endregion
 
 
-            #region #3
+            #region #3 ToRangeData
             {
                 var result = query
                     .IQueryable_OrderBy(new[] {
@@ -51,9 +53,9 @@ namespace Vit.Linq.MsTest.Extensions
                     })
                     .IQueryable_ToRangeData<Person>(new PageInfo { pageSize = 10, pageIndex = 1 });
 
-                Assert.AreEqual(result.totalCount, 1000);
-                Assert.AreEqual(result.items.Count, 10);
-                Assert.AreEqual(result.items[0].id, 990);
+                Assert.AreEqual(1000, result.totalCount);
+                Assert.AreEqual(10, result.items.Count);
+                Assert.AreEqual(990, result.items[0].id);
             }
             #endregion
 
