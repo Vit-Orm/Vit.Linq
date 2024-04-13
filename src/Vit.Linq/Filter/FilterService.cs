@@ -34,7 +34,6 @@ namespace Vit.Linq.Filter
         /// </summary>
         protected Dictionary<string, string> operatorMap = new Dictionary<string, string>();
         public bool operatorIsIgnoreCase = true;
-        public bool ignoreError = false;
 
         public FilterService AddOperatorMap(string operatorName, string operatorType)
         {
@@ -105,7 +104,7 @@ namespace Vit.Linq.Filter
         ///
         ///  <para>   var getRightValue = (IFilterRule rule, Type valueType) =>                                   </para>
         ///  <para>   {                                                                                           </para>
-        ///  <para>       var valueInRule=rule.value;                                                             </para>
+        ///  <para>       var valueInRule = rule.value;                                                           </para>
         ///  <para>       if (valueInRule == null) return (true, null);                                           </para>
         ///  <para>       if (valueType.IsAssignableFrom(valueInRule.GetType())) return (true, valueInRule);      </para>
         ///  <para>       return (true, Json.Deserialize(Json.Serialize(valueInRule), valueType));                </para>
@@ -120,7 +119,7 @@ namespace Vit.Linq.Filter
                 var result = getRightValue(rule, valueType);
                 if (result.success) return result.value;
             }
-         
+
             object value = GetPrimitiveValue(rule.value);
             {
                 var result = ConvertValue(value, valueType);
@@ -128,7 +127,7 @@ namespace Vit.Linq.Filter
             }
 
             throw new InvalidOperationException("value in rule is not valid");
-            return value;
+            //return value;
         }
 
 
@@ -208,7 +207,7 @@ namespace Vit.Linq.Filter
         }
 
 
-     
+
 
 
 
@@ -251,14 +250,14 @@ namespace Vit.Linq.Filter
             //  nested filter rules
             if (RuleCondition.And.Equals(condition, StringComparison.OrdinalIgnoreCase))
             {
-                if (rule.rules?.Any() == true)
+                if (rule.rules != null)
                     return ConvertToExpression(rule.rules, parameter, isAnd: true);
                 else
                     return ConvertToExpressionNonNested(rule, parameter);
             }
             else if (RuleCondition.Or.Equals(condition, StringComparison.OrdinalIgnoreCase))
             {
-                if (rule.rules?.Any() == true)
+                if (rule.rules != null)
                     return ConvertToExpression(rule.rules, parameter, isAnd: false);
                 else
                     return ConvertToExpressionNonNested(rule, parameter);
@@ -289,6 +288,8 @@ namespace Vit.Linq.Filter
             Type leftValueType = leftValueExpression.Type;
 
             var Operator = GetOperator(rule);
+            if (string.IsNullOrWhiteSpace(Operator))
+                return null;
 
             #region CustomOperator
             var operatorBuilderArgs = new OperatorBuilderArgs
@@ -409,8 +410,8 @@ namespace Vit.Linq.Filter
 
 
 
-            if (!ignoreError) throw new Exception("unrecognized operator : " + rule.@operator);
-            return null;
+            throw new Exception("unrecognized operator : " + rule.@operator);
+            //return null;
 
 
             #region inner Method

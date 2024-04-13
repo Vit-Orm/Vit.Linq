@@ -16,7 +16,7 @@ namespace Vit.Linq.MsTest.Filter
         [TestMethod]
         public void Test()
         {
-
+            // empty rules
             {
                 var query = DataSource.GetQueryable();
 
