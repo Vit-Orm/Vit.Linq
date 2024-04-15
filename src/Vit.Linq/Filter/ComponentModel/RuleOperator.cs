@@ -1,6 +1,6 @@
-﻿namespace Vit.Linq.ComponentModel
+﻿namespace Vit.Linq.Filter.ComponentModel
 {
-    public class FilterRuleOperator
+    public class RuleOperator
     {
         public const string IsNull = "IsNull";
         public const string IsNotNull = "IsNotNull";

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Vit.Linq.ComponentModel;
 
-namespace Vit.Linq.ComponentModel
+namespace Vit.Linq.Filter.ComponentModel
 {
     public class QueryAction
     {

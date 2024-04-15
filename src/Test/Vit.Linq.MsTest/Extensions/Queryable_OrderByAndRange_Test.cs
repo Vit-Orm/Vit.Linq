@@ -9,13 +9,12 @@ namespace Vit.Linq.MsTest.Extensions
     public class Queryable_OrderByAndRange_Test
     {
 
-        #region Test
         [TestMethod]
         public void Test()
         {
             var query = DataSource.GetQueryable();
 
-            #region #1
+            #region #1 OrderBy Range
             {
                 var result = query
                     .OrderBy(new[] {
@@ -24,25 +23,27 @@ namespace Vit.Linq.MsTest.Extensions
                     })
                     .Range(new PageInfo { pageSize = 10, pageIndex = 1 })
                     .ToList();
-                Assert.AreEqual(result.Count, 10);
-                Assert.AreEqual(result[0].id, 990);
+
+                Assert.AreEqual(10, result.Count);
+                Assert.AreEqual(990, result[0].id);
             }
             #endregion
 
 
-            #region #2
+            #region #2 OrderBy Range
             {
                 var result = query
                     .OrderBy("id", false)
                     .Range(skip: 10, take: 10)
                     .ToList();
-                Assert.AreEqual(result.Count, 10);
-                Assert.AreEqual(result[0].id, 989);
+
+                Assert.AreEqual(10, result.Count);
+                Assert.AreEqual(989, result[0].id);
             }
             #endregion
 
 
-            #region #3
+            #region #3 ToRangeData
             {
                 var result = query
                     .OrderBy(new[] {
@@ -51,15 +52,15 @@ namespace Vit.Linq.MsTest.Extensions
                     })
                     .ToRangeData(new PageInfo { pageSize = 10, pageIndex = 1 });
 
-                Assert.AreEqual(result.totalCount, 1000);
-                Assert.AreEqual(result.items.Count, 10);
-                Assert.AreEqual(result.items[0].id, 990);
+                Assert.AreEqual(1000, result.totalCount);
+                Assert.AreEqual(10, result.items.Count);
+                Assert.AreEqual(990, result.items[0].id);
             }
             #endregion
 
 
         }
-        #endregion
+
 
     }
 }

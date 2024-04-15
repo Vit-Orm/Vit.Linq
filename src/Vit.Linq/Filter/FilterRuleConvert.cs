@@ -3,14 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-
 using Vit.Extensions.Linq_Extensions;
 using Vit.Linq.ComponentModel;
-using Vit.Linq.Filter;
+using Vit.Linq.Filter.ComponentModel;
 
-namespace Vit.Linq.Converter
+namespace Vit.Linq.Filter
 {
-    public class ExpressionConverter
+    public class FilterRuleConvert
     {
         public virtual IFilterRule ConvertToFilterRule<T>(Expression<Func<T, bool>> predicate)
         {
@@ -69,13 +68,13 @@ namespace Vit.Linq.Converter
             {
                 case ExpressionType.Not:
                     var rule = ConvertToFilterRule(queryAction, unary.Operand);
-                    if (rule.condition?.StartsWith(FilterRuleCondition.Not, StringComparison.OrdinalIgnoreCase) == true)
+                    if (rule.condition?.StartsWith(RuleCondition.Not, StringComparison.OrdinalIgnoreCase) == true)
                     {
                         rule.condition = rule.condition.Substring(3);
                     }
                     else
                     {
-                        rule.condition = FilterRuleCondition.Not;
+                        rule.condition = RuleCondition.Not;
                     }
                     return rule;
                 case ExpressionType.Quote:
@@ -215,7 +214,7 @@ namespace Vit.Linq.Converter
             RegisterMethodConvertor(predicate, convertor);
         }
 
-        public ExpressionConverter()
+        public FilterRuleConvert()
         {
             Func<QueryAction, MethodCallExpression, FilterRule> converter;
             Func<QueryAction, MethodCallExpression, bool> predicate;
@@ -361,7 +360,7 @@ namespace Vit.Linq.Converter
 
                 return ConvertToFilterRule(queryAction, expression);
             };
-            RegisterMethodConvertor(typeof(IQueryable_Extensions), "TotalCount", converter);
+            RegisterMethodConvertor(typeof(IQueryable_TotalCount_Extensions), "TotalCount", converter);
             #endregion
 
 

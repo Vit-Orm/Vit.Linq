@@ -4,13 +4,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter;
 using Vit.Extensions.Linq_Extensions;
-using Vit.Linq.ComponentModel;
+using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter
 {
 
     [TestClass]
-    public class OperatorMap_Test
+    public class FilterService_OperatorMap_Test
     {
         [TestMethod]
         public void Test_OperatorMap()
@@ -18,7 +18,7 @@ namespace Vit.Linq.MsTest.Filter
             {
                 var service = new FilterService();
                 var query = DataSource.GetQueryable();
-                service.AddOperatorMap("Equal", FilterRuleOperator.Equal);
+                service.AddOperatorMap("Equal", RuleOperator.Equal);
 
 
                 var strRule = "{'field':'isEven',  'operator': 'eQual',  'value':true }".Replace("'", "\"");

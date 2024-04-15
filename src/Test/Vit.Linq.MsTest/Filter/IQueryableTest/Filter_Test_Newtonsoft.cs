@@ -1,14 +1,19 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using Vit.Core.Module.Serialization;
-using Vit.Linq.ComponentModel;
+using Newtonsoft.Json.Linq;
+using Vit.Extensions.Linq_Extensions;
 using Vit.Linq.Filter;
-using Vit.Linq.NewtonsoftJson;
+using Queryable = System.Linq.IQueryable;
+using Vit.Linq.Filter.ComponentModel;
+using Newtonsoft.Json;
+using System.Data;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Vit.Linq.MsTest.Filter.IQueryableTest
 {
     [TestClass]
-    public class Filter_Test_Newtonsoft : Filter_Test_FilterRule
+    public class Filter_Test_Newtonsoft : Filter_TestBase<Queryable>
     {
 
         [TestMethod]
@@ -17,16 +22,40 @@ namespace Vit.Linq.MsTest.Filter.IQueryableTest
             base.TestFilterRule();
         }
 
-        public override IFilterRule GetRule(string filterRule)
+        public override FilterRule GetRule(string filterRule)
         {
-            return Json.Deserialize<FilterRule_Newtonsoft>(filterRule);
+            return JsonConvert.DeserializeObject<FilterRule>(filterRule);
         }
 
-        public override FilterService GetService()
+        public override Queryable ToQuery(IQueryable<Person> query) => query;
+
+        public override List<Person> Filter(Queryable query, IFilterRule rule)
+        {
+            return query.IQueryable_Where(rule, GetService()).IQueryable_ToList<Person>();
+        }
+
+        public virtual FilterService GetService()
         {
             FilterService service = new FilterService();
+            service.getPrimitiveValue = GetPrimitiveValue_Newtonsoft;
             return service;
         }
+
+
+
+        static object GetPrimitiveValue_Newtonsoft(object value)
+        {
+            if (value is JValue jv)
+            {
+                return jv.Value;
+            }
+            if (value is JArray ja)
+            {
+                return ja.Select(token => (token as JValue)?.Value).ToList();
+            }
+            return value;
+        }
+
 
 
     }

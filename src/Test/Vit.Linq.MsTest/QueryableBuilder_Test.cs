@@ -1,15 +1,15 @@
-﻿using System.Linq.Expressions;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Vit.Core.Module.Serialization;
-using Vit.Linq.Converter;
-using Vit.Linq.Filter;
-using Vit.Extensions.Linq_Extensions;
+﻿using System;
 using System.Data;
 using System.Linq;
-using System;
+using System.Linq.Expressions;
 
-namespace Vit.Linq.MsTest.Converter
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Vit.Core.Module.Serialization;
+using Vit.Extensions.Linq_Extensions;
+using Vit.Linq.Filter;
+
+namespace Vit.Linq.MsTest
 {
     [TestClass]
     public class QueryableBuilder_Test
@@ -18,13 +18,13 @@ namespace Vit.Linq.MsTest.Converter
         public void Test()
         {
             {
-                Func<Expression, Type, object> QueryExecutor = (exp,type) =>
+                Func<Expression, Type, object> QueryExecutor = (exp, type) =>
                 {
-                    var queryAction = new ExpressionConverter().ConvertToQueryAction(exp);
+                    var queryAction = new FilterRuleConvert().ConvertToQueryAction(exp);
                     var strQuery = Json.Serialize(queryAction);
 
                     var exp2 = new FilterService().ToExpression<Person>(queryAction.filter);
-                    var query2 = new ExpressionConverter().ConvertToQueryAction(exp2);
+                    var query2 = new FilterRuleConvert().ConvertToQueryAction(exp2);
                     var strQuery2 = Json.Serialize(query2);
 
 

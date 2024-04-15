@@ -1,6 +1,6 @@
-﻿namespace Vit.Linq.ComponentModel
+﻿namespace Vit.Linq.Filter.ComponentModel
 {
-    public class FilterRuleCondition
+    public class RuleCondition
     {
         public const string And = "And";
         public const string Or = "Or";

@@ -11,13 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq", "src\Vit.Linq\Vi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.MsTest31", "src\Test\Vit.Linq.MsTest31\Vit.Linq.MsTest31.csproj", "{7E513E2C-BF52-4662-AD8F-5910F283178D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.NewtonsoftJson", "src\Vit.Linq.NewtonsoftJson\Vit.Linq.NewtonsoftJson.csproj", "{BC843F69-5ED6-44C2-8A41-0F5826CC1911}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.SystemTextJson", "src\Vit.Linq.SystemTextJson\Vit.Linq.SystemTextJson.csproj", "{6C1BC7F7-5C2C-425B-90EC-96D2B94F6C1B}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{75C25D0B-8529-4E3F-AF43-6EC1E9E40828}"
 	ProjectSection(SolutionItems) = preProject
-		readme.md = readme.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
@@ -38,14 +34,6 @@ Global
 		{7E513E2C-BF52-4662-AD8F-5910F283178D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E513E2C-BF52-4662-AD8F-5910F283178D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E513E2C-BF52-4662-AD8F-5910F283178D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BC843F69-5ED6-44C2-8A41-0F5826CC1911}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BC843F69-5ED6-44C2-8A41-0F5826CC1911}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BC843F69-5ED6-44C2-8A41-0F5826CC1911}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BC843F69-5ED6-44C2-8A41-0F5826CC1911}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6C1BC7F7-5C2C-425B-90EC-96D2B94F6C1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C1BC7F7-5C2C-425B-90EC-96D2B94F6C1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6C1BC7F7-5C2C-425B-90EC-96D2B94F6C1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6C1BC7F7-5C2C-425B-90EC-96D2B94F6C1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

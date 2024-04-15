@@ -10,19 +10,20 @@
         <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
         <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
         <PackageReference Include="Vit.Core" Version="2.1.20" />
+
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="System.Text.Json" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Vit.Linq.NewtonsoftJson\Vit.Linq.NewtonsoftJson.csproj" />
-        <ProjectReference Include="..\..\Vit.Linq.SystemTextJson\Vit.Linq.SystemTextJson.csproj" />
         <ProjectReference Include="..\..\Vit.Linq\Vit.Linq.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="..\Vit.Linq.MsTest\Converter\*.cs" Link="Converter\%(RecursiveDir)%(FileName)%(Extension)" />
         <Compile Include="..\Vit.Linq.MsTest\Extensions\*.cs" Link="Extensions\%(RecursiveDir)%(FileName)%(Extension)" />
         <Compile Include="..\Vit.Linq.MsTest\Filter\**\*.cs" Link="Filter\%(RecursiveDir)%(FileName)%(Extension)" />
         <Compile Include="..\Vit.Linq.MsTest\DataSource.cs" />
+        <Compile Include="..\Vit.Linq.MsTest\QueryableBuilder_Test.cs" />
     </ItemGroup>
 
 

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Runtime.CompilerServices;
-using Vit.Linq.ComponentModel;
 using Vit.Linq.Filter;
+using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Extensions.Linq_Extensions
 {
