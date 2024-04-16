@@ -6,8 +6,8 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
 {
     public interface ExpressionNode_Binary : IExpressionNode
     {
-        public ExpressionNode left { get; }
-        public ExpressionNode right { get; }
+        public ExpressionNode left { get; set; }
+        public ExpressionNode right { get; set; }
     }
 
     public interface ExpressionNode_Equal : ExpressionNode_Binary { }

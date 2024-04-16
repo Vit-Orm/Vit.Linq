@@ -13,11 +13,11 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         /// <summary>
         ///   the System.Linq.Expressions.Expression that represents the instance for instance method calls or null for static method calls.
         /// </summary>
-        public ExpressionNode instance { get; }
+        public ExpressionNode instance { get; set; }
 
-        public string methodName { get; }
+        public string methodName { get; set; }
 
-        public ExpressionNode[] methodArguments { get; }
+        public ExpressionNode[] methodArguments { get; set; }
     }
 
 

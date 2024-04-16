@@ -6,13 +6,13 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
 {
     public interface ExpressionNode_And : IExpressionNode
     {
-        public ExpressionNode left { get; }
-        public ExpressionNode right { get; }
+        public ExpressionNode left { get; set; }
+        public ExpressionNode right { get; set; }
     }
     public interface ExpressionNode_Or : IExpressionNode
     {
-        public ExpressionNode left { get; }
-        public ExpressionNode right { get; }
+        public ExpressionNode left { get; set; }
+        public ExpressionNode right { get; set; }
     }
 
 

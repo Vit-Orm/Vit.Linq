@@ -14,9 +14,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         public object value { get; set; }
         public ValueType valueType { get; set; }
 
-        public Expression ConstantToExpression(
-            //ExpressionConvertService service
-            );
+        public Expression ConstantToExpression(ExpressionConvertService service);
     }
 
 
@@ -41,9 +39,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
             };
         }
 
-        public Expression ConstantToExpression(
-                //ExpressionConvertService service
-                )
+        public Expression ConstantToExpression(ExpressionConvertService service)
         {
             var value = this.value;
             Type type = this.valueType?.ToType();
@@ -51,7 +47,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
 
             if (value != null && !type.IsAssignableFrom(value.GetType()))
             {
-                //value = service.ConvertToType(value, type);
+                value = service.ConvertToType(value, type);
             }
             return Expression.Constant(value, type);
         }
