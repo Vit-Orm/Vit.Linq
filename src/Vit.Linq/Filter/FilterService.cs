@@ -250,17 +250,17 @@ namespace Vit.Linq.Filter
             //  nested filter rules
             if (RuleCondition.And.Equals(condition, StringComparison.OrdinalIgnoreCase))
             {
-                if (rule.rules != null)
-                    return ConvertToExpression(rule.rules, parameter, isAnd: true);
-                else
+                if (rule.rules == null)
                     return ConvertToExpressionNonNested(rule, parameter);
+                else
+                    return ConvertToExpression(rule.rules, parameter, isAnd: true);
             }
             else if (RuleCondition.Or.Equals(condition, StringComparison.OrdinalIgnoreCase))
             {
-                if (rule.rules != null)
-                    return ConvertToExpression(rule.rules, parameter, isAnd: false);
-                else
+                if (rule.rules == null)
                     return ConvertToExpressionNonNested(rule, parameter);
+                else
+                    return ConvertToExpression(rule.rules, parameter, isAnd: false);
             }
             else if (RuleCondition.Not.Equals(condition, StringComparison.OrdinalIgnoreCase))
             {
