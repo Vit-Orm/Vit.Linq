@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="ExpressionTree\Any_Test.cs" />
+      <Compile Remove="ExpressionTree\GroupBy_Test.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+        <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
+        <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
+        
+        <PackageReference Include="Vit.Core" Version="2.1.21" />
+        <PackageReference Include="Sers.Core" Version="2.1.24" />
+
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Vit.Linq\Vit.Linq.csproj" />
+    </ItemGroup>
+
+</Project>

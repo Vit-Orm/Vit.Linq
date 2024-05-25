@@ -1,0 +1,102 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+
+using Vit.Linq.ExpressionTree;
+using Vit.Linq.ExpressionTree.ComponentModel;
+
+namespace Vit.Extensions.Linq_Extensions
+{
+
+    public static partial class Queryable_OrderBy2_Extensions
+    {
+
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, IEnumerable<SortField> orders, ExpressionConvertService Instance =null)
+        {
+            if (query == null || orders?.Any() != true) return query;
+
+            IOrderedQueryable<T> orderedQuery = null;
+            if (Instance == null) Instance = ExpressionConvertService.Instance;
+
+            foreach (var item in orders)
+            {
+                LambdaExpression exp = Instance.ToLambdaExpression(item.member, typeof(T));
+
+                if (orderedQuery == null)
+                {
+                    orderedQuery = OrderBy(query, exp, item.asc);
+                }
+                else
+                {
+                    orderedQuery = ThenBy(orderedQuery, exp, item.asc);
+                }
+            }
+            return orderedQuery;
+        }
+
+
+        #region OrderBy
+        static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> query, LambdaExpression exp, bool asc = true)
+        {
+            if (asc)
+            {
+                return (IOrderedQueryable<T>)MethodInfo_OrderBy(typeof(T), exp.ReturnType).Invoke(null, new object[] { query, exp });
+            }
+            else
+            {
+                return (IOrderedQueryable<T>)MethodInfo_OrderByDescending(typeof(T), exp.ReturnType).Invoke(null, new object[] { query, exp });
+            }
+        }
+
+        static IOrderedQueryable<T> ThenBy<T>(this IOrderedQueryable<T> query, LambdaExpression exp, bool asc = true)
+        {
+            if (asc)
+            {
+                return (IOrderedQueryable<T>)MethodInfo_ThenBy(typeof(T), exp.ReturnType).Invoke(null, new object[] { query, exp });
+            }
+            else
+            {
+                return (IOrderedQueryable<T>)MethodInfo_ThenByDescending(typeof(T), exp.ReturnType).Invoke(null, new object[] { query, exp });
+            }
+        }
+        #endregion
+
+
+        #region  CachedMethodInfo
+
+        private static   MethodInfo MethodInfo_OrderBy_;
+        static MethodInfo MethodInfo_OrderBy(Type sourceType, Type returnType) =>
+            (MethodInfo_OrderBy_ ??=
+                new Func<IQueryable<object>, Expression<Func<object, object>>, IOrderedQueryable<object>>(System.Linq.Queryable.OrderBy<object, object>)
+                .GetMethodInfo().GetGenericMethodDefinition())
+            .MakeGenericMethod(sourceType, returnType);
+
+
+        private static MethodInfo MethodInfo_OrderByDescending_;
+        static MethodInfo MethodInfo_OrderByDescending(Type sourceType, Type returnType) =>
+            (MethodInfo_OrderByDescending_ ??=
+                new Func<IQueryable<object>, Expression<Func<object, object>>, IOrderedQueryable<object>>(System.Linq.Queryable.OrderByDescending<object, object>)
+                .GetMethodInfo().GetGenericMethodDefinition())
+            .MakeGenericMethod(sourceType, returnType);
+
+
+        private static MethodInfo MethodInfo_ThenBy_;
+        static MethodInfo MethodInfo_ThenBy(Type sourceType, Type returnType) =>
+            (MethodInfo_ThenBy_ ??=
+                new Func<IOrderedQueryable<object>, Expression<Func<object, object>>, IOrderedQueryable<object>>(System.Linq.Queryable.ThenBy<object, object>)
+                .GetMethodInfo().GetGenericMethodDefinition())
+            .MakeGenericMethod(sourceType, returnType);
+
+        private static MethodInfo MethodInfo_ThenByDescending_;
+        static MethodInfo MethodInfo_ThenByDescending(Type sourceType, Type returnType) =>
+            (MethodInfo_ThenByDescending_ ??=
+                new Func<IOrderedQueryable<object>, Expression<Func<object, object>>, IOrderedQueryable<object>>(System.Linq.Queryable.ThenByDescending<object, object>)
+                .GetMethodInfo().GetGenericMethodDefinition())
+            .MakeGenericMethod(sourceType, returnType); 
+
+        #endregion
+
+    }
+}
