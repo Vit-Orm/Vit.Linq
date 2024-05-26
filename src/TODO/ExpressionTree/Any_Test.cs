@@ -2,12 +2,12 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
+using Vit.Linq.Converter;
+using Vit.Linq.Filter;
 using Vit.Extensions.Linq_Extensions;
 using System.Data;
 using System.Linq;
 using System;
-using Vit.Linq.ExpressionTree;
-using Vit.Linq.ExpressionTree.ComponentModel.CollectionQuery;
 
 namespace Vit.Linq.MsTest.Converter
 {
@@ -18,10 +18,10 @@ namespace Vit.Linq.MsTest.Converter
         public void Test()
         {
             {
-                Func<Expression, Type, object> QueryExecutor = (expression,type) =>
+                Func<Expression, Expression, Type, object> QueryExecutor = (expression,rootExpression,type) =>
                 {
                     var convertService = ExpressionConvertService.Instance;
-                    var node = convertService.ConvertToData(expression);
+                    var node = convertService.ConvertToData(expression, rootExpression);
 
                     var strNode = Json.Serialize(node);
                     // ToLambdaExpression       

@@ -11,6 +11,7 @@ using System.Reflection.Metadata;
 using System.Data.Common;
 using System.Reflection;
 using System.Collections.Generic;
+using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter
 {

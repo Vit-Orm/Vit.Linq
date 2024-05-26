@@ -25,7 +25,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
 
         public override bool PredicateToData(DataConvertArgument arg, MethodCallExpression call)
         {
-            return  methodNames.Contains(call.Method.Name) && methodType == call.Method.DeclaringType;
+            return methodType == call.Method.DeclaringType == methodNames.Contains(call.Method.Name);
         }
 
         public override bool PredicateToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)

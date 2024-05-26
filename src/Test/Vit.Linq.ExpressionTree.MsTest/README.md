@@ -1,6 +1,7 @@
 ﻿
 # TODO: 
 
+# TotalCount  : Count without take and skip
 
 # CollectionStream. Select
 TODO: .OrderBy().Skip().Take()

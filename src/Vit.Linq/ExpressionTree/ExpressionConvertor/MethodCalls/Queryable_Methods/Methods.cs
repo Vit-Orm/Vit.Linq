@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Methods
 {
 
-    public class Queryable_Methods : MethodConvertor_Base
+    public class Methods : MethodConvertor_Base
     {
 
         public Type methodType { get; } = typeof(Queryable);

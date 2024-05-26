@@ -5,12 +5,22 @@ using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter;
+using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter
 {
     [TestClass]
     public class FilterRuleConvert_Test
     {
+        public class Person
+        {
+            public int Age { get; set; }
+            public string Name { get; set; }
+
+            public List<string> Names { get; set; }
+        }
+
+
         [TestMethod]
         public void Test()
         {
@@ -46,13 +56,7 @@ namespace Vit.Linq.MsTest.Filter
         }
 
 
-        public class Person
-        {
-            public int Age { get; set; }
-            public string Name { get; set; }
-
-            public List<string> Names { get; set; }
-        }
+       
 
     }
 }

@@ -11,7 +11,7 @@ using Vit.Linq.ExpressionTree.ComponentModel.CollectionQuery;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Vit.Linq.MsTest.Converter
+namespace Vit.Linq.ExpressionTree.MsTest
 {
     // rootExpression?
     [TestClass]
@@ -21,12 +21,12 @@ namespace Vit.Linq.MsTest.Converter
         public void Test()
         {
             {
-                Func<Expression,  Type, object> QueryExecutor = (expression,type) =>
+                Func<Expression, Type, object> QueryExecutor = (expression, type) =>
                 {
                     var convertService = ExpressionConvertService.Instance;
 
                     ExpressionNode node;
-                    
+
 
                     #region ExpressinNode
                     {
@@ -94,9 +94,9 @@ namespace Vit.Linq.MsTest.Converter
                 #region work
                         //.Where(m => m.job.name != "test")     // Member Access ： Cascade
                         //.Where(m => !pids.Contains(m.id))     // MethodCall ： Contains
-                        .Where(m => (float)m.id >= 10.0)      // Convert
-                        //.Where(m => new List<int?> { 10 }.Contains(m.departmentId))        //  Nullable
-                        //.Where(m => new int?[] { 10 }.Contains(m.departmentId))            //  Array
+                        .Where(m => m.id >= 10.0)      // Convert
+                                                              //.Where(m => new List<int?> { 10 }.Contains(m.departmentId))        //  Nullable
+                                                              //.Where(m => new int?[] { 10 }.Contains(m.departmentId))            //  Array
 
                         .Where(Param_0 => Param_0.id >= 10)
                         //.Where(m => m.id < 20)
@@ -128,7 +128,6 @@ namespace Vit.Linq.MsTest.Converter
                 #endregion
 
                 var count = query.Count();
-                var totalCount = query.TotalCount();
 
                 var First = query.First();
                 var FirstOrDefault = query.FirstOrDefault();

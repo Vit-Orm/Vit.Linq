@@ -5,10 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-
 using ValueType = Vit.Linq.ExpressionTree.ComponentModel.ValueType;
 
-namespace Vit.Linq.MsTest.Converter
+namespace Vit.Linq.ExpressionTree.MsTest
 {
     [TestClass]
     public class ValueType_Test
@@ -44,7 +43,7 @@ namespace Vit.Linq.MsTest.Converter
                 Assert.AreEqual(expectedValue, value);
 
                 // nullable
-                value = ValueType.ConvertToPrimitiveType((int?)null, type);
+                value = ValueType.ConvertToPrimitiveType(null, type);
                 Assert.AreEqual(0, value);
 
                 value = ValueType.ConvertToPrimitiveType((int?)12, type);
@@ -105,7 +104,7 @@ namespace Vit.Linq.MsTest.Converter
 
 
 
-                expectedValue = (float)12;
+                expectedValue = 12;
                 value = ValueType.ConvertToPrimitiveType(12, type);
                 Assert.AreEqual(expectedValue, value);
 
@@ -146,7 +145,7 @@ namespace Vit.Linq.MsTest.Converter
                 value = ValueType.ConvertToPrimitiveType((DateTime?)date, type);
                 Assert.AreEqual(date, value);
 
-                value = ValueType.ConvertToPrimitiveType((DateTime?)null, type);
+                value = ValueType.ConvertToPrimitiveType(null, type);
                 Assert.AreEqual(DateTime.MinValue, value);
 
                 value = ValueType.ConvertToPrimitiveType("2001-02-03T04:05:06Z", type);
@@ -175,7 +174,7 @@ namespace Vit.Linq.MsTest.Converter
                 value = ValueType.ConvertToPrimitiveType((bool?)true, type);
                 Assert.AreEqual("true", value);
 
-                value = ValueType.ConvertToPrimitiveType((bool?)null, type);
+                value = ValueType.ConvertToPrimitiveType(null, type);
                 Assert.AreEqual(null, value);
 
 
@@ -187,7 +186,7 @@ namespace Vit.Linq.MsTest.Converter
                 Assert.AreEqual("12", value);
 
 
-                value = ValueType.ConvertToPrimitiveType((int?)null, type);
+                value = ValueType.ConvertToPrimitiveType(null, type);
                 Assert.AreEqual(null, value);
             }
             #endregion
@@ -237,7 +236,7 @@ namespace Vit.Linq.MsTest.Converter
                 Assert.AreEqual(expectedValue, v);
 
                 // nullable
-                value = ValueType.ConvertToType((int?)null, type);
+                value = ValueType.ConvertToType(null, type);
                 v = value as int?;
                 Assert.AreEqual(null, v);
 
@@ -267,7 +266,7 @@ namespace Vit.Linq.MsTest.Converter
                 Assert.AreEqual(expectedValue, value);
 
                 value = ValueType.ConvertToType(null, type);
-                Assert.AreEqual((bool?)null, value);
+                Assert.AreEqual(null, value);
 
                 value = ValueType.ConvertToType("false", type);
                 Assert.AreEqual((bool?)false, value);
@@ -352,7 +351,7 @@ namespace Vit.Linq.MsTest.Converter
             #endregion
         }
 
- 
+
 
 
     }

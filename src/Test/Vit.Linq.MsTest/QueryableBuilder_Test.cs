@@ -32,9 +32,6 @@ namespace Vit.Linq.MsTest
                     list = list.OrderBy(queryAction.orders);
 
 
-
-                    if (queryAction.method == "TotalCount") return list.Count();
-
                     if (queryAction.skip.HasValue)
                         list = list.Skip(queryAction.skip.Value);
                     if (queryAction.take.HasValue)
@@ -67,9 +64,9 @@ namespace Vit.Linq.MsTest
                     .Skip(1)
                     .Take(5);
 
-                var count = query.Count();
-                var totalCount = query.TotalCount();
                 var list = query.ToList();
+                var count = query.Count();
+             
 
                 Assert.AreEqual(5, list.Count);
                 Assert.AreEqual(17, list[0].id);

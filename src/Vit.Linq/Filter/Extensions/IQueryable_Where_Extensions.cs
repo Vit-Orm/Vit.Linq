@@ -10,8 +10,6 @@ namespace Vit.Extensions.Linq_Extensions
     public static partial class IQueryable_Where_Extensions
     {
         #region Where
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IQueryable IQueryable_Where(this IQueryable query, IFilterRule rule, FilterService service = null)
         {
             LambdaExpression lambda = (service ?? FilterService.Instance).ToLambdaExpression(rule, query.ElementType);

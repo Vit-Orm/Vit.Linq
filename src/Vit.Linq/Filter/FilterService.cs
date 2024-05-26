@@ -1,39 +1,27 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Xml.Linq;
 
 using Vit.Linq.Filter.ComponentModel;
 
 
 namespace Vit.Linq.Filter
 {
-    public class OperatorBuilderArgs
-    {
-        public IFilterRule rule { get; set; }
-        public ParameterExpression parameter { get; set; }
-        public Expression leftValue { get; set; }
-        public string Operator { get; set; }
-
-        /// <summary>
-        /// Type rightValueType
-        /// </summary>
-        public Func<Type, Expression> GetRightValueExpression { get; set; }
-    }
-
-
-
-    public class FilterService
+    public partial class FilterService
     {
         public static FilterService Instance = new FilterService();
 
+
+        public bool operatorIsIgnoreCase = true;
+
+
+        #region OperatorMap
         /// <summary>
         /// operatorName -> operatorType(in class FilterRuleOperator)
         /// </summary>
         protected Dictionary<string, string> operatorMap = new Dictionary<string, string>();
-        public bool operatorIsIgnoreCase = true;
+
 
         public FilterService AddOperatorMap(string operatorName, string operatorType)
         {
@@ -48,7 +36,7 @@ namespace Vit.Linq.Filter
                 AddOperatorMap(map.operatorName, map.operatorType);
             return this;
         }
-
+        #endregion
 
 
         public Func<T, bool> ToPredicate<T>(IFilterRule rule)
@@ -98,7 +86,7 @@ namespace Vit.Linq.Filter
 
 
 
-        #region getRightValue
+        #region  GetRightValue of FileRule
         /// <summary>
         /// (bool success, object value)getRightValue(IFilterRule rule, Type valueType)
         ///
@@ -133,7 +121,7 @@ namespace Vit.Linq.Filter
 
 
 
-        #region ConvertValue
+        #region static ConvertValue
         static (bool success, object value) ConvertValue(object value, Type valueType)
         {
             //  List
@@ -211,26 +199,7 @@ namespace Vit.Linq.Filter
 
 
 
-        #region Custom Operator
-
-        Dictionary<string, Func<OperatorBuilderArgs, Expression>> customOperator = new Dictionary<string, Func<OperatorBuilderArgs, Expression>>();
-
-        Expression CustomOperator_GetExpression(OperatorBuilderArgs args)
-        {
-            if (customOperator.TryGetValue(args.Operator, out var operatorBuilder) && operatorBuilder != null)
-            {
-                return operatorBuilder(args);
-            }
-            return default;
-        }
-
-        public virtual void CustomOperator_Add(string Operator, Func<OperatorBuilderArgs, Expression> operatorBuilder)
-        {
-            if (operatorIsIgnoreCase) Operator = Operator.ToLower();
-            customOperator[Operator] = operatorBuilder;
-        }
-
-        #endregion
+   
 
 
         #region ConvertToExpression
@@ -300,7 +269,7 @@ namespace Vit.Linq.Filter
                 Operator = Operator,
                 GetRightValueExpression = (Type rightValueType) => this.GetRightValueExpression(rule, parameter, rightValueType)
             };
-            var operatorExpression = CustomOperator_GetExpression(operatorBuilderArgs);
+            var operatorExpression = CustomOperator_ToExpression(operatorBuilderArgs);
             if (operatorExpression != default) return operatorExpression;
             #endregion
 

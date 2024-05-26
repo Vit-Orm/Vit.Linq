@@ -8,7 +8,7 @@ using Vit.Extensions.Linq_Extensions;
 namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Extensions_Methods
 {
 
-    public class Queryable_Methods : MethodConvertor_Base
+    public class Methods : MethodConvertor_Base
     {
 
         public Type methodType { get; } = typeof(Queryable_Extensions);

@@ -4,14 +4,13 @@ using System.Linq;
 using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 using Vit.Core.Module.Serialization;
 using Vit.Linq.ExpressionTree;
 
-namespace Vit.Linq.MsTest.Converter
+namespace Vit.Linq.ExpressionTree.MsTest
 {
     [TestClass]
-    public class ExpressionNodeConvert_Test
+    public class ExpressionConvert_Test
     {
 
 
@@ -43,12 +42,12 @@ namespace Vit.Linq.MsTest.Converter
             {
                 var person = new { isEven = true };
                 Expression<Func<Person, bool>> predicate = x => person.isEven && x.isEven;
- 
-                Test(predicate);            
+
+                Test(predicate);
             }
 
             {
-                var person = new { names = new[] { "name2" }  };
+                var person = new { names = new[] { "name2" } };
                 Expression<Func<Person, bool>> predicate = x => x.name == person.names[0];
 
                 Test(predicate);
@@ -63,11 +62,11 @@ namespace Vit.Linq.MsTest.Converter
 
             {
                 var person = new { id = 10, name = "name5" };
-                Expression<Func<Person, bool>> predicate = x =>  x.id <= person.id && x.name == person.name;
+                Expression<Func<Person, bool>> predicate = x => x.id <= person.id && x.name == person.name;
 
                 Test(predicate);
             }
- 
+
 
 
 

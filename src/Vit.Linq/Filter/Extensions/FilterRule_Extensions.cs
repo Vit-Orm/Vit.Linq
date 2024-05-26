@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using Vit.Linq.Filter;
+using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Extensions.Linq_Extensions
 {

@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using Vit.Linq.ExpressionTree;
 using Vit.Linq.ExpressionTree.ComponentModel;
 
-namespace Vit.Linq.MsTest.New.test2
+namespace Vit.Linq.ExpressionTree.MsTest
 {
     [TestClass]
     public class Serialize_Test
@@ -16,7 +16,6 @@ namespace Vit.Linq.MsTest.New.test2
         {
             try
             {
-                //var Json = Vit.Core.Module.Serialization.Json.Instance;
                 var Json = Sers.Core.Module.Serialization.Text.Serialization_Text.Instance;
 
                 var service = ExpressionConvertService.Instance;
@@ -39,8 +38,8 @@ namespace Vit.Linq.MsTest.New.test2
 
             try
             {
-                var Json = Vit.Core.Module.Serialization.Json.Instance;
-               
+                var Json = Vit.Core.Module.Serialization.Serialization_Newtonsoft.Instance;
+
                 var service = ExpressionConvertService.Instance;
 
                 Expression<Func<Person, bool>> predicate = person => person.id > 0;
@@ -58,16 +57,6 @@ namespace Vit.Linq.MsTest.New.test2
             {
                 throw;
             }
-
-
-
-
-
-
-
-
-
-
         }
 
 

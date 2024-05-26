@@ -3,14 +3,12 @@ using System.Linq;
 using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 using Vit.Core.Module.Serialization;
 using Vit.Extensions.Linq_Extensions;
-
 using Vit.Linq.ExpressionTree;
 using Vit.Linq.ExpressionTree.ComponentModel;
 
-namespace Vit.Linq.MsTest.Converter
+namespace Vit.Linq.ExpressionTree.MsTest
 {
     [TestClass]
     public class Join_Test
@@ -19,7 +17,7 @@ namespace Vit.Linq.MsTest.Converter
         public void Test()
         {
             {
-                Func<Expression,  Type, object> QueryExecutor = (expression, type) =>
+                Func<Expression, Type, object> QueryExecutor = (expression, type) =>
                 {
                     var convertService = ExpressionConvertService.Instance;
 
@@ -40,11 +38,11 @@ namespace Vit.Linq.MsTest.Converter
                         //  )
                         node = convertService.ConvertToData(expression, autoReduce: true);
 
-                        var strNode = Json.Serialize(node); 
+                        var strNode = Json.Serialize(node);
                     }
                     #endregion
 
-                    var stream = ExpressionTree.ComponentModel.CollectionsQuery.StreamReader.ReadNode(node);
+                    var stream = ComponentModel.CollectionsQuery.StreamReader.ReadNode(node);
                     var strStream = Json.Serialize(stream);
                     return null;
                 };
@@ -57,7 +55,7 @@ namespace Vit.Linq.MsTest.Converter
                     var list = users
                         .SelectMany(
                             user => users.Where(father => father.id == user.fatherId).DefaultIfEmpty(),
-                            (user, father) => new { user1=user, father1= father, id1 = user.id }
+                            (user, father) => new { user1 = user, father1 = father, id1 = user.id }
                         )
                         .SelectMany(
                             item => users.Where(mother => mother.id == item.user1.motherId).DefaultIfEmpty(),
@@ -69,11 +67,15 @@ namespace Vit.Linq.MsTest.Converter
                         //)
                         .Where(items => items.user2.id > 0)
                         .Where(items => items.fatherId2 > 0)
-                        .Select((item) => new { 
-                            user9 = item.user2,     id9 = item.id2,
-                            father9 = item.father2, fatherId9 = item.fatherId2,
-                            mother9 = item.mother2, motherId9 = item.mother2.id 
-                         })
+                        .Select((item) => new
+                        {
+                            user9 = item.user2,
+                            id9 = item.id2,
+                            father9 = item.father2,
+                            fatherId9 = item.fatherId2,
+                            mother9 = item.mother2,
+                            motherId9 = item.mother2.id
+                        })
                         .ToList();
                 }
 
@@ -127,30 +129,30 @@ namespace Vit.Linq.MsTest.Converter
 
                 {
                     var users = QueryableBuilder.Build<User>(QueryExecutor);
-/*
-{value(Vit.Linq.Converter.OrderedQueryable`1[Vit.Linq.MsTest.Converter.Join_Test+User])
-.SelectMany(
-    user => value(Vit.Linq.MsTest.Converter.Join_Test+<>c__DisplayClass0_0).users
-        .Where(f => (Convert(f.id, Nullable`1) == user.fatherId)).DefaultIfEmpty(),
-    (user, father) => new <>f__AnonymousType4`2(user = user, father = father)  )
-.SelectMany(
-    <>h__TransparentIdentifier0 => value(Vit.Linq.MsTest.Converter.Join_Test+<>c__DisplayClass0_0).users
-            .Where(m => ((Convert(m.id, Nullable`1) == <>h__TransparentIdentifier0.user.motherId) 
-                AndAlso (Convert(<>h__TransparentIdentifier0.father.id, Nullable`1) != m.fatherId))).DefaultIfEmpty(),
-    (<>h__TransparentIdentifier0, mother) => new <>f__AnonymousType5`3(
-        user = <>h__TransparentIdentifier0.user, 
-        father = <>h__TransparentIdentifier0.father,
-        mother = mother
-))
-*/
+                    /*
+                    {value(Vit.Linq.Converter.OrderedQueryable`1[Vit.Linq.MsTest.Converter.Join_Test+User])
+                    .SelectMany(
+                        user => value(Vit.Linq.MsTest.Converter.Join_Test+<>c__DisplayClass0_0).users
+                            .Where(f => (Convert(f.id, Nullable`1) == user.fatherId)).DefaultIfEmpty(),
+                        (user, father) => new <>f__AnonymousType4`2(user = user, father = father)  )
+                    .SelectMany(
+                        <>h__TransparentIdentifier0 => value(Vit.Linq.MsTest.Converter.Join_Test+<>c__DisplayClass0_0).users
+                                .Where(m => ((Convert(m.id, Nullable`1) == <>h__TransparentIdentifier0.user.motherId) 
+                                    AndAlso (Convert(<>h__TransparentIdentifier0.father.id, Nullable`1) != m.fatherId))).DefaultIfEmpty(),
+                        (<>h__TransparentIdentifier0, mother) => new <>f__AnonymousType5`3(
+                            user = <>h__TransparentIdentifier0.user, 
+                            father = <>h__TransparentIdentifier0.father,
+                            mother = mother
+                    ))
+                    */
                     var list = (from user in users
                                 from father in users.Where(f => f.id == user.fatherId).DefaultIfEmpty()
                                 from mother in users.Where(m => m.id == user.motherId && father.id != m.fatherId).DefaultIfEmpty()
                                 select new
                                 {
-                                    user = user,
-                                    father = father,
-                                    mother = mother
+                                    user,
+                                    father,
+                                    mother
                                 }).ToList();
 
                 }
@@ -203,7 +205,7 @@ namespace Vit.Linq.MsTest.Converter
                 #endregion
 
 
-              
+
                 #endregion
 
 
@@ -226,13 +228,13 @@ namespace Vit.Linq.MsTest.Converter
             public User user;
             public User father { get; set; }
             public int? id { get; set; }
-            public int? departmentId { get; set; }  
+            public int? departmentId { get; set; }
         }
 
 
         public class User
         {
-            
+
             //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
             public int id { get; set; }
             public string name { get; set; }

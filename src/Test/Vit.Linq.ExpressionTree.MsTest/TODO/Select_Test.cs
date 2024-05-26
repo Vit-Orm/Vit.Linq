@@ -3,22 +3,20 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-
 using Vit.Core.Module.Serialization;
-using Vit.Linq.ExpressionTree;
 using Vit.Linq.ExpressionTree.ComponentModel;
 
-namespace Vit.Linq.MsTest.New.test2.ExpressionConvertor
+namespace Vit.Linq.ExpressionTree.MsTest.新文件夹
 {
     [TestClass]
-    public class New_Test
+    public class Select_Test
     {
         [TestMethod]
         public void Test()
         {
 
 
-            Func<Expression,  Type, object> QueryExecutor = (expression, type) =>
+            Func<Expression, Type, object> QueryExecutor = (expression, type) =>
             {
                 var convertService = ExpressionConvertService.Instance;
 
@@ -42,22 +40,20 @@ namespace Vit.Linq.MsTest.New.test2.ExpressionConvertor
                 }
                 #endregion
 
- 
+
 
                 //var list = DataSource.GetQueryable().Where(predicate);
 
 
-               
 
-                throw new NotSupportedException("Method not support"  );
+
+                throw new NotSupportedException("Method not support");
             };
+
 
             var query = QueryableBuilder.Build<Person>(QueryExecutor);
 
-
-
-
-            var list = query.Select(p => new { name =  p.name }).ToList();
+            var list = query.Select(p => new { p.name }).ToList();
             //Assert.AreEqual(5, list.Count);
             //Assert.AreEqual(17, list[0].id);
             //Assert.AreEqual(15, list[1].id);

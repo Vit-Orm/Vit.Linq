@@ -7,6 +7,12 @@ namespace Vit.Extensions.Linq_Extensions
 
     public static partial class Queryable_Extensions
     {
+        /// <summary>
+        /// Collection Count ignore Take and Skip
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static int TotalCount(this IQueryable source)
         {
             if (source == null)
@@ -19,6 +25,12 @@ namespace Vit.Extensions.Linq_Extensions
                     , source.Expression));
         }
 
+        /// <summary>
+        /// Collection Count ignore Take and Skip
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
         public static int TotalCount<T>(this IQueryable<T> source)
         {
             return TotalCount(source as IQueryable);

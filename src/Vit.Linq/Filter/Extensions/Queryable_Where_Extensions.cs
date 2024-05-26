@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Runtime.CompilerServices;
+
 using Vit.Linq.Filter;
 using Vit.Linq.Filter.ComponentModel;
 
@@ -7,8 +8,7 @@ namespace Vit.Extensions.Linq_Extensions
 {
     public static partial class Queryable_Where_Extensions
     {
-        #region Where
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public static IQueryable<T> Where<T>(this IQueryable<T> query, IFilterRule rule, FilterService service = null)
         where T : class
         {
@@ -24,7 +24,7 @@ namespace Vit.Extensions.Linq_Extensions
                 return query.Where(predicate);
             }
         }
-        #endregion
+
 
     }
 }

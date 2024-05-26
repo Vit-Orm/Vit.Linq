@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using Vit.Linq.Filter;
 using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter

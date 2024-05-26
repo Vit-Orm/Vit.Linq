@@ -1,16 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Linq.Expressions;
-using Vit.Linq.Filter.ComponentModel;
+using System.Linq;
 
-namespace Vit.Linq.Filter
+namespace Vit.Linq.Filter.ComponentModel
 {
     /// <summary>
     /// This class is used to define a hierarchical filter for a given collection. This type can be serialized/deserialized by JSON.NET without needing to modify the data structure from QueryBuilder.
     /// </summary>
-    [ExcludeFromCodeCoverage]
+    public class FilterRule : FilterRuleBase<FilterRule>
+    {
+    }
+
+    /// <summary>
+    /// This class is used to define a hierarchical filter for a given collection. This type can be serialized/deserialized by JSON.NET without needing to modify the data structure from QueryBuilder.
+    /// </summary>
     public abstract class FilterRuleBase<RuleType> : IFilterRule
         where RuleType : IFilterRule
     {
@@ -78,4 +82,7 @@ namespace Vit.Linq.Filter
         }
 
     }
+
+
+
 }

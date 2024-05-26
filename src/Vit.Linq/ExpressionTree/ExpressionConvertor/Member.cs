@@ -33,6 +33,10 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                     return ExpressionNode.Member(parameterName: parameter.Name, memberName: name).Member_SetType(expression.Type);
 
                 var objectValue = arg.convertService.ConvertToData(arg, member.Expression);
+                //if (objectValue?.nodeType == NodeType.Constant && arg.ReduceValue(member, out object constValue))
+                //{
+                //    return ExpressionNode.Constant(value: constValue, type: expression.Type);
+                //}
                 return ExpressionNode.Member(objectValue: objectValue, memberName: name).Member_SetType(expression.Type);
             }
             else if (expression is ParameterExpression parameter)
