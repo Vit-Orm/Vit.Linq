@@ -11,6 +11,8 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         public virtual Func<ExpressionNode, (bool success, ExpressionNode dest)> clone { get; set; }
         public virtual ExpressionNode Clone(ExpressionNode node)
         {
+            if (node == null) return null;
+
             if (clone != null)
             {
                 var result = clone(node);

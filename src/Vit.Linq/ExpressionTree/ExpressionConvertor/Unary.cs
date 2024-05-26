@@ -58,10 +58,11 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                         return Expression.Convert(value, type);
                     }
 
-                //case NodeType.Not:
-                //    ExpressionNode_Not not = data;
-                //    return Expression.Not(arg.convertService.ToExpression(arg, not.body));
-
+                case NodeType.Not:
+                    {
+                        ExpressionNode_Not not = data;
+                        return Expression.Not(arg.convertService.ToExpression(arg, not.body));
+                    }
                 default:
                     {
                         var operand = arg.convertService.ToExpression(arg, data.body);

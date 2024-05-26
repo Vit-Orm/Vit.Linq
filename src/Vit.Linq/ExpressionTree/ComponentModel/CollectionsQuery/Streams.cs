@@ -119,7 +119,7 @@ value(Vit.Linq.Converter.OrderedQueryable`1[Vit.Linq.MsTest.Converter.Join_Test+
         public ExpressionNode where { get; set; }
 
         //  a1.id, b2.id
-        public List<SortField> orders { get; set; }
+        public List<OrderField> orders { get; set; }
 
 
         public int? skip { get; set; }

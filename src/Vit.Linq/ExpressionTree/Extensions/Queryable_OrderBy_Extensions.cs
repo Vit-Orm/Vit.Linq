@@ -13,7 +13,7 @@ namespace Vit.Extensions.Linq_Extensions
     public static partial class Queryable_OrderBy2_Extensions
     {
 
-        public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, IEnumerable<SortField> orders, ExpressionConvertService Instance =null)
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, IEnumerable<OrderField> orders, ExpressionConvertService Instance =null)
         {
             if (query == null || orders?.Any() != true) return query;
 

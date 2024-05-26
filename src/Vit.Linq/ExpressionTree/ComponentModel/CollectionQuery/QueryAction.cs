@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
- 
+﻿using System.Collections.Generic;
+
 
 namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionQuery
 {
@@ -20,7 +16,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionQuery
 
         public ExpressionNode filter { get; set; }
 
-        public List<SortField> orders { get; set; }
+        public List<OrderField> orders { get; set; }
 
         public int? skip { get; set; }
         public int? take { get; set; }

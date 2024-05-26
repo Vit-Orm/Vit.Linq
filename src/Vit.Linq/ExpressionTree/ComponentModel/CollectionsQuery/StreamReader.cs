@@ -196,14 +196,14 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery
 
                                     var memberField = ReadSortField(call.arguments[1], source);
 
-                                    var orderParam = new SortField { member = memberField, asc = !methodName.EndsWith("Descending") };
+                                    var orderParam = new OrderField { member = memberField, asc = !methodName.EndsWith("Descending") };
 
                                     if (methodName.StartsWith("OrderBy"))
                                     {
-                                        joinedStream.orders = new List<SortField>();
+                                        joinedStream.orders = new List<OrderField>();
                                     }
 
-                                    joinedStream.orders ??= new List<SortField>();
+                                    joinedStream.orders ??= new List<OrderField>();
 
                                     joinedStream.orders.Add(orderParam);
 

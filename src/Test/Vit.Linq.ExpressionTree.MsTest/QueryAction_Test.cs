@@ -1,0 +1,302 @@
+﻿using System.Linq.Expressions;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Vit.Core.Module.Serialization;
+using Vit.Extensions.Linq_Extensions;
+using System.Data;
+using Vit.Linq.ExpressionTree;
+using Vit.Linq.ExpressionTree.ComponentModel;
+using System;
+using Vit.Linq.ExpressionTree.ComponentModel.CollectionQuery;
+using System.Linq;
+using System.Collections.Generic;
+using System.Collections;
+
+namespace Vit.Linq.ExpressionTree.MsTest
+{
+    // rootExpression?
+    [TestClass]
+    public class QueryAction_Test
+    {
+
+        public ExpressionConvertService convertService => ExpressionConvertService.Instance;
+
+
+        IQueryable<Person> GetQuery()
+        {
+            Func<Expression, Type, object> QueryExecutor = (expression, type) =>
+            {
+                ExpressionNode node;
+
+                #region ExpressinNode
+                {
+                    // #1 Code to Data
+                    // (query) => query.Where().OrderBy().Skip().Take().Select().ToList();
+                    node = convertService.ConvertToData(expression);
+                    var strNode = Json.Serialize(node);
+
+                    // #2 Data to Code
+                    // Param_1 => Param_1.Where(Param_0 => (Param_0.id >= 10))
+                    var lambdaExp = convertService.ToLambdaExpression(node, typeof(IQueryable<Person>));
+                    //var exp3 = (Expression<Func<IQueryable<Person>, IQueryable<Person>>>)lambdaExp;
+                    var predicate_ = lambdaExp.Compile();
+                }
+                #endregion
+
+                // As Filter
+                var queryAction = new QueryAction(node);
+                var strQuery = Json.Serialize(queryAction);
+                var predicate = convertService.ToPredicateExpression<Person>(queryAction.filter);
+                //var lambdaExp = (Expression<Func<Person, bool>>)convertService.ToLambdaExpression(queryAction.filter, typeof(Person));
+
+
+                var list = DataSource.GetQueryable().Where(predicate);
+
+
+                list = list.OrderBy(queryAction.orders);
+
+                var methodName = queryAction.method;
+
+                if (methodName == "TotalCount") return list.Count();
+
+                if (queryAction.skip.HasValue)
+                    list = list.Skip(queryAction.skip.Value);
+                if (queryAction.take.HasValue)
+                    list = list.Take(queryAction.take.Value);
+
+                switch (methodName)
+                {
+                    case "First": return list.First();
+                    case "FirstOrDefault": return list.FirstOrDefault();
+                    case "Last": return list.Last();
+                    case "LastOrDefault": return list.LastOrDefault();
+                    case "Count": return list.Count();
+                    case "ToList":
+                    case "":
+                    case null:
+                        return list;
+                }
+
+                throw new NotSupportedException("Method not support:" + methodName);
+            };
+
+            var query = QueryableBuilder.Build<Person>(QueryExecutor);
+            return query;
+        }
+
+
+        [TestMethod]
+        public void Test_Query()
+        {
+            var query = GetQuery();
+
+            query = query
+                .Where(m => !m.name.Contains("111"))
+                .OrderBy(m => m.job.name)
+                .OrderByDescending(m => m.id)
+                .ThenBy(m => m.job.departmentId)
+                .ThenByDescending(m => m.name)
+                .Skip(1)
+                .Take(5);
+
+            #region ToList
+            {
+                var list = query.ToList();
+                Assert.AreEqual(5, list.Count);
+                Assert.AreEqual(998, list.First().id);
+                Assert.AreEqual(994, list.Last().id);
+            }
+            #endregion
+
+            #region Count
+            {
+                var count = query.Count();
+                Assert.AreEqual(5, count);
+            }
+            #endregion
+
+            #region First FirstOrDefault
+            {
+                var person = query.First();
+                Assert.AreEqual(998, person.id);
+            }
+            {
+                var person = query.FirstOrDefault();
+                Assert.AreEqual(998, person.id);
+            }
+            #endregion
+
+            #region First LastOrDefault
+            {
+                var person = query.Last();
+                Assert.AreEqual(994, person.id);
+            }
+            {
+                var person = query.LastOrDefault();
+                Assert.AreEqual(994, person.id);
+            }
+            #endregion
+        }
+
+
+        [TestMethod]
+        public void Test_Where()
+        {
+            //#region Convert
+            //{
+            //    var query = GetQuery();
+
+            //    query = query
+            //        .Where(m => m.id <= 10.0)      // Convert
+            //        ;
+
+            //    var list = query.ToList();
+            //    Assert.AreEqual(11, list.Count);
+            //    Assert.AreEqual(0, list.First().id);
+            //    Assert.AreEqual(10, list.Last().id);
+            //}
+            //#endregion
+
+            //#region Member Access :  Cascade
+            //{
+            //    var query = GetQuery();
+
+            //    query = query
+            //        .Where(m => m.job.name == "name10_job1")     // Member Access :  Cascade
+            //        ;
+
+            //    var list = query.ToList();
+            //    Assert.AreEqual(1, list.Count);
+            //    Assert.AreEqual(10, list.First().id);
+            //}
+            //#endregion
+
+            #region MethodCall :  List.Contains
+            {
+                var query = GetQuery();
+                var ids = new List<int> { 3, 4 };
+                query = query
+                      .Where(m => !ids.Contains(m.id))     // MethodCall :  List.Contains
+                    ;
+
+                var list = query.ToList();
+                Assert.AreEqual(2, list.Count);
+                Assert.AreEqual(3, list.First().id);
+                Assert.AreEqual(4, list.Last().id);
+            }
+            #endregion
+
+            #region MethodCall :  Array.Contains
+            {
+                var query = GetQuery();
+
+                query = query
+                      .Where(m => new int[] { 3, 4 }.Contains(m.id))     // MethodCall :  Array.Contains
+                    ;
+
+                var list = query.ToList();
+                Assert.AreEqual(2, list.Count);
+                Assert.AreEqual(3, list.First().id);
+                Assert.AreEqual(4, list.Last().id);
+            }
+            #endregion
+
+            #region MethodCall :  String.Contains
+            {
+                var query = GetQuery();
+
+                query = query
+                  .Where(m => !m.job.name.Contains("me10_job")) // String.Contains
+                    ;
+
+                var list = query.ToList();
+                Assert.AreEqual(1, list.Count);
+                Assert.AreEqual(10, list.First().id);
+            }
+            #endregion
+
+
+
+            #region Nullable
+            {
+                var query = GetQuery();
+
+                query = query
+                  .Where(m => new List<int?> { 3, 4 }.Contains(m.departmentId)) // Nullable
+                    ;
+
+                var list = query.ToList();
+                Assert.AreEqual(2, list.Count);
+                Assert.AreEqual(3, list.First().id);
+                Assert.AreEqual(4, list.Last().id);
+            }
+            #endregion
+
+            #region GetQuery
+            {
+                var query = GetQuery();
+
+                query = query
+                    .Where(Param_0 => Param_0.id >= 10)
+                    .Where(m => m.id <= 20)
+
+                    ;
+
+                var list = query.ToList();
+                Assert.AreEqual(5, list.Count);
+                Assert.AreEqual(998, list.First().id);
+                Assert.AreEqual(994, list.Last().id);
+            }
+            #endregion
+
+
+
+            {
+
+                IQueryable<Person> query = GetQuery();
+                var persons = new List<Person> { new Person { id = 2 }, new Person { id = 3 } }.AsQueryable();
+
+
+
+                var jobs = new List<Job> { new Job { departmentId = 1 }, new Job { departmentId = 2 } };
+
+                query = query
+                #region work
+
+
+
+                #endregion
+
+                        //.Where(m => persons.Any(p => p.id == m.id)) // MethodCall Any
+                        //.Where(m => persons.Where(p=>p.id>0).Any(p => p.id == m.id)) // MethodCall Any
+
+                        //.Where((m, index) => index > 10) //  MethodCall Where   not supported in FilterAction
+                        ;
+
+
+                #region List
+                {
+                    var list = query.ToList();
+                    //Assert.AreEqual(5, list.Count);
+                    //Assert.AreEqual(17, list[0].id);
+                    //Assert.AreEqual(15, list[1].id);
+                }
+                #endregion
+
+                var count = query.Count();
+
+                var First = query.First();
+                var FirstOrDefault = query.FirstOrDefault();
+                var Last = query.Last();
+                var LastOrDefault = query.LastOrDefault();
+
+            }
+
+
+        }
+
+
+
+
+    }
+}
