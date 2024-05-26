@@ -16,11 +16,25 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             {
                 var type = expression.Type;
                 var value = constant.Value;
-                if (value != null && !IsTransportableType(type))
+                if (value != null && DataConvertArgument.IsQueryableArgument(type))
                 {
-                    return arg.GetParameter(value, type);
+                    return arg.CreateParameter(value, type);
                 }
                 return ExpressionNode.Constant(value: constant.Value, type: type);
+            }
+            else if (expression is NewArrayExpression newArray)
+            {
+                if (DataConvertArgument.CanCalculateToConstant(newArray))
+                {
+                    return ExpressionNode.Constant(value: DataConvertArgument.InvokeExpression(expression), type: expression.Type);
+                }
+            }
+            else if (expression is ListInitExpression listInit)
+            {
+                if (DataConvertArgument.CanCalculateToConstant(listInit))
+                {
+                    return ExpressionNode.Constant(value: DataConvertArgument.InvokeExpression(expression), type: expression.Type);
+                }
             }
 
             return null;
@@ -41,42 +55,6 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                 value = ComponentModel.ValueType.ConvertToType(value, targetType);
             }
             return Expression.Constant(value, targetType);
-        }
-
-
-
-        static bool IsTransportableType(Type type)
-        {
-            if (IsBasicType(type)) return true;
-
-            if (type.IsArray && IsTransportableType(type.GetElementType()))
-            {
-                return true;
-            }
-
-            if (type.IsGenericType)
-            {
-                if (type.GetGenericArguments().Any(t => !IsTransportableType(t))) return false;
-
-                if (typeof(IList).IsAssignableFrom(type)
-                    || typeof(ICollection).IsAssignableFrom(type)
-                    )
-                    return true;
-            }
-
-            return false;
-
-            #region Method IsBasicType
-            // is valueType of Nullable 
-            static bool IsBasicType(Type type)
-            {
-                return
-                    type.IsEnum || // enum
-                    type == typeof(string) || // string
-                    type.IsValueType ||  //int
-                    (type.IsGenericType && typeof(Nullable<>) == type.GetGenericTypeDefinition()); // int?
-            }
-            #endregion
         }
 
     }

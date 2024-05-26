@@ -57,7 +57,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
 
         public override bool PredicateToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
         {
-            return (call.methodName == "Add"|| call.methodName == "Concat") && (methodType == null || methodType.Name == call.typeName);
+            return (call.methodName == "Add"|| call.methodName == "Concat") && (methodType == null || methodType.Name == call.methodCall_typeName);
         }
 
         public override Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)

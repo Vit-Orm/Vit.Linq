@@ -8,12 +8,12 @@ namespace Vit.Linq.ExpressionTree
 {
     public partial class ExpressionConvertService
     {
-        public ExpressionNode ConvertToData(Expression expression, bool autoReduce = false)
+        public ExpressionNode ConvertToData(Expression expression, bool autoReduce = true)
         {
             return ConvertToData(expression, out _, autoReduce);
         }
 
-        public ExpressionNode ConvertToData(Expression expression, out ParamterInfo[] parameters, bool autoReduce = false)
+        public ExpressionNode ConvertToData(Expression expression, out ParamterInfo[] parameters, bool autoReduce = true)
         {
             var arg = new DataConvertArgument { convertService = this, autoReduce = autoReduce };
 

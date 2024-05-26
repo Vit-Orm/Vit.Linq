@@ -25,7 +25,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
 
         public override bool PredicateToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
         {
-            return call.methodName == methodName && (methodType == null || methodType.Name == call.typeName);
+            return call.methodName == methodName && (methodType == null || methodType.Name == call.methodCall_typeName);
         }
     }
 

@@ -24,6 +24,8 @@ namespace Vit.Linq.MsTest.Converter
                 {
                     var userList = users.ToList();
                     Assert.AreEqual(6, userList.Count);
+                    Assert.AreEqual(1, userList.First().id);
+                    Assert.AreEqual(6, userList.Last().id);
                 }
             }
 

@@ -23,8 +23,7 @@ namespace Vit.Linq
                 if (int.TryParse(propertyOrFieldName, out var index))
                     return Expression.ArrayAccess(parameter, Expression.Constant(index));
             }
-            else
-            if (valueType.IsGenericType && typeof(IEnumerable).IsAssignableFrom(valueType))
+            else if (valueType.IsGenericType && typeof(IEnumerable).IsAssignableFrom(valueType))
             {
                 // IEnumerable<>    List<>
                 if (int.TryParse(propertyOrFieldName, out var index))

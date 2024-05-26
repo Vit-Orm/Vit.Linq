@@ -28,8 +28,6 @@ namespace Vit.Linq.ExpressionTree.MsTest.新文件夹
                     // #1 Code to Data
                     // (query) => query.Where().OrderBy().Skip().Take().Select().ToList();
                     node = convertService.ConvertToData(expression);
-
-                    // {"nodeType":"Lambda","parameterNames":["Param_1"],"body":{"nodeType":"Call","methodName":"Where","arguments":[{"parameterName":"Param_1","nodeType":"Member"},{"nodeType":"Lambda","parameterNames":["Param_0"],"body":{"left":{"nodeType":"Member","parameterName":"Param_0","memberName":"id"},"right":{"nodeType":"Constant","valueType":{"typeName":"Int32"},"value":10},"nodeType":"GreaterThanOrEqual"}}]}}
                     var strNode = Json.Serialize(node);
 
                     // #2 Data to Code

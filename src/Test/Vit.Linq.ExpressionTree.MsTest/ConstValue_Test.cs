@@ -4,22 +4,29 @@ using System.Linq;
 using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Vit.Core.Module.Serialization;
-using Vit.Linq.ExpressionTree;
 
 namespace Vit.Linq.ExpressionTree.MsTest
 {
     [TestClass]
-    public class ExpressionConvert_Test
+    public class ConstValue_Test
     {
-
 
         void Test(Expression<Func<Person, bool>> predicate)
         {
-            var convert = ExpressionConvertService.Instance;
-            var node = convert.ConvertToData(predicate);
+            var convertService = ExpressionConvertService.Instance;
+
+            // #1 to ExpressionNode
+            // () =>  (query)=> query.isEven
+            var node = convertService.ConvertToData(predicate);
             var str = Json.Serialize(node);
-            var convertedPredicate = convert.ToPredicate<Person>(node);
+
+            // #2 get convertedPredicate
+            //var lambda = convertService.ToLambdaExpression(node);
+            //var del = lambda.Compile();
+            //var convertedPredicate = del.DynamicInvoke() as Func<Person, bool>;
+            var convertedPredicate = convertService.ToPredicate<Person>(node.body);
 
 
             IQueryable<Person> queryable = DataSource.GetQueryable();
@@ -40,8 +47,14 @@ namespace Vit.Linq.ExpressionTree.MsTest
         public void Test()
         {
             {
+                Expression<Func<Person, bool>> predicate = x => x.isEven;
+
+                Test(predicate);
+            }
+
+            {
                 var person = new { isEven = true };
-                Expression<Func<Person, bool>> predicate = x => person.isEven && x.isEven;
+                Expression<Func<Person, bool>> predicate = x => person.isEven;
 
                 Test(predicate);
             }
@@ -66,9 +79,6 @@ namespace Vit.Linq.ExpressionTree.MsTest
 
                 Test(predicate);
             }
-
-
-
 
         }
 

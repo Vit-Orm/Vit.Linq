@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -17,10 +18,9 @@ namespace Vit.Linq.ExpressionTree
         {
             try
             {
-                if (autoReduce)
+                if (autoReduce && CanCalculateToConstant(expression))
                 {
-                    var del = Expression.Lambda(expression).Compile();
-                    value = (T)del.DynamicInvoke();
+                    value = (T)InvokeExpression(expression);
                     return true;
                 }
             }
@@ -30,6 +30,107 @@ namespace Vit.Linq.ExpressionTree
             value = default;
             return false;
         }
+
+        public static object InvokeExpression(Expression expression) 
+        {
+            return Expression.Lambda(expression).Compile().DynamicInvoke();
+        }
+
+        public static bool CanCalculateToConstant(Expression expression) 
+        {
+            switch (expression)
+            {
+                case null: return true;
+                case MemberExpression member:
+                    {
+                        return CanCalculateToConstant(member.Expression);
+                    }
+                case UnaryExpression unary:
+                    {
+                        //switch (unary.NodeType)
+                        //{
+                        //    case ExpressionType.Convert:
+                        //    case ExpressionType.Quote:
+                        //        return CouldExecuteToConst(unary.Operand);
+                        //}
+                        return CanCalculateToConstant(unary.Operand);
+                    }
+                case BinaryExpression binary:
+                    {
+                        return CanCalculateToConstant(binary.Left)&& CanCalculateToConstant(binary.Right);
+                    }
+                case ConstantExpression constant:
+                    {
+                        var type = expression.Type;
+                        var value = constant.Value;
+                        if (value == null) return true;
+                        if (IsQueryableArgument(type)) return false;
+                        return true;
+                    }
+                case NewArrayExpression newArray:
+                    {
+                        return newArray.Expressions?.All(exp => CanCalculateToConstant(exp)) != false;
+                    }
+                case ListInitExpression listInit:
+                    {
+                        return listInit.Initializers?.All(exp => CanCalculateToConstant(exp.Arguments[0])) != false;
+                    }
+            }
+            return false;
+        }
+
+        #region Type
+
+        public static bool IsQueryableArgument(Type type)
+        {
+            if (!type.IsArray && type.IsGenericType && typeof(IQueryable).IsAssignableFrom(type))
+            {
+                //if (typeof(List<>) == type.GetGenericTypeDefinition())
+                //    return false;
+
+                return true;
+            }
+
+            return false;
+
+        }
+        public static bool IsTransportableType(Type type)
+        {
+            if (IsBasicType(type)) return true;
+
+            if (type.IsArray && IsTransportableType(type.GetElementType()))
+            {
+                return true;
+            }
+
+            if (type.IsGenericType)
+            {
+                if (type.GetGenericArguments().Any(t => !IsTransportableType(t))) return false;
+
+                if (typeof(IList).IsAssignableFrom(type)
+                    || typeof(ICollection).IsAssignableFrom(type)
+                    )
+                    return true;
+            }
+
+            return false;
+        }
+
+
+        // is valueType of Nullable 
+        public static bool IsBasicType(Type type)
+        {
+            return
+                type.IsEnum || // enum
+                type == typeof(string) || // string
+                type.IsValueType ||  //int
+                (type.IsGenericType && typeof(Nullable<>) == type.GetGenericTypeDefinition()); // int?
+        }
+
+
+        #endregion
+
+
 
         public ExpressionConvertService convertService { get; set; }
 
@@ -71,7 +172,7 @@ namespace Vit.Linq.ExpressionTree
         internal List<ParamterInfo> globalParameters { get; private set; }
 
 
-        public ExpressionNode GetParameter(object value, Type type)
+        public ExpressionNode CreateParameter(object value, Type type)
         {
             ParamterInfo parameter;
 

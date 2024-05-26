@@ -24,7 +24,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
 
         public override bool PredicateToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
         {
-            return methodNames.Contains(call.methodName) && methodType.Name == call.typeName;
+            return methodNames.Contains(call.methodName) && methodType.Name == call.methodCall_typeName;
         }
 
         public override Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
@@ -39,7 +39,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
                 return Expression.Call(typeof(Queryable), call.methodName, new[] { elementType }, methodArguments);
             }
 
-            throw new NotSupportedException($"Unsupported method typeName: {call.typeName}, methodName: {call.methodName}");
+            throw new NotSupportedException($"Unsupported method typeName: {call.methodCall_typeName}, methodName: {call.methodName}");
         }
     }
 
