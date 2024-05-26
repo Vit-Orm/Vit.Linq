@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Linq;
-using System.Text;
+using System.Linq.Expressions;
 
 namespace Vit.Extensions.Linq_Extensions
 {
-    public static partial class IQueryable_TotalCount_Extensions
-    {
 
-        #region Count 
-        public static int TotalCount(this IQueryable source)
+    public static partial class Queryable_Extensions
+    {
+        public static int ExecuteDelete(this IQueryable source)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -18,9 +15,8 @@ namespace Vit.Extensions.Linq_Extensions
             return source.Provider.Execute<int>(
                 Expression.Call(
                     null,
-                    new Func<IQueryable, int>(TotalCount).Method
+                    new Func<IQueryable, int>(ExecuteDelete).Method
                     , source.Expression));
         }
-        #endregion
     }
 }

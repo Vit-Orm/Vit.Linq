@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vit.Core.Module.Serialization;
 using Vit.Extensions.Linq_Extensions;
-using Vit.Linq.Filter;
+using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter
 {

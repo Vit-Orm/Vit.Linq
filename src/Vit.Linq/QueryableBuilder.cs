@@ -11,8 +11,7 @@ namespace Vit.Linq
         public static IQueryable<Model> Build<Model>(Func<Expression, Type, object> QueryExecutor)
         {
             var queryProvider = new QueryProvider(QueryExecutor);
-            var query = new OrderedQueryable<Model>(queryProvider);
-            return query;
+            return new OrderedQueryable<Model>(queryProvider);
         }
 
 
@@ -70,8 +69,8 @@ namespace Vit.Linq
 
         public OrderedQueryable(QueryProvider provider)
         {
-            _expression = Expression.Constant(this);
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+            _expression = Expression.Constant(this);
         }
 
         public OrderedQueryable(QueryProvider provider, Expression expression)
@@ -86,8 +85,9 @@ namespace Vit.Linq
                 throw new ArgumentOutOfRangeException(nameof(expression));
             }
 
-            _expression = expression;
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+
+            _expression = expression;
         }
 
         public Type ElementType => typeof(T);
@@ -110,6 +110,7 @@ namespace Vit.Linq
     internal class QueryProvider : IQueryProvider
     {
         Func<Expression, Type, object> QueryExecutor;
+
 
         public QueryProvider(Func<Expression, Type, object> QueryExecutor)
         {
@@ -139,8 +140,7 @@ namespace Vit.Linq
 
         public object ExecuteExpression(Expression expression, Type type)
         {
-            var data = QueryExecutor(expression, type);
-            return data;
+            return QueryExecutor(expression, type);
         }
     }
 
