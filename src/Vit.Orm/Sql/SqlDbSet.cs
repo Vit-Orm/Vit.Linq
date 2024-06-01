@@ -68,7 +68,8 @@ namespace Vit.Orm.Sql
             {
                 // #1 convert to ExpressionNode
                 // (query) => query.Where().OrderBy().Skip().Take().Select().ToList();
-                ExpressionNode node = dbContext.convertService.ConvertToData(expression, autoReduce: true);
+                var isArgument = QueryableBuilder.QueryTypeNameCompare("SqlDbSet");
+                ExpressionNode node = dbContext.convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
                 var strNode = Json.Serialize(node);
 
 
@@ -126,7 +127,7 @@ namespace Vit.Orm.Sql
                 }
                 throw new NotSupportedException("not supported query type: " + joinedStream.method);
             };
-            return QueryableBuilder.Build<Entity>(QueryExecutor);
+            return QueryableBuilder.Build<Entity>(QueryExecutor, "SqlDbSet");
         }
 
         int BatchUpdate(StreamToUpdate streamToUpdate, Type entityType)

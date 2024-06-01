@@ -24,7 +24,7 @@ namespace Vit.Orm.Sqlite.MsTest
         public static DbContext BuildInitedDatabase(string dbName)
         {
             //"data source=T:\\sample\\sers\\sqlite.db"
-            var filePath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "{dbName}.db");
+            var filePath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, $"{dbName}.db");
 
             if (File.Exists(filePath)) File.Delete(filePath);
             File.WriteAllBytes(filePath, new byte[0]);

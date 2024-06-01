@@ -1,6 +1,20 @@
 ﻿
 # TODO: 
 
+
+
+
+# MethodCall Any
+var persons = new List<Person> { new Person { id = 2 }, new Person { id = 3 } }
+    //.AsQueryable()
+    ;
+query = query
+    .Where(m => persons.Any(p => p.id == m.id)) // MethodCall Enumerable.Any
+.Where(m => persons.Where(p => p.id > 0).Select(p=>p.id).Contains(m.id)) // MethodCall Enumerable.Contains
+//.Where(m => persons.Any(p => p.id == m.id)) // MethodCall Enumerable.Any
+//.Where(m => persons.Where(p => p.id > 0).Any(p => p.id == m.id)) // MethodCall Enumerable.Where  Enumerable.Any  
+
+
 # TotalCount  : Count without take and skip
 
 # CollectionStream. Select

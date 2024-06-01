@@ -32,7 +32,8 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 {
                     // #1 Code to Data
                     // query => query.Where().OrderBy().Skip().Take().Select().ToList();
-                    node = convertService.ConvertToData(expression, autoReduce: true);
+                    var isArgument = QueryableBuilder.QueryTypeNameCompare("TestQuery");
+                    node = convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
                     var strNode = Json.Serialize(node);
 
                     // #2 Data to Code
@@ -80,7 +81,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 throw new NotSupportedException("Method not support:" + methodName);
             };
 
-            var query = QueryableBuilder.Build<Person>(QueryExecutor);
+            var query = QueryableBuilder.Build<Person>(QueryExecutor,"TestQuery");
             return query;
         }
 
@@ -255,24 +256,23 @@ namespace Vit.Linq.ExpressionTree.MsTest
 
 
         [TestMethod]
-        public void Test_MethodCall_Any()
+        public void Test_MethodCall_Enumerable_Contains()
         {
-            #region Convert
+            #region Enumerable.Contains
             {
                 var query = GetQuery();
 
-                var persons = new List<Person> { new Person { id = 2 }, new Person { id = 3 } }
-                    //.AsQueryable()
-                    ;
+                var persons = new List<Person> { new Person { id = 2 }, new Person { id = 3 } };
+                var ids = persons.Where(p => p.id > 0).Select(p => p.id);
+
                 query = query
-                    .Where(m => persons.Any(p => p.id == m.id)) // MethodCall Any
-                    //.Where(m => persons.Where(p => p.id > 0).Any(p => p.id == m.id)) // MethodCall Where Any  
+                    .Where(m => ids.Contains(m.id)) // MethodCall Enumerable.Contains
                     ;
 
                 var list = query.ToList();
-                Assert.AreEqual(11, list.Count);
-                Assert.AreEqual(0, list.First().id);
-                Assert.AreEqual(10, list.Last().id);
+                Assert.AreEqual(2, list.Count);
+                Assert.AreEqual(2, list.First().id);
+                Assert.AreEqual(3, list.Last().id);
             }
             #endregion
 

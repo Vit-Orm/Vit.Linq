@@ -12,31 +12,36 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
     {
         public ExpressionNode ConvertToData(DataConvertArgument arg, Expression expression)
         {
-            if (expression is ConstantExpression constant)
+            switch (expression)
             {
-                var type = expression.Type;
-                var value = constant.Value;
-                if (value != null && DataConvertArgument.IsQueryableArgument(type))
-                {
-                    return arg.CreateParameter(value, type);
-                }
-                return ExpressionNode.Constant(value: constant.Value, type: type);
+                case ConstantExpression constant:
+                    {
+                        var type = expression.Type;
+                        var value = constant.Value;
+                        if (arg.IsArgument(constant))
+                        {
+                            return arg.CreateParameter(value, type);
+                        }
+                        return ExpressionNode.Constant(value: constant.Value, type: type);
+                    }
+                case NewArrayExpression newArray:
+                case ListInitExpression listInit:
+                    {
+                        if (arg.CanCalculateToConstant(expression))
+                        {
+                            return ExpressionNode.Constant(value: DataConvertArgument.InvokeExpression(expression), type: expression.Type);
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        if (arg.autoReduce && arg.CanCalculateToConstant(expression))
+                        {
+                            return ExpressionNode.Constant(value: DataConvertArgument.InvokeExpression(expression), type: expression.Type);
+                        }
+                        break;
+                    }
             }
-            else if (expression is NewArrayExpression newArray)
-            {
-                if (DataConvertArgument.CanCalculateToConstant(newArray))
-                {
-                    return ExpressionNode.Constant(value: DataConvertArgument.InvokeExpression(expression), type: expression.Type);
-                }
-            }
-            else if (expression is ListInitExpression listInit)
-            {
-                if (DataConvertArgument.CanCalculateToConstant(listInit))
-                {
-                    return ExpressionNode.Constant(value: DataConvertArgument.InvokeExpression(expression), type: expression.Type);
-                }
-            }
-
             return null;
         }
 

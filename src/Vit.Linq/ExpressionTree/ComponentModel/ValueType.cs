@@ -261,7 +261,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
                     {
                         return typeof(object);
                     }
-                default: return Type.GetType("System." + typeName);
+                default: return Type.GetType("System." + typeName) ?? typeof(object);
             }
         }
 
