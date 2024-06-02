@@ -29,7 +29,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery
 
     class Argument
     {
-        public Dictionary<string, IStream> streamAliasMap;
+        public Dictionary<string, IStream> streamAliasMap { get; set; }
 
         public Argument WithAlias(IStream stream, string alias)
         {
@@ -74,7 +74,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery
             return "t" + (aliasNameCount++);
         }
 
-        // query.SelectMany(query2).Where().OrderBy().Skip().Take().Select()
+        // query.SelectMany(query2).Where().Where().OrderBy().Skip().Take().Select()
         IStream ReadStream(Argument arg, ExpressionNode node)
         {
             switch (node.nodeType)
@@ -113,14 +113,14 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery
 
                                     if (source is JoinedStream joinedStream)
                                     {
-                                        if (  joinedStream.orders == null
-                                            && joinedStream.skip == null && joinedStream.take == null
-                                            && joinedStream.select?.existCalculatedField != true)
-                                        {
-                                            where = ReadWhere(arg, joinedStream, predicateLambda);
-                                            joinedStream.where = joinedStream.where == null ? where : ExpressionNode.And(left: joinedStream.where, right: where);
-                                            return joinedStream;
-                                        }
+                                        //if (  joinedStream.orders == null
+                                        //    && joinedStream.skip == null && joinedStream.take == null
+                                        //    && joinedStream.select?.existCalculatedField != true)
+                                        //{
+                                        //    where = ReadWhere(arg, joinedStream, predicateLambda);
+                                        //    joinedStream.where = joinedStream.where == null ? where : ExpressionNode.And(left: joinedStream.where, right: where);
+                                        //    return joinedStream;
+                                        //}
                                     }
 
                                     where = ReadWhere(arg, source, predicateLambda);
@@ -249,7 +249,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery
             // #3 merge multiple join
             if (left is JoinedStream joinedStream)
             {
-                if ( joinedStream.where == null && joinedStream.orders == null
+                if (joinedStream.where == null && joinedStream.orders == null
                     && joinedStream.skip == null && joinedStream.take == null
                     && joinedStream.select?.existCalculatedField != true)
                 {
@@ -304,7 +304,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery
 
                                 right = source;
 
-                                on = ReadWhere(arg, right, predicateLambda);
+                                on = ReadWhere(arg, source, predicateLambda);
                                 return;
                             }
                         case "DefaultIfEmpty":
@@ -335,13 +335,17 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery
                 {
                     ExpressionNode_Member member = node;
 
-                    if (!string.IsNullOrWhiteSpace(member.parameterName) && arg.streamAliasMap?.TryGetValue(member.parameterName, out var parameterValue) == true)
+                    if (!string.IsNullOrWhiteSpace(member.parameterName))
                     {
-                        if (parameterValue is JoinedStream stream && stream.select?.TryGetField(node.memberName, out var sourceStream) == true)
+                        if (arg.streamAliasMap?.TryGetValue(member.parameterName, out var parameterValue) == true)
                         {
-                            return (true, (ExpressionNode)sourceStream);
+                            if (parameterValue is JoinedStream stream && stream.select?.TryGetField(member.memberName, out var sourceStream) == true)
+                            {
+                                return (true, (ExpressionNode)sourceStream);
+                            }
+                            return (true, ExpressionNode_RenameableMember.Member(parameterValue, member.memberName, node));
                         }
-                        return (true, ExpressionNode_RenameableMember.Member(parameterValue, node.memberName, node));
+                        throw new NotSupportedException($"[CollectionStream] ReadWhere, unexpected parameterName : {member.parameterName}");
                     }
                 }
                 return default;

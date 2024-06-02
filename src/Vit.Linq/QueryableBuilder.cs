@@ -21,9 +21,9 @@ namespace Vit.Linq
         }
 
 
-        public static Func<ConstantExpression, bool> QueryTypeNameCompare(string queryTypeName)
+        public static Func<object, Type, bool> QueryTypeNameCompare(string queryTypeName)
         {
-            return (exp) => GetQueryTypeName(exp?.Value as IQueryable) == queryTypeName;
+            return (value, type) => GetQueryTypeName(value as IQueryable) == queryTypeName;
         }
 
 

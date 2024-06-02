@@ -5,40 +5,15 @@ using System.Data;
 using Vit.Orm;
 using Dapper.Contrib.Extensions;
 using Vit.Orm.Sqlite.Extensions;
+using Vit.Orm.Sqlite.MsTest;
 
 namespace Vit.Linq.MsTest.Converter
 {
 
-
-
-
-
-
-    [Table("User")]
-    public class User
-    {
-        [Key]
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int id { get; set; }
-        public string name { get; set; }
-        public DateTime? birth { get; set; }
-
-        public int? fatherId { get; set; }
-        public int? motherId { get; set; }
-    }
-
-
-
     [TestClass]
     public class Queryable_Test
     {
-        static DbContext GetDbContext()
-        {
-            var dbContext = new DbContext();
-            dbContext.UseSqlite("data source=T:\\sample\\sers\\sqlite.db");
-
-            return dbContext;
-        }
+        DbContext GetDbContext() => TestData.BuildInitedDatabase(GetType().Name);
 
 
         [TestMethod]
@@ -67,9 +42,9 @@ namespace Vit.Linq.MsTest.Converter
             #region ## Test_Update
             if (1 == 1)
             {
-                var user = new User { id = 7, name = "testUser2", birth = DateTime.Now, fatherId = 1, motherId = 2 };
+                var user = new User { id = 4, name = "testUser4", birth = DateTime.Now, fatherId = 1, motherId = 2 };
 
-                var rowCount=dbContext.Update(user);
+                var rowCount = dbContext.Update(user);
 
                 Assert.AreEqual(1, rowCount);
             }
@@ -83,7 +58,7 @@ namespace Vit.Linq.MsTest.Converter
 
             if (1 == 1)
             {
-                var user = new User { id = 7, name = "testUser2", birth = DateTime.Now, fatherId = 1, motherId = 2 };
+                var user = new User { id = 5, name = "testUser2", birth = DateTime.Now, fatherId = 1, motherId = 2 };
 
                 var rowCount = dbContext.Delete(user);
 
@@ -94,7 +69,7 @@ namespace Vit.Linq.MsTest.Converter
                 var rowCount = dbContext.DeleteByKey<User>(7);
                 Assert.AreEqual(0, rowCount);
             }
-        
+
         }
 
 
@@ -102,12 +77,111 @@ namespace Vit.Linq.MsTest.Converter
         [TestMethod]
         public void Test_Query()
         {
-
             var dbContext = GetDbContext();
+
+            // table == null
+            {
+                var users = dbContext.Query<User>();
+
+                var userList = (from user in users
+                                from father in users.Where(father => user.fatherId == father.id).DefaultIfEmpty()
+                                where user.id > 2 && father == null
+                                select new
+                                {
+                                    user,
+                                    father
+                                }).ToList();
+
+                Assert.AreEqual(0, userList.Count);
+                Assert.AreEqual(0, userList.First().user.id);
+            }
+
+            #region ## Select
+            if (1 == 1)
+            {
+                var users = dbContext.Query<User>();
+                var userList = (from user in users
+                                select new
+                                {
+                                    uniqueId1 = user.id + "_" + user.fatherId + "_" + user.motherId,
+                                    uniqueId2 = $"{user.id}_{user.fatherId}_{user.motherId}"
+                                }).ToList();
+
+                Assert.AreEqual(6, userList.Count);
+                Assert.AreEqual("1_5_6", userList.First().uniqueId1);
+            }
+            #endregion
+
+            #region ## Join
+
+            // Select
+            {
+                var users = dbContext.Query<User>();
+                var userList = (from user in users
+                                from father in users.Where(father => user.fatherId == father.id).DefaultIfEmpty()
+                                select new
+                                {
+                                    user,
+                                    father
+                                }).ToList();
+
+                Assert.AreEqual(6, userList.Count);
+                Assert.AreEqual(1, userList.First().user.id);
+                Assert.AreEqual(6, userList.Last().user.id);
+                Assert.AreEqual(null, userList.Last().father?.id);
+            }
+
+            // Select
+            {
+                var users = dbContext.Query<User>();
+                var userList = (from user in users
+                                from father in users.Where(father => user.fatherId == father.id).DefaultIfEmpty()
+                                from mother in users.Where(mother => user.motherId == mother.id).DefaultIfEmpty()
+                                select new
+                                {
+                                    user,
+                                    father,
+                                    userId = user.id + 100,
+                                    hasFather = user.fatherId != null ? true : false,
+                                    hasFather2 = father != null,
+                                    fatherName = father.name,
+                                    motherName = mother.name,
+                                }).ToList();
+
+                Assert.AreEqual(6, userList.Count);
+                Assert.AreEqual(1, userList.First().user.id);
+                Assert.AreEqual(6, userList.Last().user.id);
+                Assert.AreEqual(101, userList.First().userId);
+            }
+
+           
+            if (1 == 1)
+            {
+                var users = dbContext.Query<User>();
+                var userList = (from user in users
+                                from father in users.Where(father => user.fatherId == father.id).DefaultIfEmpty()
+                                from mother in users.Where(mother => user.motherId == mother.id).DefaultIfEmpty()
+                                select new
+                                {
+                                    uniqueId = user.id + "_" + father.id + "_" + mother.id,
+                                    uniqueId1 = user.id + "_" + user.fatherId + "_" + user.motherId,
+                                    user,
+                                    user2 = user,
+                                    user3 = user,
+                                    father,
+                                    hasFather = user.fatherId != null ? true : false,
+                                    fatherName = father.name,
+                                    mother
+                                }).ToList();
+            }
+
+           
+
+            #endregion
 
 
             #region ## Count
-            if (1 == 2)
+            if (1 == 1)
             {
                 var users = dbContext.Query<User>();
 
@@ -148,77 +222,6 @@ namespace Vit.Linq.MsTest.Converter
                 Assert.AreEqual(4, list[1].user.id);
             }
             #endregion
-           
-
-            #region #1 Join
-            // worked
-            if (1 == 1)
-            {
-                var users = dbContext.Query<User>();
-
-                var userList = (from user in users
-                                from father in users.Where(father => user.fatherId == father.id).DefaultIfEmpty()
-                                where user.id > 2 && father == null
-                                select new
-                                {
-                                    userId = user.id + 100,
-                                    user,
-                                    father,
-                                    hasFather = father != null,
-                                    fatherName = father.name,
-                                }).ToList();
-            }
-            if (1 == 2)
-            {
-                var users = dbContext.Query<User>();
-                var userList = (from user in users
-                                from father in users.Where(father => user.fatherId == father.id).DefaultIfEmpty()
-                                from mother in users.Where(mother => user.motherId == mother.id).DefaultIfEmpty()
-                                select new
-                                {
-                                    userId = user.id + 100,
-                                    hasFather = user.fatherId != null ? true : false,
-                                    fatherName = father.name,
-                                    motherName = mother.name,
-                                }).ToList();
-
-            }
-            if (1 == 2)
-            {
-                var users = dbContext.Query<User>();
-                var userList = (from user in users
-                                    from father in users.Where(father => user.fatherId == father.id).DefaultIfEmpty()
-                                    from mother in users.Where(mother => user.motherId == mother.id).DefaultIfEmpty()
-                                select new
-                                {
-                                    uniqueId = user.id + "_" + father.id + "_" + mother.id,
-                                    uniqueId1 = user.id + "_" + user.fatherId + "_" + user.motherId,
-                                    user,
-                                    user2 = user,
-                                    user3 = user,
-                                    father,
-                                    hasFather = user.fatherId != null ? true : false,
-                                    fatherName = father.name,
-                                    mother
-                                }).ToList();
-            }
-
-            if (1 == 2)
-            {
-                var users = dbContext.Query<User>();
-                var userList = (from user in users
-                                select new
-                                {
-                                    uniqueId1 = user.id + "_" + user.fatherId + "_" + user.motherId,
-                                    uniqueId2 = $"{ user.id }_{ user.fatherId }_{ user.motherId }"
-                                }).ToList();
-            }
-
-            #endregion
-
-           
-
-
 
         }
 
@@ -241,7 +244,7 @@ namespace Vit.Linq.MsTest.Converter
                 Assert.AreEqual(6, count);
             }
 
-            if (1 == 3)
+            if (1 == 1)
             {
                 var users = dbContext.Query<User>();
 
@@ -263,7 +266,7 @@ namespace Vit.Linq.MsTest.Converter
 
 
 
-            if (1 == 2)
+            if (1 == 1)
             {
                 var users = dbContext.Query<User>();
 

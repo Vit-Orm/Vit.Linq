@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -37,7 +38,15 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                     {
                         if (arg.autoReduce && arg.CanCalculateToConstant(expression))
                         {
-                            return ExpressionNode.Constant(value: DataConvertArgument.InvokeExpression(expression), type: expression.Type);
+                            var value = DataConvertArgument.InvokeExpression(expression);
+                            var type = expression.Type;
+
+                            if (arg.IsArgument(value: value, type: type))
+                            {
+                                return arg.CreateParameter(value, type);
+                            }
+
+                            return ExpressionNode.Constant(value: value, type: type);
                         }
                         break;
                     }

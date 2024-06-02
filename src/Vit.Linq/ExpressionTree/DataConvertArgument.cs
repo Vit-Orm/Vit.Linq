@@ -28,36 +28,53 @@ namespace Vit.Linq.ExpressionTree
     {
         public bool autoReduce { get; set; } = false;
 
-        public Func<ConstantExpression, bool> isArgument { get; set; }
+        public Func<object,Type, bool> isArgument { get; set; }
 
-        public virtual bool IsArgument(ConstantExpression constant)
+
+        public virtual bool IsArgument(ConstantExpression constant) 
+        {
+            var value = constant.Value;
+            var type = constant.Type;
+
+            return IsArgument(value,type);
+        }
+
+        public virtual bool IsArgument(object value,Type type)
         {
             if (isArgument != null)
-                return isArgument(constant);
+                return isArgument(value,type);
 
-            var type = constant.Type;
-            //var value = constant.Value;
+         
             if (!type.IsArray && type.IsGenericType && typeof(IQueryable).IsAssignableFrom(type))
             {
-                //if (typeof(List<>) == type.GetGenericTypeDefinition())
-                //    return false;
-
                 return true;
             }
             return false;
         }
 
-        /// <summary>
-        /// TODO: use object hashcode to cache EValueType
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
+        private Dictionary<int, EValueType> eTypeMap = new Dictionary<int, EValueType>();
+
+
         protected EValueType GetEValueType(Expression expression)
         {
+            //if (expression == null) return EValueType.constant;
+
+            var hashCode = expression.GetHashCode();
+            if (eTypeMap.TryGetValue(hashCode, out var type)) return type;
+
+            type = GetEValueType_Directly(expression);
+            eTypeMap[hashCode] = type;
+
+            return type;
+        }
+
+        protected EValueType GetEValueType_Directly(Expression expression)
+        {
+
             List<EValueType> childrenTypes;
             switch (expression)
             {
-                case null: return EValueType.constant;
+                // case null: return EValueType.constant;
 
                 case ConstantExpression constant:
                     {
@@ -75,6 +92,11 @@ namespace Vit.Linq.ExpressionTree
                 case BinaryExpression binary:
                     {
                         childrenTypes = new List<EValueType> { GetEValueType(binary.Left), GetEValueType(binary.Right) };
+                        break;
+                    }
+                case NewExpression newExp:
+                    {
+                        childrenTypes = newExp.Arguments?.Select(GetEValueType).ToList();
                         break;
                     }
                 case NewArrayExpression newArray:

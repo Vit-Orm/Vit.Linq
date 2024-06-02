@@ -35,15 +35,18 @@ namespace Vit.Orm.Sqlite.MsTest
             var dbSet = dbContext.DbSet<User>();
             dbSet.Create();
 
-            new List<User> {
-                    new User {id=1,name="u1",fatherId=5,motherId=6 },
+            var users = new List<User> {
+                    new User {id=1,name="u1",  fatherId=5,motherId=6 },
                     new User {id=2,name="u2",fatherId=5,motherId=6 },
                     new User {id=3,name="u3",fatherId=5,motherId=6 },
                     new User {id=4,name="u4" },
                     new User {id=5,name="u5" },
                     new User {id=6,name="u6"},
 
-                }.ForEach(user => dbSet.Insert(user));
+                };
+            users.ForEach(user => { user.birth = DateTime.Parse("2021-01-01 00:00:00").AddHours(user.id); });
+
+            users.ForEach(user => dbSet.Insert(user));
 
             return dbContext;
         }
