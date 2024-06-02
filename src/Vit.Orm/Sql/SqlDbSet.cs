@@ -68,12 +68,16 @@ namespace Vit.Orm.Sql
             {
                 // #1 convert to ExpressionNode
                 // (query) => query.Where().OrderBy().Skip().Take().Select().ToList();
+                // (users) => users.SelectMany(
+                //      user => users.Where(father => (father.id == user.fatherId)).DefaultIfEmpty(),
+                //      (user, father) => new <>f__AnonymousType4`2(user = user, father = father)
+                //  ).Where().Select();
                 var isArgument = QueryableBuilder.QueryTypeNameCompare("SqlDbSet");
                 ExpressionNode node = dbContext.convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
                 var strNode = Json.Serialize(node);
 
 
-                // #2 convert to CombinedStream
+                // #2 convert to JoinedStream
                 // {select,left,joins,where,order,skip,take}
                 var stream = StreamReader.ReadNode(node);
                 var strStream = Json.Serialize(stream);
