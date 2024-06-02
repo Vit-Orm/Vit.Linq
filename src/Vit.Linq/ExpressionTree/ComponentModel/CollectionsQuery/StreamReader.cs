@@ -274,15 +274,10 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery
             //      user => users.Where(father => (father.id == user.fatherId)).DefaultIfEmpty(),
             StreamToJoin ReadRightStream(Argument arg, IStream left, ExpressionNode_Lambda rightSelector)
             {
-                string joinType = "innerJoin";
-                IStream right = null;
-                ExpressionNode on = null;
+                var rightStream = new StreamToJoin();
+                rightStream.joinType = "innerJoin";
 
                 ReadNode(arg.WithAlias(left, rightSelector.parameterNames[0]), rightSelector.body);
-                var rightStream = new StreamToJoin();
-                rightStream.joinType = joinType;
-                rightStream.right = right;
-                rightStream.on = on;
 
                 return rightStream;
 
@@ -296,20 +291,20 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery
                     {
                         case "Where":
                             {
-                                if (on != null)
+                                if (rightStream.on != null)
                                     throw new Exception("[CollectionStream] unexpected multiple where in join");
 
                                 var source = ReadStream(arg, call.arguments[0]);
                                 var predicateLambda = call.arguments[1] as ExpressionNode_Lambda;
 
-                                right = source;
+                                rightStream.right = source;
+                                rightStream.on = ReadWhere(arg, source, predicateLambda);
 
-                                on = ReadWhere(arg, source, predicateLambda);
                                 return;
                             }
                         case "DefaultIfEmpty":
                             {
-                                joinType = "leftJoin";
+                                rightStream.joinType = "leftJoin";
                                 var source = call.arguments[0];
                                 ReadNode(arg, source);
                                 return;
@@ -327,6 +322,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery
         ExpressionNode ReadWhere(Argument arg, IStream source, ExpressionNode_Lambda predicateLambda)
         {
             arg = arg.WithAlias(source, predicateLambda.parameterNames[0]);
+
             ExpressionNode predicate = predicateLambda.body;
             var cloner = new ExpressionNodeCloner();
             cloner.clone = (node) =>

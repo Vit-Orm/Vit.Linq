@@ -261,7 +261,7 @@ namespace Vit.Linq.MsTest.Converter
                     name = "u_" + row.user.id + "_" + (row.father.id.ToString() ?? "") + "|" + (row.user.name ?? "")
                 });
 
-                Assert.AreEqual(3, count);
+                Assert.AreEqual(6, count);
             }
 
 
