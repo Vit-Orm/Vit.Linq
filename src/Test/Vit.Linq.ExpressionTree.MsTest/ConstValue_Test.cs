@@ -22,7 +22,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
             var node = convertService.ConvertToData(predicate);
             var str = Json.Serialize(node);
 
-            // #2 get convertedPredicate
+            // #2 convert to predicate
             //var lambda = convertService.ToLambdaExpression(node);
             //var del = lambda.Compile();
             //var convertedPredicate = del.DynamicInvoke() as Func<Person, bool>;

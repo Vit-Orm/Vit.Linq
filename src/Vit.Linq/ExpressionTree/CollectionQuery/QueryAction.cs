@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 
+using Vit.Linq.ExpressionTree.ComponentModel;
 
-namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionQuery
+namespace Vit.Linq.ExpressionTree.CollectionQuery
 {
     public partial class QueryAction
     {

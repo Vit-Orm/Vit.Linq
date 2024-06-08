@@ -11,12 +11,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Vit.Linq\Vit.Linq.csproj" />
+      <PackageReference Include="Dapper" Version="2.1.35" />
+      <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Vit.Core" Version="2.1.21" />
-        <PackageReference Include="Vit.Orm.Dapper" Version="2.2.15" />
+        <ProjectReference Include="..\Vit.Linq\Vit.Linq.csproj" />
     </ItemGroup>
 
 </Project>

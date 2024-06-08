@@ -1,69 +1,122 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery;
+using Vit.Linq.ExpressionTree.CollectionsQuery;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
-using Dapper;
 using System.Linq.Expressions;
-using System.Data;
 using Vit.Orm.Entity;
 using System.Reflection;
-using Vit.Core.Module.Serialization;
 using Vit.Linq;
+using Vit.Orm.Sql.DataReader;
+using Vit.Extensions.Linq_Extensions;
 
 namespace Vit.Orm.Sql
 {
     public class SqlDbSetConstructor
     {
-        public Type entityType;
-        public DbContext dbContext;
-        public ISqlTranslator sqlTranslator;
-        public Func<IDbConnection> CreateDbConnection;
-        public Func<Type, IEntityDescriptor> GetEntityDescriptor;
-
-
-        public static IDbSet CreateDbSet<Entity>(SqlDbSetConstructor arg)
-        {
-            return new SqlDbSet<Entity>(arg.dbContext, arg.CreateDbConnection, arg.sqlTranslator, arg.GetEntityDescriptor(arg.entityType));
-        }
-        static MethodInfo _CreateDbSet = new Func<SqlDbSetConstructor, IDbSet>(CreateDbSet<object>)
-                   .Method.GetGenericMethodDefinition();
-
-        public IDbSet CreateDbSet()
+        public static IDbSet CreateDbSet( SqlDbContext dbContext, Type entityType, IEntityDescriptor entityDescriptor)
         {
             return _CreateDbSet.MakeGenericMethod(entityType)
-                     .Invoke(null, new[] { this }) as IDbSet;
+                     .Invoke(null, new object[] { dbContext, entityDescriptor }) as IDbSet;
         }
+       
+        static MethodInfo _CreateDbSet = new Func<SqlDbContext, IEntityDescriptor,IDbSet>(CreateDbSet<object>)
+                   .Method.GetGenericMethodDefinition();
+        public static IDbSet CreateDbSet<Entity>(SqlDbContext dbContext, IEntityDescriptor entityDescriptor)
+        {
+            return new SqlDbSet<Entity>(dbContext, entityDescriptor);
+        }
+
     }
 
     public class SqlDbSet<Entity> : Vit.Orm.DbSet<Entity>
     {
-        ISqlTranslator sqlTranslator;
-        DbContext dbContext;
-        protected Func<IDbConnection> CreateDbConnection;
+        protected SqlDbContext dbContext;
 
-        IEntityDescriptor _entityDescriptor;
+        protected IEntityDescriptor _entityDescriptor;
         public override IEntityDescriptor entityDescriptor => _entityDescriptor;
 
-        public SqlDbSet(DbContext dbContext, Func<IDbConnection> CreateDbConnection, ISqlTranslator sqlTranslator, IEntityDescriptor entityDescriptor)
+
+        public virtual ISqlTranslator sqlTranslator => dbContext.sqlTranslator;
+
+        public SqlDbSet(SqlDbContext dbContext, IEntityDescriptor entityDescriptor)
         {
             this.dbContext = dbContext;
-            this.CreateDbConnection = CreateDbConnection;
-            this.sqlTranslator = sqlTranslator;
             this._entityDescriptor = entityDescriptor;
         }
 
         public override void Create()
         {
-            string sql = sqlTranslator.Create(entityDescriptor);
+            string sql = sqlTranslator.PrepareCreate(entityDescriptor);
 
-            using var connection = CreateDbConnection();
-            connection.Execute(sql: sql);
+            dbContext.Execute(sql: sql);
         }
+
+
+
+
+        public override Entity Add(Entity entity)
+        {
+            // #1 prepare sql
+            (string sql, Func<Entity, Dictionary<string, object>> GetSqlParams) = sqlTranslator.PrepareAdd(this);
+
+            // #2 get sql params
+            var sqlParam = GetSqlParams(entity);
+
+            // #3 execute
+            var affectedRowCount = dbContext.Execute(sql: sql, param: (object)sqlParam);
+
+            return affectedRowCount == 1 ? entity : default;
+        }
+
+        public override void AddRange(IEnumerable<Entity> entitys)
+        {
+            // #1 prepare sql
+            (string sql, Func<Entity, Dictionary<string, object>> GetSqlParams) = sqlTranslator.PrepareAdd(this);
+
+            // #2 execute
+            var affectedRowCount = 0;
+
+            foreach (var entity in entitys)
+            {
+                var sqlParam = GetSqlParams(entity);
+                if (dbContext.Execute(sql: sql, param: (object)sqlParam) == 1)
+                    affectedRowCount++;
+            }
+        }
+
+
+        public override Entity Get(object keyValue)
+        {
+            // #1 prepare sql
+            string sql = sqlTranslator.PrepareGet(this);
+
+            // #2 get sql params
+            var sqlParam = new Dictionary<string, object>();
+            sqlParam[entityDescriptor.keyName] = keyValue;
+
+            // #3 execute
+            using var reader = dbContext.ExecuteReader(sql: sql, param: (object)sqlParam);
+            if (reader.Read())
+            {
+                var entity = (Entity)Activator.CreateInstance(typeof(Entity));
+                foreach (var column in entityDescriptor.allColumns)
+                {
+                    column.Set(entity, TypeUtil.ConvertToType(reader[column.name], column.type));
+                }
+                return entity;
+            }
+            return default;
+
+
+        }
+
 
         public override IQueryable<Entity> Query()
         {
+            var dbContextId = "SqlDbSet_" + dbContext.GetHashCode();
+
             Func<Expression, Type, object> QueryExecutor = (expression, type) =>
             {
                 // #1 convert to ExpressionNode
@@ -72,49 +125,63 @@ namespace Vit.Orm.Sql
                 //      user => users.Where(father => (father.id == user.fatherId)).DefaultIfEmpty(),
                 //      (user, father) => new <>f__AnonymousType4`2(user = user, father = father)
                 //  ).Where().Select();
-                var isArgument = QueryableBuilder.QueryTypeNameCompare("SqlDbSet");
+                var isArgument = QueryableBuilder.QueryTypeNameCompare(dbContextId);
                 ExpressionNode node = dbContext.convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
-                var strNode = Json.Serialize(node);
+                //var strNode = Json.Serialize(node);
 
 
-                // #2 convert to JoinedStream
+                // #2 convert to Streams
                 // {select,left,joins,where,order,skip,take}
                 var stream = StreamReader.ReadNode(node);
-                var strStream = Json.Serialize(stream);
+                //var strStream = Json.Serialize(stream);
 
-     
 
-                // #3.1 BatchUpdate
+                // #3.1 ExecuteUpdate
                 if (stream is StreamToUpdate streamToUpdate)
                 {
-                    var entityType = expression.Type.GetGenericArguments()?.FirstOrDefault();
-                    return BatchUpdate(streamToUpdate, entityType);
+                    (string sql, Dictionary<string, object> sqlParam) = sqlTranslator.PrepareExecuteUpdate(streamToUpdate);
+
+                    return dbContext.Execute(sql: sql, param: (object)sqlParam);
                 }
 
 
                 // #3.3 Query
                 // #3.3.1
-                var joinedStream = stream as JoinedStream;
-                if (joinedStream == null) joinedStream = new JoinedStream("tmp") { left = stream };
+                var combinedStream = stream as CombinedStream;
+                if (combinedStream == null) combinedStream = new CombinedStream("tmp") { source = stream };
 
                 // #3.3.2 execute and read result
-                switch (joinedStream.method)
+                switch (combinedStream.method)
                 {
-                    case "ToSql":
+                    case nameof(Queryable_Extensions.ToExecuteString):
                         {
-                            // ToSql
-                            var entityType = expression.Type.GetGenericArguments()?.FirstOrDefault();
-                            (string sql, Dictionary<string, object> sqlParam, IDbDataReader dataReader) = sqlTranslator.Query(joinedStream, entityType);
+                            // ToExecuteString
+                            (string sql, Dictionary<string, object> sqlParam, IDbDataReader dataReader) = sqlTranslator.PrepareQuery(combinedStream, entityType: null);
                             return sql;
                         }
                     case "Count":
                         {
                             // Count
-                            (string sql, Dictionary<string, object> sqlParam, IDbDataReader dataReader) = sqlTranslator.Query(joinedStream, entityType: null);
+                            (string sql, Dictionary<string, object> sqlParam, IDbDataReader dataReader) = sqlTranslator.PrepareQuery(combinedStream, entityType: null);
 
-                            using var connection = CreateDbConnection();
-                            var count = connection.ExecuteScalar(sql: sql, param: (object)sqlParam);
+                            var count = dbContext.ExecuteScalar(sql: sql, param: (object)sqlParam);
+                            return Convert.ToInt32(count);
+                        }
+                    case nameof(Queryable_Extensions.ExecuteDelete):
+                        {
+                            // ExecuteDelete
+                            (string sql, Dictionary<string, object> sqlParam) = sqlTranslator.PrepareExecuteDelete(combinedStream);
+
+                            var count = dbContext.Execute(sql: sql, param: (object)sqlParam);
                             return count;
+                        }
+                    case "FirstOrDefault" or "First" or "LastOrDefault" or "Last":
+                        {
+                            var entityType = expression.Type;
+                            (string sql, Dictionary<string, object> sqlParam, IDbDataReader dataReader) = sqlTranslator.PrepareQuery(combinedStream, entityType);
+
+                            using var reader = dbContext.ExecuteReader(sql: sql, param: (object)sqlParam);
+                            return dataReader.ReadData(reader);
                         }
                     case "ToList":
                     case "":
@@ -122,67 +189,92 @@ namespace Vit.Orm.Sql
                         {
                             // ToList
                             var entityType = expression.Type.GetGenericArguments()?.FirstOrDefault();
-                            (string sql, Dictionary<string, object> sqlParam, IDbDataReader dataReader) = sqlTranslator.Query(joinedStream, entityType);
+                            (string sql, Dictionary<string, object> sqlParam, IDbDataReader dataReader) = sqlTranslator.PrepareQuery(combinedStream, entityType);
 
-                            using var connection = CreateDbConnection();
-                            using var reader = connection.ExecuteReader(sql: sql, param: (object)sqlParam);
+                            using var reader = dbContext.ExecuteReader(sql: sql, param: (object)sqlParam);
                             return dataReader.ReadData(reader);
                         }
                 }
-                throw new NotSupportedException("not supported query type: " + joinedStream.method);
+                throw new NotSupportedException("not supported query type: " + combinedStream.method);
             };
-            return QueryableBuilder.Build<Entity>(QueryExecutor, "SqlDbSet");
-        }
-
-        int BatchUpdate(StreamToUpdate streamToUpdate, Type entityType)
-        {
-            // Update
-            (string sql, Dictionary<string, object> sqlParam) = sqlTranslator.ExecuteUpdate(streamToUpdate, entityType);
-
-            using var connection = CreateDbConnection();
-            return connection.Execute(sql: sql, param: (object)sqlParam);
+            return QueryableBuilder.Build<Entity>(QueryExecutor, dbContextId);
         }
 
 
-        public override Entity Insert(Entity entity)
-        {
-            (string sql, Dictionary<string, object> sqlParam ) = sqlTranslator.Insert(this, entity);
 
-            // # execute and get key value
-            using var connection = CreateDbConnection();
-            var affectedRowCount = connection.Execute(sql: sql, param: (object)sqlParam);
 
-            return affectedRowCount == 1 ? entity : default;
-        }
-   
+
         public override int Update(Entity entity)
         {
-            (string sql, Dictionary<string, object> sqlParam) = sqlTranslator.Update(this, entity);
+            // #1 prepare sql
+            (string sql, Func<Entity, Dictionary<string, object>> GetSqlParams) = sqlTranslator.PrepareUpdate(this);
+
+            // #2 get sql params
+            var sqlParam = GetSqlParams(entity);
 
             // #3 execute
-            using var connection = CreateDbConnection();
-            var affectedRowCount = connection.Execute(sql: sql, param: (object)sqlParam);
+            var affectedRowCount = dbContext.Execute(sql: sql, param: (object)sqlParam);
 
             return affectedRowCount;
         }
-     
+
+        public override int UpdateRange(IEnumerable<Entity> entitys)
+        {
+            // #1 prepare sql
+            (string sql, Func<Entity, Dictionary<string, object>> GetSqlParams) = sqlTranslator.PrepareUpdate(this);
+
+            // #2 execute
+            var affectedRowCount = 0;
+
+            foreach (var entity in entitys)
+            {
+                var sqlParam = GetSqlParams(entity);
+                affectedRowCount += dbContext.Execute(sql: sql, param: (object)sqlParam);
+            }
+            return affectedRowCount;
+        }
+
+
+
         public override int Delete(Entity entity)
         {
-            (string sql, Dictionary<string, object> sqlParam) = sqlTranslator.Delete(this, entity);
+            var key = entityDescriptor.key.Get(entity);
+            return DeleteByKey(key);
+        }
+
+        public override int DeleteRange(IEnumerable<Entity> entitys)
+        {
+            var keys = entitys.Select(entity => entityDescriptor.key.Get(entity)).ToList();
+            return DeleteByKeys(keys);
+        }
+
+
+        public override int DeleteByKey(object keyValue)
+        {
+            // #1 prepare sql
+            string sql = sqlTranslator.PrepareDelete(this);
+
+            // #2 get sql params
+            var sqlParam = new Dictionary<string, object>();
+            sqlParam[entityDescriptor.keyName] = keyValue;
 
             // #3 execute
-            using var connection = CreateDbConnection();
-            var affectedRowCount = connection.Execute(sql: sql, param: (object)sqlParam);
+            var affectedRowCount = dbContext.Execute(sql: sql, param: (object)sqlParam);
 
             return affectedRowCount;
         }
-        public override int DeleteByKey(object keyValue)
+
+        public override int DeleteByKeys<Key>(IEnumerable<Key> keys)
         {
-            (string sql, Dictionary<string, object> sqlParam) = sqlTranslator.DeleteByKey(this, keyValue);
+            // #1 prepare sql
+            string sql = sqlTranslator.PrepareDeleteRange(this);
+
+            // #2 get sql params
+            var sqlParam = new Dictionary<string, object>();
+            sqlParam["keys"] = keys;
 
             // #3 execute
-            using var connection = CreateDbConnection();
-            var affectedRowCount = connection.Execute(sql: sql, param: (object)sqlParam);
+            var affectedRowCount = dbContext.Execute(sql: sql, param: (object)sqlParam);
 
             return affectedRowCount;
         }

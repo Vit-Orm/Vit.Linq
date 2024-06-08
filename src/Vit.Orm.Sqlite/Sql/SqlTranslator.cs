@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
-using Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery;
+using Vit.Linq.ExpressionTree.CollectionsQuery;
 using Vit.Orm.Entity;
 using Vit.Orm.Sql;
+using Vit.Linq.ExpressionTree.ExpressionConvertor;
+using System.Linq;
 
 namespace Vit.Orm.Sqlite.Sql
 {
@@ -19,7 +22,7 @@ namespace Vit.Orm.Sqlite.Sql
         }
 
 
-        public string Create(IEntityDescriptor entityDescriptor)
+        public string PrepareCreate(IEntityDescriptor entityDescriptor)
         {
             /* //sql
 CREATE TABLE `user` (
@@ -82,57 +85,84 @@ CREATE TABLE `{entityDescriptor.tableName}` (
             #endregion
 
         }
+        public string PrepareGet<Entity>(DbSet<Entity> dbSet)
+        {
+            /* //sql
+            delete from user where id = 7;
+            */
+            var entityDescriptor = dbSet.entityDescriptor;
 
+            // #2 build sql
+            string sql = $@"select * from `{entityDescriptor.tableName}` where `{entityDescriptor.keyName}`=@{entityDescriptor.keyName};";
 
-        public (string sql, Dictionary<string, object> sqlParam, IDbDataReader dataReader) Query(JoinedStream joinedStream, Type entityType)
+            return sql;
+        }
+
+        public (string sql, Dictionary<string, object> sqlParam, IDbDataReader dataReader) PrepareQuery(CombinedStream combinedStream, Type entityType)
         {
             var query = new QueryTranslator(this, entityType: entityType);
-            string sql = query.BuildQuery(joinedStream);
+            string sql = query.BuildQuery(combinedStream);
             return (sql, query.sqlParam, query.dataReader);
         }
 
-        public (string sql, Dictionary<string, object> sqlParam) ExecuteUpdate(JoinedStream joinedStream, Type entityType)
+        public (string sql, Dictionary<string, object> sqlParam) PrepareExecuteUpdate(CombinedStream combinedStream)
         {
-            var query = new BatchUpdateTranslator(this, entityType: entityType);
-            string sql = query.BuildQuery(joinedStream);
+            var query = new BatchUpdateTranslator(this);
+            string sql = query.BuildQuery(combinedStream);
             return (sql, query.sqlParam);
         }
 
-        public (string sql, Dictionary<string, object> sqlParam) Insert<Entity>(DbSet<Entity> dbSet, Entity entity)
+        public (string sql, Dictionary<string, object> sqlParam) PrepareExecuteDelete(CombinedStream combinedStream)
+        {
+            var query = new BatchDeleteTranslator(this);
+            string sql = query.BuildQuery(combinedStream);
+            return (sql, query.sqlParam);
+        }
+
+        public (string sql, Func<Entity, Dictionary<string, object>> GetSqlParams) PrepareAdd<Entity>(DbSet<Entity> dbSet)
         {
             /* //sql
              insert into user(name,birth,fatherId,motherId) values('','','');
              select seq from sqlite_sequence where name='user';
               */
             var entityDescriptor = dbSet.entityDescriptor;
-            var sqlParam = new Dictionary<string, object>();
 
-            #region columns 
+            // #1 GetSqlParams 
+            Func<Entity, Dictionary<string, object>> GetSqlParams = (Entity entity) =>
+                {
+                    var sqlParam = new Dictionary<string, object>();
+                    foreach (var column in entityDescriptor.allColumns)
+                    {
+                        var columnName = column.name;
+                        var value = column.Get(entity);
+
+                        sqlParam[columnName] = value;
+                    }
+                    return sqlParam;
+                };
+
+            #region #2 columns 
             List<string> columnNames = new List<string>();
             List<string> valueParams = new List<string>();
             string columnName;
-            object value;
 
             foreach (var column in entityDescriptor.allColumns)
             {
                 columnName = column.name;
-                value = column.Get(entity);
-                //value ??= DBNull.Value;
 
                 columnNames.Add($"`{columnName}`");
                 valueParams.Add($"@{columnName}");
-                sqlParam[columnName] = value;
             }
             #endregion
 
-            // #2 build sql
+            // #3 build sql
             string sql = $@"insert into `{entityDescriptor.tableName}`({string.Join(",", columnNames)}) values({string.Join(",", valueParams)});";
             //sql+=$"select seq from sqlite_sequence where name = '{tableName}'; ";
 
-            return (sql, sqlParam);
+            return (sql, GetSqlParams);
         }
 
-        public (string sql, Dictionary<string, object> sqlParam) Update<Entity>(DbSet<Entity> dbSet, Entity entity)
+        public (string sql, Func<Entity, Dictionary<string, object>> GetSqlParams) PrepareUpdate<Entity>(DbSet<Entity> dbSet)
         {
             /* //sql
                 update user set name='' where id=7;
@@ -141,54 +171,61 @@ CREATE TABLE `{entityDescriptor.tableName}` (
             var entityDescriptor = dbSet.entityDescriptor;
             var sqlParam = new Dictionary<string, object>();
 
-            // #1 columns
+            // #1 GetSqlParams
+            Func<Entity, Dictionary<string, object>> GetSqlParams = (Entity entity) =>
+            {
+                var sqlParam = new Dictionary<string, object>();
+                foreach (var column in entityDescriptor.allColumns)
+                {
+                    var columnName = column.name;
+                    var value = column.Get(entity);
+
+                    sqlParam[columnName] = value;
+                }
+                //sqlParam[entityDescriptor.keyName] = entityDescriptor.key.Get(entity);
+                return sqlParam;
+            };
+
+            // #2 columns
             List<string> columnsToUpdate = new List<string>();
-            string columnName; object value;
+            string columnName;
             foreach (var column in entityDescriptor.columns)
             {
                 columnName = column.name;
-                value = column.Get(entity) ?? DBNull.Value;
-
                 columnsToUpdate.Add($"`{columnName}`=@{columnName}");
-                sqlParam[columnName] = value;
             }
 
-
-            // #2 build sql
+            // #3 build sql
             string sql = $@"update `{entityDescriptor.tableName}` set {string.Join(",", columnsToUpdate)} where `{entityDescriptor.keyName}`=@{entityDescriptor.keyName};";
-            sqlParam[entityDescriptor.keyName] = entityDescriptor.key.Get(entity);
 
-            return (sql, sqlParam);
+            return (sql, GetSqlParams);
         }
 
 
-        public (string sql, Dictionary<string, object> sqlParam) Delete<Entity>(DbSet<Entity> dbSet, Entity entity)
+        public string PrepareDelete<Entity>(DbSet<Entity> dbSet)
         {
             /* //sql
-            delete from user where id=7;
+            delete from user where id = 7;
             */
             var entityDescriptor = dbSet.entityDescriptor;
-            var sqlParam = new Dictionary<string, object>();
 
             // #2 build sql
             string sql = $@"delete from `{entityDescriptor.tableName}` where `{entityDescriptor.keyName}`=@{entityDescriptor.keyName};";
-            sqlParam[entityDescriptor.keyName] = entityDescriptor.key.Get(entity);
 
-            return (sql, sqlParam);
+            return sql;
         }
-        public (string sql, Dictionary<string, object> sqlParam) DeleteByKey<Entity>(DbSet<Entity> dbSet, object keyValue)
+
+        public string PrepareDeleteRange<Entity>(DbSet<Entity> dbSet)
         {
             /* //sql
-            delete from user where id=7;
+            delete from user where id in ( 7 ) ;
             */
             var entityDescriptor = dbSet.entityDescriptor;
-            var sqlParam = new Dictionary<string, object>();
 
             // #2 build sql
-            string sql = $@"delete from `{entityDescriptor.tableName}` where `{entityDescriptor.keyName}`=@{entityDescriptor.keyName};";
-            sqlParam[entityDescriptor.keyName] = keyValue;
+            string sql = $@"delete from `{entityDescriptor.tableName}` where `{entityDescriptor.keyName}` in @keys;";
 
-            return (sql, sqlParam);
+            return sql;
         }
 
         public string GetTableName(Type entityType)
@@ -196,10 +233,12 @@ CREATE TABLE `{entityDescriptor.tableName}` (
             return dbContext.GetEntityDescriptor(entityType)?.tableName;
         }
 
+
         public string GetSqlField(string tableName, string columnName)
         {
             return $"`{tableName}`.`{columnName}`";
         }
+
 
         public string GetSqlField(ExpressionNode_Member member)
         {
@@ -213,6 +252,36 @@ CREATE TABLE `{entityDescriptor.tableName}` (
             // 2: {"nodeType":"Member","objectValue":{"parameterName":"a0","nodeType":"Member"},"memberName":"id"}
             return GetSqlField(member.objectValue?.parameterName ?? member.parameterName, memberName);
         }
+
+
+        /// <summary>
+        /// functionName example:  Count, Max, Min, Sum, Average
+        /// </summary>
+        /// <param name="functionName"></param>
+        /// <param name="tableName"></param>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
+        public string GetSqlField_Aggregate(string functionName, string tableName, string columnName)
+        {
+            switch (functionName)
+            {
+                case nameof(Enumerable.Count):
+                    {
+                        if (columnName == null) return $"{functionName}(*)";
+                        return $"{functionName}(`{tableName}`.`{columnName}`)";
+                    }
+                case nameof(Enumerable.Max) or nameof(Enumerable.Min) or nameof(Enumerable.Sum):
+                    {
+                        return $"{functionName}(`{tableName}`.`{columnName}`)";
+                    }
+                case nameof(Enumerable.Average):
+                    {
+                        return $"AVG(`{tableName}`.`{columnName}`)";
+                    }
+            }
+            throw new NotSupportedException("[SqlTranslator] unsupported aggregate function : " + functionName);
+        }
+
 
         public IEntityDescriptor GetEntityDescriptor(Type entityType) => dbContext.GetEntityDescriptor(entityType);
 

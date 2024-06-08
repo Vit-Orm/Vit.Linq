@@ -4,17 +4,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
 using Vit.Extensions.Linq_Extensions;
 using System.Data;
-using Vit.Linq.ExpressionTree;
 using Vit.Linq.ExpressionTree.ComponentModel;
 using System;
-using Vit.Linq.ExpressionTree.ComponentModel.CollectionQuery;
 using System.Linq;
 using System.Collections.Generic;
-using System.Collections;
+using Vit.Linq.ExpressionTree.CollectionQuery;
 
 namespace Vit.Linq.ExpressionTree.MsTest
 {
-    // rootExpression?
     [TestClass]
     public class QueryAction_Test
     {
@@ -35,6 +32,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                     var isArgument = QueryableBuilder.QueryTypeNameCompare("TestQuery");
                     node = convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
                     var strNode = Json.Serialize(node);
+
 
                     // #2 Data to Code
                     // query => query.Where(person => (person.id >= 10))
@@ -271,6 +269,24 @@ namespace Vit.Linq.ExpressionTree.MsTest
 
                 var list = query.ToList();
                 Assert.AreEqual(2, list.Count);
+                Assert.AreEqual(2, list.First().id);
+                Assert.AreEqual(3, list.Last().id);
+            }
+            #endregion
+
+        }
+
+
+
+        [TestMethod]
+        public void Test_MethodCall_Enumerable_ToArray()
+        {
+            #region Enumerable.ToArray
+            {
+                var query = GetQuery().Where(m => m.id >= 2 && m.id < 4);
+
+                var list = query.ToArray();
+                Assert.AreEqual(2, list.Length);
                 Assert.AreEqual(2, list.First().id);
                 Assert.AreEqual(3, list.Last().id);
             }

@@ -17,7 +17,10 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                 arg.RegisterParameterNames(parameterNames);
 
                 var body = arg.convertService.ConvertToData(arg, lambda.Body);
-                return ExpressionNode.Lambda(parameterNames: parameterNames, body: body);
+
+                var parameterTypes = lambda.Parameters.Select(parameter => parameter.Type).ToArray();
+                var returnType = lambda.ReturnType;
+                return ExpressionNode.Lambda(parameterNames: parameterNames, body: body).Lambda_SetParamTypes(parameterTypes, returnType);
             }
 
             return null;

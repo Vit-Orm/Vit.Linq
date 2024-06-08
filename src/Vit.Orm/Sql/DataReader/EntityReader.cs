@@ -13,10 +13,9 @@ namespace Vit.Orm.Sql.DataReader
     {
         public List<string> sqlFields { get; private set; } = new List<string>();
 
-        Type entityType;
-        List<IArgReader> entityArgReaders = new List<IArgReader>();
-        Delegate lambdaCreateEntity;
-
+        protected Type entityType;
+        protected List<IArgReader> entityArgReaders = new List<IArgReader>();
+        protected Delegate lambdaCreateEntity;
 
         public string BuildSelect(Type entityType, ISqlTranslator sqlTranslator, ExpressionConvertService convertService, ExpressionNode selectedFields)
         {
@@ -30,6 +29,17 @@ namespace Vit.Orm.Sql.DataReader
                     ExpressionNode_Member member = node;
 
                     var argName = GetArgument(sqlTranslator, member);
+
+                    if (argName != null)
+                    {
+                        return (true, ExpressionNode.Member(parameterName: argName, memberName: null));
+                    }
+                }
+                else if (node?.nodeType == NodeType.MethodCall)
+                {
+                    ExpressionNode_MethodCall methodCall = node;
+
+                    var argName = GetArgument(sqlTranslator, methodCall);
 
                     if (argName != null)
                     {
@@ -51,18 +61,18 @@ namespace Vit.Orm.Sql.DataReader
             #endregion
 
             // sqlFields
-            return String.Join(",", sqlFields);
+            return String.Join(", ", sqlFields);
         }
 
 
-        public object ReadData(IDataReader reader)
+        public virtual object ReadData(IDataReader reader)
         {
-            return new Func<IDataReader, List<string>>(ReadEntity<string>)
+            return new Func<IDataReader, object>(ReadEntity<string>)
               .GetMethodInfo().GetGenericMethodDefinition().MakeGenericMethod(entityType)
               .Invoke(this, new object[] { reader });
         }
 
-        List<Entity> ReadEntity<Entity>(IDataReader reader)
+        object ReadEntity<Entity>(IDataReader reader)
         {
             var list = new List<Entity>();
 
@@ -72,10 +82,11 @@ namespace Vit.Orm.Sql.DataReader
                 var obj = (Entity)lambdaCreateEntity.DynamicInvoke(lambdaArgs);
                 list.Add(obj);
             }
+
             return list;
         }
 
-        string GetArgument(ISqlTranslator sqlTranslator, ExpressionNode_Member member)
+        protected string GetArgument(ISqlTranslator sqlTranslator, ExpressionNode_Member member)
         {
             // tableName_fieldName   tableName_
             var argUniqueKey = $"arg_{member.objectValue?.parameterName ?? member.parameterName}_{member.memberName}";
@@ -85,22 +96,94 @@ namespace Vit.Orm.Sql.DataReader
             if (argReader == null)
             {
                 var argName = "arg_" + entityArgReaders.Count;
-                if (member.memberName != null)
+
+                var argType = member.Member_GetType();
+
+                bool isValueType = TypeUtil.IsValueType(argType);
+                if (isValueType)
                 {
                     // Value arg
                     string sqlFieldName = sqlTranslator.GetSqlField(member);
-                    argReader = new ValueReader(this, member, argUniqueKey, argName, sqlFieldName);
+                    argReader = new ValueReader(this, argType, argUniqueKey, argName, sqlFieldName);
                 }
                 else
                 {
                     // Entity arg
-                    var argType = member.Member_GetType();
-
                     argReader = new ModelReader(this, sqlTranslator, member, argUniqueKey, argName, argType);
                 }
                 entityArgReaders.Add(argReader);
             }
             return argReader.argName;
+        }
+        protected string GetArgument(ISqlTranslator sqlTranslator, ExpressionNode_MethodCall methodCall)
+        {
+            var functionName = methodCall.methodName;
+            switch (methodCall.methodName)
+            {
+                case nameof(Enumerable.Count):
+                    {
+                        var stream = methodCall.arguments[0] as ExpressionNode_Member;
+                        if (stream?.nodeType == NodeType.Member && stream.parameterName != null && stream.memberName == null)
+                        {
+                            var tableName = stream.parameterName;
+                            var columnName = stream.memberName;
+
+                            var argUniqueKey = $"argFunc_{functionName}_{tableName}_{columnName}";
+
+                            IArgReader argReader = entityArgReaders.FirstOrDefault(reader => reader.argUniqueKey == argUniqueKey);
+
+                            if (argReader == null)
+                            {
+                                var argName = "arg_" + entityArgReaders.Count;
+
+                                var argType = typeof(int);
+
+                                // Value arg
+                                string sqlFieldName = sqlTranslator.GetSqlField_Aggregate(functionName,tableName, columnName: columnName);
+                                argReader = new ValueReader(this, argType, argUniqueKey, argName, sqlFieldName);
+
+                                entityArgReaders.Add(argReader);
+                            }
+                            return argReader.argName;
+                        }
+                    }
+                    break;
+                case nameof(Enumerable.Max) or nameof(Enumerable.Min) or nameof(Enumerable.Sum) or nameof(Enumerable.Average) when methodCall.arguments.Length == 2:
+                    {
+                        var stream = methodCall.arguments[0] as ExpressionNode_Member;
+                        if (stream?.nodeType == NodeType.Member && stream.parameterName != null && stream.memberName == null)
+                        {
+                            var lambdaFieldSelect = methodCall.arguments[1] as ExpressionNode_Lambda;
+                            if (lambdaFieldSelect?.body?.nodeType == NodeType.Member)
+                            {
+                                var tableName = stream.parameterName;
+                                string columnName = lambdaFieldSelect.body.memberName;
+
+                                var argUniqueKey = $"argFunc_{functionName}_{tableName}_{columnName}";
+
+                                IArgReader argReader = entityArgReaders.FirstOrDefault(reader => reader.argUniqueKey == argUniqueKey);
+
+                                if (argReader == null)
+                                {
+                                    var argName = "arg_" + entityArgReaders.Count;
+
+                                    var argType = methodCall.MethodCall_GetReturnType();
+
+                                    // Value arg
+                                    string sqlFieldName = sqlTranslator.GetSqlField_Aggregate(functionName,tableName, columnName: columnName);
+                                    argReader = new ValueReader(this, argType, argUniqueKey, argName, sqlFieldName);
+
+                                    entityArgReaders.Add(argReader);
+                                }
+                                return argReader.argName;
+                            }
+                        }
+                    }
+                    break;
+
+            }
+            //throw new NotSupportedException("[CollectionStream] unexpected method call : " + methodCall.methodName);
+            return default;
         }
 
 

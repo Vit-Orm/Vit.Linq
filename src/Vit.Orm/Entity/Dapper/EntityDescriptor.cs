@@ -6,14 +6,16 @@ using System.Reflection;
 
 namespace Vit.Orm.Entity.Dapper
 {
-    public class EntityDescriptor: IEntityDescriptor
+    public class EntityDescriptor : IEntityDescriptor
     {
         static ConcurrentDictionary<Type, EntityDescriptor> descMap = new();
         static EntityDescriptor New(Type entityType) => new EntityDescriptor(entityType);
+
+        public static string GetTableName(Type entityType) => entityType?.GetCustomAttribute<global::Dapper.Contrib.Extensions.TableAttribute>()?.Name;
         public static EntityDescriptor GetEntityDescriptor(Type entityType)
         {
-            if (entityType?.GetCustomAttribute<global::Dapper.Contrib.Extensions.TableAttribute>() == null) return null;
-            //if (entityType == null) return null;
+            if (GetTableName(entityType) == null) return null;
+
             return descMap.GetOrAdd(entityType, New);
         }
 
@@ -24,15 +26,17 @@ namespace Vit.Orm.Entity.Dapper
 
         EntityDescriptor(Type entityType)
         {
-            tableName = entityType.GetCustomAttribute<global::Dapper.Contrib.Extensions.TableAttribute>()?.Name;
+            tableName = GetTableName(entityType);
 
-            var entityProperties = entityType?.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var entityProperties = entityType?.GetProperties(BindingFlags.Public | BindingFlags.Instance) ?? new PropertyInfo[0];
 
             var keyProperty = entityProperties.FirstOrDefault(p => p.GetCustomAttribute<global::Dapper.Contrib.Extensions.KeyAttribute>() != null);
             this.key = new ColumnDescriptor(keyProperty, true);
 
             var properties = entityProperties.Where(p => p.GetCustomAttribute<global::Dapper.Contrib.Extensions.KeyAttribute>() == null);
             this.columns = properties.Select(p => new ColumnDescriptor(p, false)).ToArray();
+
+            allColumns = new List<IColumnDescriptor> { key }.Concat(columns).ToArray();
         }
 
         public string tableName { get; private set; }
@@ -53,7 +57,7 @@ namespace Vit.Orm.Entity.Dapper
         public IColumnDescriptor[] columns { get; private set; }
 
 
-        public IEnumerable<IColumnDescriptor> allColumns => new[] { key }.Concat(columns);
+        public IColumnDescriptor[] allColumns { get; private set; }
 
 
     }

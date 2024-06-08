@@ -5,7 +5,7 @@ using Vit.Linq.ExpressionTree.ComponentModel;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
+namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Other_Methods
 {
 
     /// <summary>

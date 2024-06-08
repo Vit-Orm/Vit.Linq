@@ -7,7 +7,13 @@ namespace Vit.Extensions.Linq_Extensions
 
     public static partial class Queryable_Extensions
     {
-        public static string ToSql(this IQueryable source)
+        /// <summary>
+        /// if mysql or sqlserver or sqlite , will get sql string
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static string ToExecuteString(this IQueryable source)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -15,7 +21,7 @@ namespace Vit.Extensions.Linq_Extensions
             return source.Provider.Execute<string>(
                 Expression.Call(
                     null,
-                    new Func<IQueryable, string>(ToSql).Method
+                    new Func<IQueryable, string>(ToExecuteString).Method
                     , source.Expression));
         }
     }

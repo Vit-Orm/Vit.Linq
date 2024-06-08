@@ -20,6 +20,10 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         public string methodName { get;  }
 
         public ExpressionNode[] arguments { get; }
+
+        Type[] MethodCall_GetParamTypes();
+        Type MethodCall_GetReturnType();
+        ExpressionNode MethodCall_SetParamTypes(Type[] paramTypes, Type returnType = null);
     }
 
     public partial class ExpressionNode : ExpressionNode_MethodCall
@@ -45,6 +49,24 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
                 @object = @object,
                 arguments = arguments,
             };
+        }
+
+        public Type[] MethodCall_GetParamTypes()
+        {
+            return GetCodeArg("MethodCall_ParamTypes") as Type[];
+        }
+        public Type MethodCall_GetReturnType()
+        {
+            return GetCodeArg("MethodCall_ReturnType") as Type;
+        }
+
+        public ExpressionNode MethodCall_SetParamTypes(Type[] paramTypes, Type returnType = null)
+        {
+            if (paramTypes != null)
+                SetCodeArg("MethodCall_ParamTypes", paramTypes);
+            if (returnType != null)
+                SetCodeArg("MethodCall_ReturnType", returnType);
+            return this;
         }
     }
 }

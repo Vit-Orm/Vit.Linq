@@ -66,7 +66,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
             if (value != null)
             {
-                value = ComponentModel.ValueType.ConvertToType(value, targetType);
+                value = ComponentModel.ValueType.ConvertValueToType(value, targetType);
             }
             return Expression.Constant(value, targetType);
         }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Vit.Linq.ExpressionTree.ComponentModel;
 
-
-namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionQuery
+namespace Vit.Linq.ExpressionTree.CollectionQuery
 {
     public partial class QueryAction
     {
@@ -77,10 +77,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionQuery
                                     return (true, ConvertFilter(arg, call.arguments[0]));
                                 }
 
-                            case "OrderBy":
-                            case "OrderByDescending":
-                            case "ThenBy":
-                            case "ThenByDescending":
+                            case "OrderBy" or "OrderByDescending" or "ThenBy" or "ThenByDescending":
                                 {
                                     if (!arg.gettedOrder)
                                     {
@@ -142,12 +139,9 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionQuery
                                     }
                                     return (true, ExpressionNode.And(left: left, right: predicateFilter));
                                 }
-                            case "TotalCount":
-                            case "First":
-                            case "FirstOrDefault":
-                            case "Last":
-                            case "LastOrDefault":
+                            case "FirstOrDefault" or "First" or "LastOrDefault" or "Last":
                             case "Count":
+                            case "TotalCount":
                                 {
                                     if (!string.IsNullOrWhiteSpace(arg.queryAction.method)) throw new Exception("can not process multiple Method call");
 

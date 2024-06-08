@@ -2,30 +2,45 @@
 using System.Collections.Generic;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
-using Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery;
+using Vit.Linq.ExpressionTree.CollectionsQuery;
 using Vit.Orm.Entity;
 
 namespace Vit.Orm.Sql
 {
     public interface ISqlTranslator
     {
-        (string sql, Dictionary<string, object> sqlParam, IDbDataReader dataReader) Query(JoinedStream joinedStream, Type entityType);
-        (string sql, Dictionary<string, object> sqlParam) ExecuteUpdate(JoinedStream joinedStream, Type entityType);
+        string PrepareCreate(IEntityDescriptor entityDescriptor);
 
-        string Create(IEntityDescriptor entityDescriptor);
+        string PrepareGet<Entity>(DbSet<Entity> dbSet);
 
-        (string sql, Dictionary<string, object> sqlParam) Insert<Entity>(DbSet<Entity> dbSet, Entity entity);
-        (string sql, Dictionary<string, object> sqlParam) Update<Entity>(DbSet<Entity> dbSet, Entity entity);
+        (string sql, Dictionary<string, object> sqlParam, IDbDataReader dataReader) PrepareQuery(CombinedStream combinedStream, Type entityType);
 
-        (string sql, Dictionary<string, object> sqlParam) Delete<Entity>(DbSet<Entity> dbSet, Entity entity);
 
-        (string sql, Dictionary<string, object> sqlParam) DeleteByKey<Entity>(DbSet<Entity> dbSet, object keyValue);
+        (string sql, Func<Entity, Dictionary<string, object>> GetSqlParams) PrepareAdd<Entity>(DbSet<Entity> dbSet);
+
+
+        (string sql, Func<Entity, Dictionary<string, object>> GetSqlParams) PrepareUpdate<Entity>(DbSet<Entity> dbSet);
+        (string sql, Dictionary<string, object> sqlParam) PrepareExecuteUpdate(CombinedStream combinedStream);
+
+        string PrepareDelete<Entity>(DbSet<Entity> dbSet);
+
+        string PrepareDeleteRange<Entity>(DbSet<Entity> dbSet);
+
+        (string sql, Dictionary<string, object> sqlParam) PrepareExecuteDelete(CombinedStream combinedStream);
 
 
         string GetTableName(Type entityType);
         string GetSqlField(string tableName, string columnName);
         string GetSqlField(ExpressionNode_Member member);
 
+        /// <summary>
+        /// functionName example:  Count, Max, Min, Sum, Average
+        /// </summary>
+        /// <param name="functionName"></param>
+        /// <param name="tableName"></param>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
+        string GetSqlField_Aggregate(string functionName, string tableName, string columnName);
         IEntityDescriptor GetEntityDescriptor(Type entityType);
     }
 }

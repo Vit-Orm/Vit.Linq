@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 
+using Vit.Linq.ExpressionTree.ComponentModel;
 
-
-namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery
+namespace Vit.Linq.ExpressionTree.CollectionsQuery
 {
     public interface IStream
     {
@@ -29,13 +27,19 @@ namespace Vit.Linq.ExpressionTree.ComponentModel.CollectionsQuery
         }
 
         public object GetSource() => source;
+
+        public Type GetEntityType() => source?.GetType().GenericTypeArguments[0];
     }
 
 
+    public enum EJoinType
+    {
+        LeftJoin, InnerJoin
+    }
     public class StreamToJoin
     {
-        // leftJoin , innerJoin
-        public string joinType { get; set; }
+        // LeftJoin , InnerJoin
+        public EJoinType joinType { get; set; }
         public IStream right { get; set; }
 
         //  a1.id==b2.id
@@ -71,7 +75,7 @@ value(Vit.Linq.Converter.OrderedQueryable`1[Vit.Linq.MsTest.Converter.Join_Test+
         // root value of ExpressionNode_Member is IStream
         public ExpressionNode_New fields;
 
-        public bool? existCalculatedField { get; set; }
+        public bool? isDefaultSelect { get; set; }
         internal bool TryGetField(string fieldName, out ExpressionNode field)
         {
             field = null;
@@ -89,10 +93,11 @@ value(Vit.Linq.Converter.OrderedQueryable`1[Vit.Linq.MsTest.Converter.Join_Test+
         }
     }
 
-    public partial class JoinedStream : IStream
+
+    public class CombinedStream : IStream
     {
 
-        public JoinedStream(string alias)
+        public CombinedStream(string alias)
         {
             this.alias = alias;
         }
@@ -105,18 +110,41 @@ value(Vit.Linq.Converter.OrderedQueryable`1[Vit.Linq.MsTest.Converter.Join_Test+
 
         public string alias { get; protected set; }
 
-        // ExpressionNode_New   new { c=a,d=b }
-        public SelectedFields select;
+        // ExpressionNode_New   new { c = a , d = b }
+        public SelectedFields select { get; set; }
         public bool? distinct;
+       
+
+        public IStream source;
 
 
-        public IStream left;
+        public List<StreamToJoin> joins { get; set; }
+        public ExpressionNode GetSelectedFields(Type entityType)
+        {
+            var parameterValue = select?.fields as ExpressionNode;
+            if (parameterValue == null && joins?.Any() != true)
+            {
+                parameterValue = ExpressionNode_RenameableMember.Member(stream: source, entityType);
+            }
+            return parameterValue;
+        }
 
-
-        public List<StreamToJoin> joins;
+ 
 
         //  a1.id==b2.id
         public ExpressionNode where { get; set; }
+
+
+
+        // ExpressionNode_New     new {  fatherId = left.fatherId, motherId = left.motherId }
+        // ExpressionNode_Member  left.fatherId
+        public ExpressionNode groupByFields;
+
+        //  left.fatherId >2 && left.Count()>2 && left.Max(m=>m.id) >2
+        public ExpressionNode having { get; set; }
+
+
+
 
         //  a1.id, b2.id
         public List<OrderField> orders { get; set; }
@@ -125,32 +153,39 @@ value(Vit.Linq.Converter.OrderedQueryable`1[Vit.Linq.MsTest.Converter.Join_Test+
         public int? skip { get; set; }
         public int? take { get; set; }
 
+
+        public bool isJoinedStream => joins?.Any() == true;
+        public bool isGroupedStream => groupByFields!=null;
     }
 
 
-    public partial class StreamToUpdate : JoinedStream
+
+
+    public partial class StreamToUpdate : CombinedStream
     {
         public StreamToUpdate(IStream source) : base(source.alias)
         {
-            if (source is JoinedStream joinedStream)
+            if (source is CombinedStream combinedStream)
             {
-                this.select = joinedStream.select;
-                this.distinct = joinedStream.distinct;
-                this.left = joinedStream.left;
-                this.joins = joinedStream.joins;
-                this.where = joinedStream.where;
-                this.orders = joinedStream.orders;
-                this.skip = joinedStream.skip;
-                this.take = joinedStream.take;
+                this.select = combinedStream.select;
+                this.distinct = combinedStream.distinct;
+                this.source = combinedStream.source;
+                this.joins = combinedStream.joins;
+                this.where = combinedStream.where;
+                this.groupByFields = combinedStream.groupByFields;
+                this.having = combinedStream.having;
+                this.orders = combinedStream.orders;
+                this.skip = combinedStream.skip;
+                this.take = combinedStream.take;
             }
             else
             {
-                left = source;
+                base.source = source;
             }
         }
 
         // ExpressionNode_New   new { name = name + "_" }
-        public ExpressionNode_New fieldsToUpdate;
+        public ExpressionNode_New fieldsToUpdate { get; set; }
 
     }
 }

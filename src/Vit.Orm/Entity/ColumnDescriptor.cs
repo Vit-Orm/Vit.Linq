@@ -13,17 +13,17 @@ namespace Vit.Orm.Entity
 
         PropertyInfo propertyInfo;
         public bool isPrimaryKey { get; private set; }
-        public string name => propertyInfo.Name;
+        public string name => propertyInfo?.Name;
 
-        public Type type => propertyInfo.PropertyType;
+        public Type type => propertyInfo?.PropertyType;
 
         public void Set(object entity, object value)
         {
-            propertyInfo.SetValue(entity, value);
+            propertyInfo?.SetValue(entity, value);
         }
         public object Get(object entity)
         {
-            return propertyInfo.GetValue(entity, null);
+            return propertyInfo?.GetValue(entity, null);
         }
     }
 

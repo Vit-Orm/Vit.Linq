@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Vit.Orm.Entity
+﻿namespace Vit.Orm.Entity
 {
     public interface IEntityDescriptor
     {
@@ -17,6 +14,6 @@ namespace Vit.Orm.Entity
         /// </summary>
         public IColumnDescriptor[] columns { get; }
 
-        public IEnumerable<IColumnDescriptor> allColumns { get; }
+        public IColumnDescriptor[] allColumns { get; }
     }
 }

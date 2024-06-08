@@ -7,6 +7,12 @@ namespace Vit.Extensions.Linq_Extensions
 
     public static partial class Queryable_Extensions
     {
+        /// <summary>
+        /// delete from first collection if joined multiple collections
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static int ExecuteDelete(this IQueryable source)
         {
             if (source == null)

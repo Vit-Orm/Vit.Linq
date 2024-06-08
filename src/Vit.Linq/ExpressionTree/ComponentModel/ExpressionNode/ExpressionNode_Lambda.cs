@@ -14,7 +14,8 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         public ExpressionNode body { get; }
 
         Type[] Lambda_GetParamTypes();
-        ExpressionNode Lambda_SetParamTypes(Type[] paramTypes);
+        Type Lambda_GetReturnType();
+        ExpressionNode Lambda_SetParamTypes(Type[] paramTypes, Type returnType = null);
     }
 
     public partial class ExpressionNode : ExpressionNode_Lambda
@@ -36,10 +37,17 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         {
             return GetCodeArg("Lambda_ParamTypes") as Type[];
         }
-
-        public ExpressionNode Lambda_SetParamTypes(Type[] paramTypes)
+        public Type Lambda_GetReturnType()
         {
-            SetCodeArg("Lambda_ParamTypes", paramTypes);
+            return GetCodeArg("Lambda_ReturnType") as Type;
+        }
+
+        public ExpressionNode Lambda_SetParamTypes(Type[] paramTypes, Type returnType = null)
+        {
+            if (paramTypes != null)
+                SetCodeArg("Lambda_ParamTypes", paramTypes);
+            if (returnType != null)
+                SetCodeArg("Lambda_ReturnType", returnType);
             return this;
         }
 

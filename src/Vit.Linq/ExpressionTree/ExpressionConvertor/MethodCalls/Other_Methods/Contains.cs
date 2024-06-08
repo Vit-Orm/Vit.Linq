@@ -2,16 +2,21 @@
 using System.Linq.Expressions;
 using System.Linq;
 using Vit.Linq.ExpressionTree.ComponentModel;
-using System.Collections.Generic;
 using System.Reflection;
-using Vit.Extensions.Linq_Extensions;
 
-namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
+namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Other_Methods
 {
 
-
-    #region #10 Contain  ElementAt
-
+    /// <summary>
+    /// #1 instance Method
+    ///   ##1 string.Contains
+    ///   ##2 List.Contains
+    ///   ...
+    /// #2 static Method
+    ///   ##1 Queryable.Contains
+    ///   ##2 Enumerable.Contains 
+    /// 
+    /// </summary>
     public class Contains : MethodConvertor_Common
     {
         public override Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
@@ -35,13 +40,13 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
             var modelType = argType.GetGenericArguments()[0];
             if (typeof(IQueryable).IsAssignableFrom(argType))
             {
-                // Queryable.Contains                 
+                // ##1 Queryable.Contains
                 method = (new Func<IQueryable<string>, string, bool>(Queryable.Contains<string>))
                             .Method.GetGenericMethodDefinition().MakeGenericMethod(modelType);
             }
             else
             {
-                // Enumerable.Contains 
+                // ##2 Enumerable.Contains 
                 method = (new Func<IQueryable<string>, string, bool>(Enumerable.Contains<string>))
                            .Method.GetGenericMethodDefinition().MakeGenericMethod(modelType);
             }
@@ -51,23 +56,6 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
     }
 
 
-    public class ElementAt : MethodConvertor_Common
-    {
-        public override Type methodType { get; } = typeof(Enumerable);
-        public override Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
-        {
-            //var instance = convertService.ToExpression(arg, call.instance);
-            var methodArguments = call.arguments?.Select(node => arg.convertService.ToExpression(arg, node)).ToArray();
-
-
-            // Enumerable.ElementAt
-            var type = methodArguments[0].Type.GetGenericArguments()[0];
-            var method = (new Func<IEnumerable<string>, int, string>(Enumerable.ElementAt<string>))
-                            .Method.GetGenericMethodDefinition().MakeGenericMethod(type);
-            return Expression.Call(method, methodArguments);
-        }
-    }
-    #endregion
 
 
 

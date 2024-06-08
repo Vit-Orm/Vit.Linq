@@ -3,7 +3,7 @@ using System.Data;
 
 namespace Vit.Orm.Sql.DataReader
 {
-    interface IArgReader
+    public interface IArgReader
     {
         string argUniqueKey { get; }
         Type argType { get; }

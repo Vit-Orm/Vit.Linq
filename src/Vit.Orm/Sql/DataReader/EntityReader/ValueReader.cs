@@ -13,8 +13,8 @@ namespace Vit.Orm.Sql.DataReader
 
         public Type argType { get => valueType; }
 
-        public ValueReader(EntityReader entityReader, ExpressionNode_Member member, string argUniqueKey, string argName, string sqlFieldName)
-             : base(entityReader.sqlFields, member.Member_GetType(), sqlFieldName)
+        public ValueReader(EntityReader entityReader, Type valueType, string argUniqueKey, string argName, string sqlFieldName)
+                     : base(entityReader.sqlFields, valueType, sqlFieldName)
         {
             this.argUniqueKey = argUniqueKey;
             this.argName = argName;

@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
-using Vit.Linq.ExpressionTree.ExpressionConvertor;
+using Vit.Orm;
 
 namespace Vit.Linq.ExpressionTree
 {
@@ -111,6 +110,8 @@ namespace Vit.Linq.ExpressionTree
                     }
                 case MethodCallExpression call:
                     {
+                        if (call.Method.DeclaringType == typeof(DbFunction)) return EValueType.other;
+
                         childrenTypes = new();
                         if (call.Arguments?.Any() == true) childrenTypes.AddRange(call.Arguments.Select(GetEValueType));
                         if (call.Object != null) childrenTypes.Add(GetEValueType(call.Object));

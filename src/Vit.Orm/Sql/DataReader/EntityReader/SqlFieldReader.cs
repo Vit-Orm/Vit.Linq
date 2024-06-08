@@ -15,7 +15,7 @@ namespace Vit.Orm.Sql.DataReader
         public SqlFieldReader(List<string> sqlFields, Type valueType, string sqlFieldName)
         {
             this.valueType = valueType;
-            underlyingType = GetUnderlyingType(valueType);
+            underlyingType = TypeUtil.GetUnderlyingType(valueType);
 
             sqlFieldIndex = sqlFields.IndexOf(sqlFieldName);
             if (sqlFieldIndex < 0)
@@ -30,21 +30,10 @@ namespace Vit.Orm.Sql.DataReader
         public object Read(IDataReader reader)
         {
             var value = reader.GetValue(sqlFieldIndex);
-            if (value == null || value == DBNull.Value) return null;
-
-            if (!underlyingType.IsInstanceOfType(value))
-                value = Convert.ChangeType(value, underlyingType);
-            return value;
+            return TypeUtil.ConvertToUnderlyingType(value, underlyingType);
         }
 
-        static Type GetUnderlyingType(Type type)
-        {
-            if (type.IsGenericType && typeof(Nullable<>) == type.GetGenericTypeDefinition())
-            {
-                return type.GetGenericArguments()[0];
-            }
-            return type;
-        }
+
     }
 
 
