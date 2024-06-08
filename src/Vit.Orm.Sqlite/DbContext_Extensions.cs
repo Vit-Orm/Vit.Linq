@@ -4,7 +4,7 @@ using System.Data;
 using Vit.Orm.Entity;
 using Vit.Orm.Entity.Dapper;
 using Vit.Orm.Sql;
-using Vit.Orm.Sqlite.Sql;
+using Vit.Orm.Sqlite;
 
 namespace Vit.Extensions
 {
@@ -24,7 +24,7 @@ namespace Vit.Extensions
             return dbContext;
         }
 
-        
+
 
     }
 }

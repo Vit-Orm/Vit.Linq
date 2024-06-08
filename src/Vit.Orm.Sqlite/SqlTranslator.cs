@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 using Vit.Linq.ExpressionTree.CollectionsQuery;
 using Vit.Orm.Entity;
 using Vit.Orm.Sql;
-using Vit.Linq.ExpressionTree.ExpressionConvertor;
 using System.Linq;
+using Vit.Orm.Sqlite.Sql;
 
-namespace Vit.Orm.Sqlite.Sql
+namespace Vit.Orm.Sqlite
 {
     public class SqlTranslator : ISqlTranslator
     {
@@ -20,6 +19,10 @@ namespace Vit.Orm.Sqlite.Sql
         {
             this.dbContext = dbContext;
         }
+
+
+        public IEntityDescriptor GetEntityDescriptor(Type entityType) => dbContext.GetEntityDescriptor(entityType);
+
 
 
         public string PrepareCreate(IEntityDescriptor entityDescriptor)
@@ -48,7 +51,7 @@ CREATE TABLE `user` (
             }
 
             return $@"
-CREATE TABLE `{entityDescriptor.tableName}` (
+CREATE TABLE {DelimitIdentifier(entityDescriptor.tableName)} (
 {string.Join(",\r\n", sqlFields)}
 )";
 
@@ -64,8 +67,8 @@ CREATE TABLE `{entityDescriptor.tableName}` (
                     nullable = true;
                     type = type.GetGenericArguments()[0];
                 }
-                // `name` varchar(100) DEFAULT NULL
-                return $"  `{column.name}` {GetDbType(type)} {(nullable ? "DEFAULT NULL" : "NOT NULL")}";
+                // name varchar(100) DEFAULT NULL
+                return $"  {DelimitIdentifier(column.name)} {GetDbType(type)} {(nullable ? "DEFAULT NULL" : "NOT NULL")}";
             }
             string GetDbType(Type type)
             {
@@ -93,7 +96,7 @@ CREATE TABLE `{entityDescriptor.tableName}` (
             var entityDescriptor = dbSet.entityDescriptor;
 
             // #2 build sql
-            string sql = $@"select * from `{entityDescriptor.tableName}` where `{entityDescriptor.keyName}`=@{entityDescriptor.keyName};";
+            string sql = $@"select * from {DelimitIdentifier(entityDescriptor.tableName)} where {DelimitIdentifier(entityDescriptor.keyName)}={GenerateParameterName(entityDescriptor.keyName)};";
 
             return sql;
         }
@@ -128,7 +131,7 @@ CREATE TABLE `{entityDescriptor.tableName}` (
             var entityDescriptor = dbSet.entityDescriptor;
 
             // #1 GetSqlParams 
-            Func<Entity, Dictionary<string, object>> GetSqlParams = (Entity entity) =>
+            Func<Entity, Dictionary<string, object>> GetSqlParams = (entity) =>
                 {
                     var sqlParam = new Dictionary<string, object>();
                     foreach (var column in entityDescriptor.allColumns)
@@ -150,13 +153,13 @@ CREATE TABLE `{entityDescriptor.tableName}` (
             {
                 columnName = column.name;
 
-                columnNames.Add($"`{columnName}`");
-                valueParams.Add($"@{columnName}");
+                columnNames.Add( DelimitIdentifier(columnName));
+                valueParams.Add(GenerateParameterName(columnName));
             }
             #endregion
 
             // #3 build sql
-            string sql = $@"insert into `{entityDescriptor.tableName}`({string.Join(",", columnNames)}) values({string.Join(",", valueParams)});";
+            string sql = $@"insert into {DelimitIdentifier(entityDescriptor.tableName)}({string.Join(",", columnNames)}) values({string.Join(",", valueParams)});";
             //sql+=$"select seq from sqlite_sequence where name = '{tableName}'; ";
 
             return (sql, GetSqlParams);
@@ -172,7 +175,7 @@ CREATE TABLE `{entityDescriptor.tableName}` (
             var sqlParam = new Dictionary<string, object>();
 
             // #1 GetSqlParams
-            Func<Entity, Dictionary<string, object>> GetSqlParams = (Entity entity) =>
+            Func<Entity, Dictionary<string, object>> GetSqlParams = (entity) =>
             {
                 var sqlParam = new Dictionary<string, object>();
                 foreach (var column in entityDescriptor.allColumns)
@@ -192,11 +195,11 @@ CREATE TABLE `{entityDescriptor.tableName}` (
             foreach (var column in entityDescriptor.columns)
             {
                 columnName = column.name;
-                columnsToUpdate.Add($"`{columnName}`=@{columnName}");
+                columnsToUpdate.Add($"{DelimitIdentifier(columnName)}={GenerateParameterName(columnName)}");
             }
 
             // #3 build sql
-            string sql = $@"update `{entityDescriptor.tableName}` set {string.Join(",", columnsToUpdate)} where `{entityDescriptor.keyName}`=@{entityDescriptor.keyName};";
+            string sql = $@"update {DelimitIdentifier(entityDescriptor.tableName)} set {string.Join(",", columnsToUpdate)} where {DelimitIdentifier(entityDescriptor.keyName)}={GenerateParameterName(entityDescriptor.keyName)};";
 
             return (sql, GetSqlParams);
         }
@@ -210,7 +213,7 @@ CREATE TABLE `{entityDescriptor.tableName}` (
             var entityDescriptor = dbSet.entityDescriptor;
 
             // #2 build sql
-            string sql = $@"delete from `{entityDescriptor.tableName}` where `{entityDescriptor.keyName}`=@{entityDescriptor.keyName};";
+            string sql = $@"delete from {DelimitIdentifier(entityDescriptor.tableName)} where {DelimitIdentifier(entityDescriptor.keyName)}={GenerateParameterName(entityDescriptor.keyName)};";
 
             return sql;
         }
@@ -223,7 +226,7 @@ CREATE TABLE `{entityDescriptor.tableName}` (
             var entityDescriptor = dbSet.entityDescriptor;
 
             // #2 build sql
-            string sql = $@"delete from `{entityDescriptor.tableName}` where `{entityDescriptor.keyName}` in @keys;";
+            string sql = $@"delete from {DelimitIdentifier(entityDescriptor.tableName)} where {DelimitIdentifier(entityDescriptor.keyName)} in {GenerateParameterName("keys")};";
 
             return sql;
         }
@@ -234,13 +237,16 @@ CREATE TABLE `{entityDescriptor.tableName}` (
         }
 
 
-        public string GetSqlField(string tableName, string columnName)
+       
+
+
+        public virtual string GetSqlField(string tableName, string columnName)
         {
-            return $"`{tableName}`.`{columnName}`";
+            return $"{DelimitIdentifier(tableName)}.{DelimitIdentifier(columnName)}";
         }
 
 
-        public string GetSqlField(ExpressionNode_Member member)
+        public virtual string GetSqlField(ExpressionNode_Member member)
         {
             var memberName = member.memberName;
             if (string.IsNullOrWhiteSpace(memberName))
@@ -268,22 +274,52 @@ CREATE TABLE `{entityDescriptor.tableName}` (
                 case nameof(Enumerable.Count):
                     {
                         if (columnName == null) return $"{functionName}(*)";
-                        return $"{functionName}(`{tableName}`.`{columnName}`)";
+                        return $"{functionName}({GetSqlField(tableName, columnName)})";
                     }
                 case nameof(Enumerable.Max) or nameof(Enumerable.Min) or nameof(Enumerable.Sum):
                     {
-                        return $"{functionName}(`{tableName}`.`{columnName}`)";
+                        return $"{functionName}({GetSqlField(tableName, columnName)})";
                     }
                 case nameof(Enumerable.Average):
                     {
-                        return $"AVG(`{tableName}`.`{columnName}`)";
+                        return $"AVG({GetSqlField(tableName, columnName)})";
                     }
             }
             throw new NotSupportedException("[SqlTranslator] unsupported aggregate function : " + functionName);
         }
 
 
-        public IEntityDescriptor GetEntityDescriptor(Type entityType) => dbContext.GetEntityDescriptor(entityType);
+    
 
+
+
+        #region DelimitIdentifier
+        /// <summary>
+        ///     Generates the delimited SQL representation of an identifier (column name, table name, etc.).
+        /// </summary>
+        /// <param name="identifier">The identifier to delimit.</param>
+        /// <returns>
+        ///     The generated string.
+        /// </returns>
+        public virtual string DelimitIdentifier(string identifier) => $"\"{EscapeIdentifier(identifier)}\""; // Interpolation okay; strings
+
+        /// <summary>
+        ///     Generates the escaped SQL representation of an identifier (column name, table name, etc.).
+        /// </summary>
+        /// <param name="identifier">The identifier to be escaped.</param>
+        /// <returns>
+        ///     The generated string.
+        /// </returns>
+        public virtual string EscapeIdentifier(string identifier) => identifier.Replace("\"", "\"\"");
+
+        /// <summary>
+        ///     Generates a valid parameter name for the given candidate name.
+        /// </summary>
+        /// <param name="name">The candidate name for the parameter.</param>
+        /// <returns>
+        ///     A valid name based on the candidate name.
+        /// </returns>
+        public virtual string GenerateParameterName(string name) => name.StartsWith("@", StringComparison.Ordinal) ? name : "@" + name;
+        #endregion
     }
 }

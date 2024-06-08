@@ -5,11 +5,15 @@ sqlite/transactions  https://learn.microsoft.com/en-us/dotnet/standard/data/sqli
 --------------
 # cur
 
+# support Mysql
+
+
+
 # sqlite upgrade to latest version
-# remove depency of Vit.Db and Dapper
+# remove depency of Dapper
 # try to make it clean
 
-# support Mysql
+
 # support SqlServer
 # support ElasticSearch
 # support ClickHouse
