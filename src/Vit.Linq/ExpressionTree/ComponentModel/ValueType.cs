@@ -110,9 +110,62 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         #endregion
 
 
+        #region ToType
+        public Type ToType()
+        {
+            if (string.IsNullOrWhiteSpace(typeName)) return null;
+
+            switch (typeName)
+            {
+                case "Nullable":
+                    {
+                        var baseType = genericArgumentTypes[0]?.ToType();
+                        if (baseType == null) return null;
+                        return typeof(Nullable<>).MakeGenericType(baseType);
+                    }
+                case "Array":
+                    {
+                        var baseType = genericArgumentTypes[0]?.ToType();
+                        if (baseType == null) return null;
+                        return baseType.MakeArrayType();
+                    }
+                case "List":
+                    {
+                        var baseType = genericArgumentTypes[0]?.ToType();
+                        if (baseType == null) return null;
+                        return typeof(List<string>).GetGenericTypeDefinition().MakeGenericType(baseType);
+                    }
+                case "Queryable":
+                    {
+                        var baseType = genericArgumentTypes[0]?.ToType();
+                        if (baseType == null) return null;
+                        return typeof(IQueryable<string>).GetGenericTypeDefinition().MakeGenericType(baseType);
+                    }
+                case "Enumerable":
+                    {
+                        var baseType = genericArgumentTypes[0]?.ToType();
+                        if (baseType == null) return null;
+                        return typeof(IEnumerable<string>).GetGenericTypeDefinition().MakeGenericType(baseType);
+                    }
+                case "Collection":
+                    {
+                        var baseType = genericArgumentTypes[0]?.ToType();
+                        if (baseType == null) return null;
+                        return typeof(ICollection<string>).GetGenericTypeDefinition().MakeGenericType(baseType);
+                    }
+                case "Object":
+                    {
+                        return typeof(object);
+                    }
+                default: return Type.GetType("System." + typeName) ?? typeof(object);
+            }
+        }
+
+        #endregion
+
 
         #region ConvertToType
-        public static object ConvertToType(object oriValue, Type targetType)
+        public static object ConvertValueToType(object oriValue, Type targetType)
         {
             if (oriValue != null && targetType.IsAssignableFrom(oriValue.GetType()))
             {
@@ -172,7 +225,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
             {
                 foreach (var item in enumerable)
                 {
-                    list.Add((T)ConvertToType(item, type));
+                    list.Add((T)ConvertValueToType(item, type));
                 }
             }
             if (collectionType.IsArray)
@@ -220,52 +273,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
 
 
 
-        #region ToType
-        public Type ToType()
-        {
-            if (string.IsNullOrWhiteSpace(typeName)) return null;
 
-            switch (typeName)
-            {
-                case "Nullable":
-                    {
-                        var baseType = genericArgumentTypes[0].ToType();
-                        return typeof(Nullable<>).MakeGenericType(baseType);
-                    }
-                case "Array":
-                    {
-                        var baseType = genericArgumentTypes[0].ToType();
-                        return baseType.MakeArrayType();
-                    }
-                case "List":
-                    {
-                        var baseType = genericArgumentTypes[0].ToType();
-                        return typeof(List<string>).GetGenericTypeDefinition().MakeGenericType(baseType);
-                    }
-                case "Queryable":
-                    {
-                        var baseType = genericArgumentTypes[0].ToType();
-                        return typeof(IQueryable<string>).GetGenericTypeDefinition().MakeGenericType(baseType);
-                    }
-                case "Enumerable":
-                    {
-                        var baseType = genericArgumentTypes[0].ToType();
-                        return typeof(IEnumerable<string>).GetGenericTypeDefinition().MakeGenericType(baseType);
-                    }
-                case "Collection":
-                    {
-                        var baseType = genericArgumentTypes[0].ToType();
-                        return typeof(ICollection<string>).GetGenericTypeDefinition().MakeGenericType(baseType);
-                    }
-                case "Object":
-                    {
-                        return typeof(object);
-                    }
-                default: return Type.GetType("System." + typeName);
-            }
-        }
-
-        #endregion
     }
 
 }

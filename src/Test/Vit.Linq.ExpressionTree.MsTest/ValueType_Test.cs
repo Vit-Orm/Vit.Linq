@@ -210,45 +210,45 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 expectedValue = (int?)12;
                 int? v;
 
-                value = ValueType.ConvertToType(12.0, type);
+                value = ValueType.ConvertValueToType(12.0, type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
-                value = ValueType.ConvertToType(12.1, type);
+                value = ValueType.ConvertValueToType(12.1, type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
-                value = ValueType.ConvertToType(12, type);
+                value = ValueType.ConvertValueToType(12, type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
 
-                value = ValueType.ConvertToType("12", type);
+                value = ValueType.ConvertValueToType("12", type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
-                value = ValueType.ConvertToType("12.0", type);
+                value = ValueType.ConvertValueToType("12.0", type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
-                value = ValueType.ConvertToType("12.1", type);
+                value = ValueType.ConvertValueToType("12.1", type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
                 // nullable
-                value = ValueType.ConvertToType(null, type);
+                value = ValueType.ConvertValueToType(null, type);
                 v = value as int?;
                 Assert.AreEqual(null, v);
 
-                value = ValueType.ConvertToType((int?)12, type);
+                value = ValueType.ConvertValueToType((int?)12, type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
-                value = ValueType.ConvertToType((double?)12.0, type);
+                value = ValueType.ConvertValueToType((double?)12.0, type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
-                value = ValueType.ConvertToType((double?)12.1, type);
+                value = ValueType.ConvertValueToType((double?)12.1, type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
@@ -259,16 +259,16 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 type = typeof(bool?);
                 expectedValue = (bool?)true;
 
-                value = ValueType.ConvertToType(true, type);
+                value = ValueType.ConvertValueToType(true, type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToType("true", type);
+                value = ValueType.ConvertValueToType("true", type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToType(null, type);
+                value = ValueType.ConvertValueToType(null, type);
                 Assert.AreEqual(null, value);
 
-                value = ValueType.ConvertToType("false", type);
+                value = ValueType.ConvertValueToType("false", type);
                 Assert.AreEqual((bool?)false, value);
             }
             #endregion
@@ -285,7 +285,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 var type = typeof(int[]);
                 int expectedValue = 12;
 
-                var value = ValueType.ConvertToType(new[] { 12.1 }, type) as int[];
+                var value = ValueType.ConvertValueToType(new[] { 12.1 }, type) as int[];
                 Assert.AreEqual(expectedValue, value[0]);
             }
 
@@ -294,7 +294,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 var type = typeof(int?[]);
                 int? expectedValue = 12;
 
-                var value = ValueType.ConvertToType(new[] { 12.1 }, type) as int?[];
+                var value = ValueType.ConvertValueToType(new[] { 12.1 }, type) as int?[];
                 Assert.AreEqual(expectedValue, value[0]);
             }
             #endregion
@@ -306,7 +306,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 var type = typeof(List<int>);
                 int expectedValue = 12;
 
-                var value = ValueType.ConvertToType(new[] { 12.1 }, type) as List<int>;
+                var value = ValueType.ConvertValueToType(new[] { 12.1 }, type) as List<int>;
                 Assert.AreEqual(expectedValue, value[0]);
             }
             // IEnumerable<double>  ->  IEnumerable<int>
@@ -315,7 +315,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 int expectedValue = 12;
                 IEnumerable<double> oriValue = new[] { 11.1 }.Select(m => m + 1);
 
-                var value = ValueType.ConvertToType(oriValue, type) as IEnumerable<int>;
+                var value = ValueType.ConvertValueToType(oriValue, type) as IEnumerable<int>;
                 Assert.AreEqual(expectedValue, value.First());
             }
             // IEnumerable<double>  ->  IQueryable<int>
@@ -324,7 +324,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 int expectedValue = 12;
                 IEnumerable<double> oriValue = new[] { 11.1 }.Select(m => m + 1);
 
-                var value = ValueType.ConvertToType(oriValue, type) as IQueryable<int>;
+                var value = ValueType.ConvertValueToType(oriValue, type) as IQueryable<int>;
                 Assert.AreEqual(expectedValue, value.First());
             }
             // IQueryable<double>  ->  ICollection<string>
@@ -333,7 +333,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 var expectedValue = "12.1";
                 IQueryable<double> oriValue = new[] { 11.1 }.AsQueryable().Select(m => m + 1);
 
-                var value = ValueType.ConvertToType(oriValue, type) as ICollection<string>;
+                var value = ValueType.ConvertValueToType(oriValue, type) as ICollection<string>;
                 Assert.AreEqual(expectedValue, value.First());
             }
             #endregion
@@ -345,7 +345,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 var type = typeof(int[][]);
                 int expectedValue = 12;
 
-                var value = ValueType.ConvertToType(new[] { new[] { 12.1 } }, type) as int[][];
+                var value = ValueType.ConvertValueToType(new[] { new[] { 12.1 } }, type) as int[][];
                 Assert.AreEqual(expectedValue, value[0][0]);
             }
             #endregion

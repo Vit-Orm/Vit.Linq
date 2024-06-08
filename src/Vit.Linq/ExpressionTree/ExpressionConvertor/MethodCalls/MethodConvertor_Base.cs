@@ -53,8 +53,9 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
             //    var value = GetValue(call);
             //    return ExpressionNode_Constant.FromValue(value);
             //}
-
-            return ExpressionNode.MethodCall(typeName: typeName, methodName: methodName, @object: @object, arguments: arguments);
+            var parameterTypes = call.Method.GetParameters().Select(parameter => parameter.ParameterType).ToArray();
+            var returnType = call.Method.ReturnType;
+            return ExpressionNode.MethodCall(methodCall_typeName: typeName, methodName: methodName, @object: @object, arguments: arguments).MethodCall_SetParamTypes(parameterTypes, returnType);
         }
 
 

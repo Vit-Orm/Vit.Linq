@@ -15,14 +15,9 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
         {
             if (expression is MemberExpression member)
             {
-                if (typeof(IQueryable).IsAssignableFrom(member.Type) && arg.ReduceValue(member, out object query))
+                if (arg.ReduceValue(member, out object constValue))
                 {
-                    var value = query;
-                    var type = expression.Type;
-                    if (value != null)
-                    {
-                        return arg.GetParameter(value, type);
-                    }
+                    return ExpressionNode.Constant(value: constValue, type: expression.Type);
                 }
 
                 var name = member.Member?.Name;
@@ -33,10 +28,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                     return ExpressionNode.Member(parameterName: parameter.Name, memberName: name).Member_SetType(expression.Type);
 
                 var objectValue = arg.convertService.ConvertToData(arg, member.Expression);
-                if (objectValue?.nodeType == NodeType.Constant && arg.ReduceValue(member, out object constValue))
-                {
-                    return ExpressionNode.Constant(value: constValue, type: expression.Type);
-                }
+                
                 return ExpressionNode.Member(objectValue: objectValue, memberName: name).Member_SetType(expression.Type);
             }
             else if (expression is ParameterExpression parameter)

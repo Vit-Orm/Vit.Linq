@@ -4,17 +4,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
 using Vit.Extensions.Linq_Extensions;
 using System.Data;
-using Vit.Linq.ExpressionTree;
 using Vit.Linq.ExpressionTree.ComponentModel;
 using System;
-using Vit.Linq.ExpressionTree.ComponentModel.CollectionQuery;
 using System.Linq;
 using System.Collections.Generic;
-using System.Collections;
+using Vit.Linq.ExpressionTree.CollectionQuery;
 
 namespace Vit.Linq.ExpressionTree.MsTest
 {
-    // rootExpression?
     [TestClass]
     public class QueryAction_Test
     {
@@ -31,12 +28,14 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 #region ExpressinNode
                 {
                     // #1 Code to Data
-                    // (query) => query.Where().OrderBy().Skip().Take().Select().ToList();
-                    node = convertService.ConvertToData(expression);
+                    // query => query.Where().OrderBy().Skip().Take().Select().ToList();
+                    var isArgument = QueryableBuilder.QueryTypeNameCompare("TestQuery");
+                    node = convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
                     var strNode = Json.Serialize(node);
 
+
                     // #2 Data to Code
-                    // Param_1 => Param_1.Where(Param_0 => (Param_0.id >= 10))
+                    // query => query.Where(person => (person.id >= 10))
                     var lambdaExp = convertService.ToLambdaExpression(node, typeof(IQueryable<Person>));
                     //var exp3 = (Expression<Func<IQueryable<Person>, IQueryable<Person>>>)lambdaExp;
                     var predicate_ = lambdaExp.Compile();
@@ -80,7 +79,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 throw new NotSupportedException("Method not support:" + methodName);
             };
 
-            var query = QueryableBuilder.Build<Person>(QueryExecutor);
+            var query = QueryableBuilder.Build<Person>(QueryExecutor,"TestQuery");
             return query;
         }
 
@@ -142,41 +141,57 @@ namespace Vit.Linq.ExpressionTree.MsTest
         [TestMethod]
         public void Test_Where()
         {
-            //#region Convert
-            //{
-            //    var query = GetQuery();
+            #region Convert
+            {
+                var query = GetQuery();
 
-            //    query = query
-            //        .Where(m => m.id <= 10.0)      // Convert
-            //        ;
+                query = query
+                    .Where(m => m.id <= 10.0)      // Convert
+                    ;
 
-            //    var list = query.ToList();
-            //    Assert.AreEqual(11, list.Count);
-            //    Assert.AreEqual(0, list.First().id);
-            //    Assert.AreEqual(10, list.Last().id);
-            //}
-            //#endregion
+                var list = query.ToList();
+                Assert.AreEqual(11, list.Count);
+                Assert.AreEqual(0, list.First().id);
+                Assert.AreEqual(10, list.Last().id);
+            }
+            #endregion
 
-            //#region Member Access :  Cascade
-            //{
-            //    var query = GetQuery();
+            #region Member Access :  Cascade
+            {
+                var query = GetQuery();
 
-            //    query = query
-            //        .Where(m => m.job.name == "name10_job1")     // Member Access :  Cascade
-            //        ;
+                query = query
+                    .Where(m => m.job.name == "name10_job1")     // Member Access :  Cascade
+                    ;
 
-            //    var list = query.ToList();
-            //    Assert.AreEqual(1, list.Count);
-            //    Assert.AreEqual(10, list.First().id);
-            //}
-            //#endregion
+                var list = query.ToList();
+                Assert.AreEqual(1, list.Count);
+                Assert.AreEqual(10, list.First().id);
+            }
+            #endregion
+
+
+            #region MethodCall :  String.Contains
+            {
+                var query = GetQuery();
+
+                query = query
+                  .Where(m => m.job.name.Contains("me10_job")) // String.Contains
+                    ;
+
+                var list = query.ToList();
+                Assert.AreEqual(1, list.Count);
+                Assert.AreEqual(10, list.First().id);
+            }
+            #endregion
 
             #region MethodCall :  List.Contains
             {
                 var query = GetQuery();
                 var ids = new List<int> { 3, 4 };
                 query = query
-                      .Where(m => !ids.Contains(m.id))     // MethodCall :  List.Contains
+                      .Where(m => ids.Contains(m.id))     // MethodCall :  List.Contains
+                      .Where(m => new List<int> { 3, 4 }.Contains(m.id))     // MethodCall :  List.Contains
                     ;
 
                 var list = query.ToList();
@@ -189,9 +204,10 @@ namespace Vit.Linq.ExpressionTree.MsTest
             #region MethodCall :  Array.Contains
             {
                 var query = GetQuery();
-
+                var ids = new int[] { 3, 4 };
                 query = query
-                      .Where(m => new int[] { 3, 4 }.Contains(m.id))     // MethodCall :  Array.Contains
+                    .Where(m => ids.Contains(m.id))     // MethodCall :  Array.Contains
+                    .Where(m => new int[] { 3, 4 }.Contains(m.id))     // MethodCall :  Array.Contains
                     ;
 
                 var list = query.ToList();
@@ -201,19 +217,6 @@ namespace Vit.Linq.ExpressionTree.MsTest
             }
             #endregion
 
-            #region MethodCall :  String.Contains
-            {
-                var query = GetQuery();
-
-                query = query
-                  .Where(m => !m.job.name.Contains("me10_job")) // String.Contains
-                    ;
-
-                var list = query.ToList();
-                Assert.AreEqual(1, list.Count);
-                Assert.AreEqual(10, list.First().id);
-            }
-            #endregion
 
 
 
@@ -222,7 +225,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 var query = GetQuery();
 
                 query = query
-                  .Where(m => new List<int?> { 3, 4 }.Contains(m.departmentId)) // Nullable
+                  .Where(m => new List<int?> { 3, 4 }.Contains(m.id)) // Nullable
                     ;
 
                 var list = query.ToList();
@@ -232,66 +235,62 @@ namespace Vit.Linq.ExpressionTree.MsTest
             }
             #endregion
 
-            #region GetQuery
+            #region Where
             {
                 var query = GetQuery();
 
                 query = query
                     .Where(Param_0 => Param_0.id >= 10)
-                    .Where(m => m.id <= 20)
-
+                    .Where(m => m.id < 20)
                     ;
 
                 var list = query.ToList();
-                Assert.AreEqual(5, list.Count);
-                Assert.AreEqual(998, list.First().id);
-                Assert.AreEqual(994, list.Last().id);
+                Assert.AreEqual(10, list.Count);
+                Assert.AreEqual(10, list.First().id);
+                Assert.AreEqual(19, list.Last().id);
+            }
+            #endregion
+        }
+
+
+        [TestMethod]
+        public void Test_MethodCall_Enumerable_Contains()
+        {
+            #region Enumerable.Contains
+            {
+                var query = GetQuery();
+
+                var persons = new List<Person> { new Person { id = 2 }, new Person { id = 3 } };
+                var ids = persons.Where(p => p.id > 0).Select(p => p.id);
+
+                query = query
+                    .Where(m => ids.Contains(m.id)) // MethodCall Enumerable.Contains
+                    ;
+
+                var list = query.ToList();
+                Assert.AreEqual(2, list.Count);
+                Assert.AreEqual(2, list.First().id);
+                Assert.AreEqual(3, list.Last().id);
             }
             #endregion
 
+        }
 
 
+
+        [TestMethod]
+        public void Test_MethodCall_Enumerable_ToArray()
+        {
+            #region Enumerable.ToArray
             {
+                var query = GetQuery().Where(m => m.id >= 2 && m.id < 4);
 
-                IQueryable<Person> query = GetQuery();
-                var persons = new List<Person> { new Person { id = 2 }, new Person { id = 3 } }.AsQueryable();
-
-
-
-                var jobs = new List<Job> { new Job { departmentId = 1 }, new Job { departmentId = 2 } };
-
-                query = query
-                #region work
-
-
-
-                #endregion
-
-                        //.Where(m => persons.Any(p => p.id == m.id)) // MethodCall Any
-                        //.Where(m => persons.Where(p=>p.id>0).Any(p => p.id == m.id)) // MethodCall Any
-
-                        //.Where((m, index) => index > 10) //  MethodCall Where   not supported in FilterAction
-                        ;
-
-
-                #region List
-                {
-                    var list = query.ToList();
-                    //Assert.AreEqual(5, list.Count);
-                    //Assert.AreEqual(17, list[0].id);
-                    //Assert.AreEqual(15, list[1].id);
-                }
-                #endregion
-
-                var count = query.Count();
-
-                var First = query.First();
-                var FirstOrDefault = query.FirstOrDefault();
-                var Last = query.Last();
-                var LastOrDefault = query.LastOrDefault();
-
+                var list = query.ToArray();
+                Assert.AreEqual(2, list.Length);
+                Assert.AreEqual(2, list.First().id);
+                Assert.AreEqual(3, list.Last().id);
             }
-
+            #endregion
 
         }
 

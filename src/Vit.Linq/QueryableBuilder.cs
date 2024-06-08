@@ -3,15 +3,27 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Vit.Linq
 {
     public static class QueryableBuilder
     {
-        public static IQueryable<Model> Build<Model>(Func<Expression, Type, object> QueryExecutor)
+        public static IQueryable<Model> Build<Model>(Func<Expression, Type, object> QueryExecutor, string queryTypeName = null)
         {
             var queryProvider = new QueryProvider(QueryExecutor);
-            return new OrderedQueryable<Model>(queryProvider);
+            return new OrderedQueryable<Model>(queryProvider, queryTypeName);
+        }
+
+        public static string GetQueryTypeName (IQueryable  query)
+        {
+            return (query as IQueryType)?.queryTypeName;
+        }
+
+
+        public static Func<object, Type, bool> QueryTypeNameCompare(string queryTypeName)
+        {
+            return (value, type) => GetQueryTypeName(value as IQueryable) == queryTypeName;
         }
 
 
@@ -61,16 +73,22 @@ namespace Vit.Linq
         }
     }
 
-
-    internal class OrderedQueryable<T> : IOrderedQueryable<T>
+    interface IQueryType 
+    {
+        string queryTypeName { get; }
+    }
+    internal class OrderedQueryable<T> : IOrderedQueryable<T>, IQueryType
     {
         protected readonly Expression _expression;
         protected readonly QueryProvider _provider;
 
-        public OrderedQueryable(QueryProvider provider)
+        public string queryTypeName { get;  set; }
+
+        public OrderedQueryable(QueryProvider provider, string queryTypeName = null)
         {
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
             _expression = Expression.Constant(this);
+            this.queryTypeName = queryTypeName;
         }
 
         public OrderedQueryable(QueryProvider provider, Expression expression)
