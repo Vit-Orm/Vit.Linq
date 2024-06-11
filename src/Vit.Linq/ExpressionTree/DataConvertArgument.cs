@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
-using Vit.Orm;
+using Vitorm;
 
 namespace Vit.Linq.ExpressionTree
 {
