@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Vit.Orm
+namespace Vitorm
 {
     public static partial class DbFunction
     {
