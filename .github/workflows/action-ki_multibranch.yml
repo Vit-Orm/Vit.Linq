@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: ki_multibranch
+name: ki_multibranch_3.1
 
 # Controls when the action will run. 
 on:
@@ -37,14 +37,14 @@ jobs:
            set -e
            echo start build
 
-           # export DOCKER_ImagePrefix="serset/"
-           # export DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME  }}"
-           # export DOCKER_PASSWORD="${{ secrets.DOCKER_PASSWORD }}"
+           export DOCKER_ImagePrefix="serset/"
+           export DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME  }}"
+           export DOCKER_PASSWORD="${{ secrets.DOCKER_PASSWORD }}"
            export NUGET_SERVER="${{ secrets.NUGET_SERVER  }}"
            export NUGET_KEY="${{ secrets.NUGET_KEY }}"
            export WebDav_BaseUrl="${{ secrets.WebDav_BaseUrl }}"
            export WebDav_User="${{ secrets.WebDav_User }}"
-           cd ./Publish/DevOps2/github-bash
+           cd ./Publish/DevOps3/github-bash
            bash startup.bash
            echo build succeed!
            

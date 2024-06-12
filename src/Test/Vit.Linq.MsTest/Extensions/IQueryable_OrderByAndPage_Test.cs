@@ -9,40 +9,41 @@ namespace Vit.Linq.MsTest.Extensions
     public class IQueryable_OrderByAndPage_Test
     {
 
-        #region Test
         [TestMethod]
         public void Test()
         {
             var query = DataSource.GetIQueryable();
 
-            #region #1
+            #region #1 OrderBy Page
             {
                 var result = query
                     .IQueryable_OrderBy(new[] {
                         new OrderField { field = "job.departmentId", asc = false },
                         new OrderField { field = "id", asc = true }
                     })
-                    .IQueryable_Page(new PageInfo { pageSize = 10, pageIndex = 1  })
+                    .IQueryable_Page(new PageInfo { pageSize = 10, pageIndex = 1 })
                     .IQueryable_ToList<Person>();
-                Assert.AreEqual(result.Count, 10);
-                Assert.AreEqual(result[0].id, 990);
+
+                Assert.AreEqual(10, result.Count);
+                Assert.AreEqual(990, result[0].id);
             }
             #endregion
 
 
-            #region #2
+            #region #2 OrderBy Page
             {
                 var result = query
                     .IQueryable_OrderBy("id", false)
                     .IQueryable_Page(pageSize: 10, pageIndex: 2)
                     .IQueryable_ToList<Person>();
-                Assert.AreEqual(result.Count, 10);
-                Assert.AreEqual(result[0].id, 989);
+
+                Assert.AreEqual(10, result.Count);
+                Assert.AreEqual(989, result[0].id);
             }
             #endregion
 
 
-            #region #3
+            #region #3 ToPageData
             {
                 var result = query
                     .IQueryable_OrderBy(new[] {
@@ -51,14 +52,13 @@ namespace Vit.Linq.MsTest.Extensions
                     })
                     .IQueryable_ToPageData<Person>(new PageInfo { pageSize = 10, pageIndex = 1 });
 
-                Assert.AreEqual(result.totalCount, 1000);
-                Assert.AreEqual(result.items.Count, 10);
-                Assert.AreEqual(result.items[0].id, 990);
+                Assert.AreEqual(1000, result.totalCount);
+                Assert.AreEqual(10, result.items.Count);
+                Assert.AreEqual(990, result.items[0].id);
             }
             #endregion
 
         }
-        #endregion
 
 
     }

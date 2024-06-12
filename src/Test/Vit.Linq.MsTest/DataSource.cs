@@ -66,7 +66,7 @@ namespace Vit.Linq.MsTest
 
 
 
-    public class DataSource
+    public partial class DataSource
     {
         public static List<Person> BuildDataSource(int count = 1000)
         {

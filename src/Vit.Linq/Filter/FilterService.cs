@@ -1,39 +1,27 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-using Vit.Linq.ComponentModel;
+using Vit.Linq.Filter.ComponentModel;
 
 
 namespace Vit.Linq.Filter
 {
-    public class OperatorBuilderArgs
-    {
-        public IFilterRule rule { get; set; }
-        public ParameterExpression parameter { get; set; }
-        public Expression leftValue { get; set; }
-        public string Operator { get; set; }
-
-        /// <summary>
-        /// Type rightValueType
-        /// </summary>
-        public Func<Type, Expression> GetRightValueExpression { get; set; }
-    }
-
-
-
-    public class FilterService
+    public partial class FilterService
     {
         public static FilterService Instance = new FilterService();
 
+
+        public bool operatorIsIgnoreCase = true;
+
+
+        #region OperatorMap
         /// <summary>
         /// operatorName -> operatorType(in class FilterRuleOperator)
         /// </summary>
         protected Dictionary<string, string> operatorMap = new Dictionary<string, string>();
-        public bool operatorIsIgnoreCase = true;
-        public bool ignoreError = false;
+
 
         public FilterService AddOperatorMap(string operatorName, string operatorType)
         {
@@ -48,7 +36,7 @@ namespace Vit.Linq.Filter
                 AddOperatorMap(map.operatorName, map.operatorType);
             return this;
         }
-
+        #endregion
 
 
         public Func<T, bool> ToPredicate<T>(IFilterRule rule)
@@ -82,109 +70,100 @@ namespace Vit.Linq.Filter
 
 
 
-        public virtual ECondition? GetCondition(IFilterRule filter)
+        public virtual string GetCondition(IFilterRule filter)
         {
-            var condition = filter.condition;
-            if (string.IsNullOrEmpty(condition)) return default;
-
-            if (FilterRuleCondition.And.Equals(condition, StringComparison.OrdinalIgnoreCase))
-            {
-                return ECondition.And;
-            }
-            if (FilterRuleCondition.Or.Equals(condition, StringComparison.OrdinalIgnoreCase))
-            {
-                return ECondition.Or;
-            }
-            if (FilterRuleCondition.Not.Equals(condition, StringComparison.OrdinalIgnoreCase))
-            {
-                return ECondition.Not;
-            }
-            if (FilterRuleCondition.NotAnd.Equals(condition, StringComparison.OrdinalIgnoreCase))
-            {
-                return ECondition.NotAnd;
-            }
-            if (FilterRuleCondition.NotOr.Equals(condition, StringComparison.OrdinalIgnoreCase))
-            {
-                return ECondition.NotOr;
-            }
-            return default;
+            return filter?.condition;
         }
 
 
-        #region GetPrimitiveValue
+
+        public Func<object, object> getPrimitiveValue { get; set; }
+        protected virtual object GetPrimitiveValue(object value)
+        {
+            if (getPrimitiveValue != null) value = getPrimitiveValue(value);
+            return value;
+        }
+
+
+
+        #region  GetRightValue of FileRule
         /// <summary>
-        /// (bool success, object value)GetPrimitiveValue(object valueInRule, IFilterRule rule, Type valueType)
+        /// (bool success, object value)getRightValue(IFilterRule rule, Type valueType)
         ///
-        ///  <para>   var GetPrimitiveValue = (object valueInRule, IFilterRule rule, Type valueType) =>           </para>
+        ///  <para>   var getRightValue = (IFilterRule rule, Type valueType) =>                                   </para>
         ///  <para>   {                                                                                           </para>
+        ///  <para>       var valueInRule = rule.value;                                                           </para>
         ///  <para>       if (valueInRule == null) return (true, null);                                           </para>
         ///  <para>       if (valueType.IsAssignableFrom(valueInRule.GetType())) return (true, valueInRule);      </para>
         ///  <para>       return (true, Json.Deserialize(Json.Serialize(valueInRule), valueType));                </para>
-        ///  <para>   };                                                                                          </para>        /// 
+        ///  <para>   };                                                                                          </para>
         /// 
         /// </summary>
-        public Func<object, IFilterRule, Type, (bool success, object value)> GetPrimitiveValue { get; set; }
-        protected virtual object GetRulePrimitiveValue(object valueInRule, IFilterRule rule, Type valueType)
+        public Func<IFilterRule, Type, (bool success, object value)> getRightValue { get; set; }
+        protected virtual object GetRightValue(IFilterRule rule, Type valueType)
         {
-            if (GetPrimitiveValue != null)
+            if (getRightValue != null)
             {
-                var result = GetPrimitiveValue(valueInRule, rule, valueType);
+                var result = getRightValue(rule, valueType);
                 if (result.success) return result.value;
             }
 
-            //if (valueInRule == null) return null;
-            //if (valueType.IsAssignableFrom(valueInRule.GetType())) return valueInRule;
-            //return  Vit.Core.Module.Serialization.Json.Deserialize(Vit.Core.Module.Serialization.Json.Serialize(valueInRule), valueType);
+            object value = GetPrimitiveValue(rule.value);
+            {
+                var result = ConvertValue(value, valueType);
+                if (result.success) return result.value;
+            }
 
-            object value = null;
+            throw new InvalidOperationException("value in rule is not valid");
+            //return value;
+        }
 
+
+
+
+        #region static ConvertValue
+        static (bool success, object value) ConvertValue(object value, Type valueType)
+        {
             //  List
             if (valueType.IsGenericType && (
                 typeof(IEnumerable<>).IsAssignableFrom(valueType.GetGenericTypeDefinition())
                 || typeof(List<>).IsAssignableFrom(valueType.GetGenericTypeDefinition())
                 ))
             {
-                //if (valueInRule != null)
-                {
-                    value = ConvertToList(valueInRule, rule, valueType);
-                }
+                var elementType = valueType.GetGenericArguments()[0];
+                var list = value as IEnumerable<object>;
+                if (list == null) return (false, null);
+                return (true, ToList(list, elementType));
             }
             else
             {
-                //  value
-                if (valueInRule != null)
-                {
-                    Type type = Nullable.GetUnderlyingType(valueType) ?? valueType;
-                    value = Convert.ChangeType(valueInRule, type);
-                }
+                return (true, ConvertElementValue(value, valueType));
             }
-            return value;
         }
 
-
-        #region ConvertToList
-        internal object ConvertToList(object value, IFilterRule rule, Type valueType)
+        static object ToList(IEnumerable<object> list, Type elementType)
         {
-            if (!(value is string) && value is IEnumerable values)
-            {
-                Type fieldType = valueType.GetGenericArguments()[0];
+            var methodInfo = new Func<IEnumerable<object>, List<string>>(ToList<string>)
+              .Method.GetGenericMethodDefinition().MakeGenericMethod(elementType);
 
-                var methodInfo = new Func<IEnumerable, IFilterRule, List<object>>(ConvertToListByType<object>)
-                    .Method.GetGenericMethodDefinition().MakeGenericMethod(fieldType);
-                return methodInfo.Invoke(this, new object[] { values, rule });
-            }
-            return null;
+            return methodInfo.Invoke(null, new object[] { list });
         }
-        internal List<T> ConvertToListByType<T>(IEnumerable values, IFilterRule rule)
+
+        static List<ElementType> ToList<ElementType>(IEnumerable<object> list)
         {
-            Type fieldType = typeof(T);
-            var list = new List<T>();
-            foreach (var itemValue in values)
+            return list?.Select(elem => (ElementType)ConvertElementValue(elem, typeof(ElementType))).ToList();
+        }
+
+        static object ConvertElementValue(object value, Type valueType)
+        {
+            if (value == null) return default;
+
+            if (valueType.IsAssignableFrom(value.GetType()))
             {
-                T value = (T)Convert.ChangeType(itemValue, fieldType);
-                list.Add(value);
+                return value;
             }
-            return list;
+            valueType = Nullable.GetUnderlyingType(valueType) ?? valueType;
+            return Convert.ChangeType(value, valueType);
         }
         #endregion
 
@@ -208,7 +187,7 @@ namespace Vit.Linq.Filter
 
         protected virtual Expression GetRightValueExpression(IFilterRule rule, ParameterExpression valueExpression, Type valueType)
         {
-            var rightValue = GetRulePrimitiveValue(rule.value, rule, valueType);
+            var rightValue = GetRightValue(rule, valueType);
             return Expression.Constant(rightValue, valueType);
 
             //Expression<Func<object>> valueLamba = () => rightValue;
@@ -218,26 +197,9 @@ namespace Vit.Linq.Filter
 
 
 
-        #region Custom Operator
 
-        Dictionary<string, Func<OperatorBuilderArgs, Expression>> customOperator = new Dictionary<string, Func<OperatorBuilderArgs, Expression>>();
 
-        Expression CustomOperator_GetExpression(OperatorBuilderArgs args)
-        {
-            if (customOperator.TryGetValue(args.Operator, out var operatorBuilder) && operatorBuilder != null)
-            {
-                return operatorBuilder(args);
-            }
-            return default;
-        }
-
-        public virtual void CustomOperator_Add(string Operator, Func<OperatorBuilderArgs, Expression> operatorBuilder)
-        {
-            if (operatorIsIgnoreCase) Operator = Operator.ToLower();
-            customOperator[Operator] = operatorBuilder;
-        }
-
-        #endregion
+   
 
 
         #region ConvertToExpression
@@ -248,28 +210,41 @@ namespace Vit.Linq.Filter
 
             return ConvertToExpression(rule, parameter, GetCondition(rule));
         }
-        Expression ConvertToExpression(IFilterRule rule, ParameterExpression parameter, ECondition? condition)
+
+        Expression ConvertToExpression(IFilterRule rule, ParameterExpression parameter, string condition)
         {
             if (condition == null)
                 return ConvertToExpressionNonNested(rule, parameter);
 
             //  nested filter rules
-            switch (condition.Value)
+            if (RuleCondition.And.Equals(condition, StringComparison.OrdinalIgnoreCase))
             {
-                case ECondition.And:
-                case ECondition.Or:
-                    if (rule.rules?.Any() == true)
-                        return ConvertToExpression(rule.rules, parameter, condition.Value);
-                    else
-                        return ConvertToExpressionNonNested(rule, parameter);
-                case ECondition.Not:
-                    return Expression.Not(ConvertToExpression(rule, parameter, null));
-                case ECondition.NotAnd:
-                    return Expression.Not(ConvertToExpression(rule, parameter, ECondition.And));
-                case ECondition.NotOr:
-                    return Expression.Not(ConvertToExpression(rule, parameter, ECondition.Or));
-                default: throw new Exception("unrecognized condition : " + rule.condition);
+                if (rule.rules == null)
+                    return ConvertToExpressionNonNested(rule, parameter);
+                else
+                    return ConvertToExpression(rule.rules, parameter, isAnd: true);
             }
+            else if (RuleCondition.Or.Equals(condition, StringComparison.OrdinalIgnoreCase))
+            {
+                if (rule.rules == null)
+                    return ConvertToExpressionNonNested(rule, parameter);
+                else
+                    return ConvertToExpression(rule.rules, parameter, isAnd: false);
+            }
+            else if (RuleCondition.Not.Equals(condition, StringComparison.OrdinalIgnoreCase))
+            {
+                return Expression.Not(ConvertToExpression(rule, parameter, null));
+            }
+            else if (RuleCondition.NotAnd.Equals(condition, StringComparison.OrdinalIgnoreCase))
+            {
+                return Expression.Not(ConvertToExpression(rule, parameter, RuleCondition.And));
+            }
+            else if (RuleCondition.NotOr.Equals(condition, StringComparison.OrdinalIgnoreCase))
+            {
+                return Expression.Not(ConvertToExpression(rule, parameter, RuleCondition.Or));
+            }
+
+            throw new Exception("unrecognized condition : " + rule.condition);
         }
 
 
@@ -279,111 +254,11 @@ namespace Vit.Linq.Filter
             // non-nested rule
 
             Expression leftValueExpression = GetLeftValueExpression(rule, parameter);
-            Type leftFieldType = leftValueExpression.Type;
+            Type leftValueType = leftValueExpression.Type;
 
-            #region Get System Expression
             var Operator = GetOperator(rule);
-            var cmpType = operatorIsIgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
-
-
-            {
-                #region ##1  null
-                if (FilterRuleOperator.IsNull.Equals(Operator, cmpType))
-                {
-                    return IsNull();
-                }
-                if (FilterRuleOperator.IsNotNull.Equals(Operator, cmpType))
-                {
-                    return Expression.Not(IsNull());
-                }
-                #endregion
-
-
-                #region ##2 number
-                if (FilterRuleOperator.Equal.Equals(Operator, cmpType))
-                {
-                    return Expression.Equal(leftValueExpression, GetRightValueExpression());
-                }
-                if (FilterRuleOperator.NotEqual.Equals(Operator, cmpType))
-                {
-                    return Expression.NotEqual(leftValueExpression, GetRightValueExpression());
-                }
-
-                if (FilterRuleOperator.GreaterThan.Equals(Operator, cmpType))
-                {
-                    return Expression.GreaterThan(leftValueExpression, GetRightValueExpression());
-                }
-                if (FilterRuleOperator.GreaterThanOrEqual.Equals(Operator, cmpType))
-                {
-                    return Expression.GreaterThanOrEqual(leftValueExpression, GetRightValueExpression());
-                }
-                if (FilterRuleOperator.LessThan.Equals(Operator, cmpType))
-                {
-                    return Expression.LessThan(leftValueExpression, GetRightValueExpression());
-
-                }
-                if (FilterRuleOperator.LessThanOrEqual.Equals(Operator, cmpType))
-                {
-                    return Expression.LessThanOrEqual(leftValueExpression, GetRightValueExpression());
-                }
-                #endregion
-
-
-                #region ##3 array
-                if (FilterRuleOperator.In.Equals(Operator, cmpType))
-                {
-                    return In();
-                }
-                if (FilterRuleOperator.NotIn.Equals(Operator, cmpType))
-                {
-                    return Expression.Not(In());
-                }
-                #endregion
-
-
-                #region ##4 string
-                if (FilterRuleOperator.Contains.Equals(Operator, cmpType))
-                {
-                    var nullCheck = Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression);
-                    var contains = Expression.Call(leftValueExpression, "Contains", null, GetRightValueExpression());
-
-                    return Expression.AndAlso(Expression.Not(nullCheck), contains);
-
-                }
-                if (FilterRuleOperator.NotContains.Equals(Operator, cmpType))
-                {
-                    var nullCheck = Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression);
-                    var contains = Expression.Call(leftValueExpression, "Contains", null, GetRightValueExpression());
-
-                    return Expression.OrElse(nullCheck, Expression.Not(contains));
-                }
-                if (FilterRuleOperator.StartsWith.Equals(Operator, cmpType))
-                {
-                    var nullCheck = Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression));
-                    var startsWith = Expression.Call(leftValueExpression, "StartsWith", null, GetRightValueExpression());
-
-                    return Expression.AndAlso(nullCheck, startsWith);
-                }
-
-                if (FilterRuleOperator.EndsWith.Equals(Operator, cmpType))
-                {
-                    var nullCheck = Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression));
-                    var endsWith = Expression.Call(leftValueExpression, "EndsWith", null, GetRightValueExpression());
-                    return Expression.AndAlso(nullCheck, endsWith);
-                }
-                if (FilterRuleOperator.IsNullOrEmpty.Equals(Operator, cmpType))
-                {
-                    return Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression);
-                }
-                if (FilterRuleOperator.IsNotNullOrEmpty.Equals(Operator, cmpType))
-                {
-                    return Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression));
-                }
-                #endregion
-
-            }
-            #endregion
-
+            if (string.IsNullOrWhiteSpace(Operator))
+                return null;
 
             #region CustomOperator
             var operatorBuilderArgs = new OperatorBuilderArgs
@@ -394,28 +269,133 @@ namespace Vit.Linq.Filter
                 Operator = Operator,
                 GetRightValueExpression = (Type rightValueType) => this.GetRightValueExpression(rule, parameter, rightValueType)
             };
-            var operatorExpression = CustomOperator_GetExpression(operatorBuilderArgs);
+            var operatorExpression = CustomOperator_ToExpression(operatorBuilderArgs);
             if (operatorExpression != default) return operatorExpression;
             #endregion
 
 
-            if (!ignoreError) throw new Exception("unrecognized operator : " + rule.@operator);
-            return null;
+            #region Get System Expression
+
+            var cmpType = operatorIsIgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+
+
+            {
+                #region ##1  null
+                if (RuleOperator.IsNull.Equals(Operator, cmpType))
+                {
+                    return IsNull();
+                }
+                if (RuleOperator.IsNotNull.Equals(Operator, cmpType))
+                {
+                    return Expression.Not(IsNull());
+                }
+                #endregion
+
+
+                #region ##2 number
+                if (RuleOperator.Equal.Equals(Operator, cmpType))
+                {
+                    return Expression.Equal(leftValueExpression, GetRightValueExpression());
+                }
+                if (RuleOperator.NotEqual.Equals(Operator, cmpType))
+                {
+                    return Expression.NotEqual(leftValueExpression, GetRightValueExpression());
+                }
+
+                if (RuleOperator.GreaterThan.Equals(Operator, cmpType))
+                {
+                    return Expression.GreaterThan(leftValueExpression, GetRightValueExpression());
+                }
+                if (RuleOperator.GreaterThanOrEqual.Equals(Operator, cmpType))
+                {
+                    return Expression.GreaterThanOrEqual(leftValueExpression, GetRightValueExpression());
+                }
+                if (RuleOperator.LessThan.Equals(Operator, cmpType))
+                {
+                    return Expression.LessThan(leftValueExpression, GetRightValueExpression());
+
+                }
+                if (RuleOperator.LessThanOrEqual.Equals(Operator, cmpType))
+                {
+                    return Expression.LessThanOrEqual(leftValueExpression, GetRightValueExpression());
+                }
+                #endregion
+
+
+                #region ##3 array
+                if (RuleOperator.In.Equals(Operator, cmpType))
+                {
+                    return In();
+                }
+                if (RuleOperator.NotIn.Equals(Operator, cmpType))
+                {
+                    return Expression.Not(In());
+                }
+                #endregion
+
+
+                #region ##4 string
+                if (RuleOperator.Contains.Equals(Operator, cmpType))
+                {
+                    var nullCheck = Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression);
+                    var contains = Expression.Call(leftValueExpression, "Contains", null, GetRightValueExpression());
+
+                    return Expression.AndAlso(Expression.Not(nullCheck), contains);
+
+                }
+                if (RuleOperator.NotContains.Equals(Operator, cmpType))
+                {
+                    var nullCheck = Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression);
+                    var contains = Expression.Call(leftValueExpression, "Contains", null, GetRightValueExpression());
+
+                    return Expression.OrElse(nullCheck, Expression.Not(contains));
+                }
+                if (RuleOperator.StartsWith.Equals(Operator, cmpType))
+                {
+                    var nullCheck = Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression));
+                    var startsWith = Expression.Call(leftValueExpression, "StartsWith", null, GetRightValueExpression());
+
+                    return Expression.AndAlso(nullCheck, startsWith);
+                }
+
+                if (RuleOperator.EndsWith.Equals(Operator, cmpType))
+                {
+                    var nullCheck = Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression));
+                    var endsWith = Expression.Call(leftValueExpression, "EndsWith", null, GetRightValueExpression());
+                    return Expression.AndAlso(nullCheck, endsWith);
+                }
+                if (RuleOperator.IsNullOrEmpty.Equals(Operator, cmpType))
+                {
+                    return Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression);
+                }
+                if (RuleOperator.IsNotNullOrEmpty.Equals(Operator, cmpType))
+                {
+                    return Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression));
+                }
+                #endregion
+
+            }
+            #endregion
+
+
+
+            throw new Exception("unrecognized operator : " + rule.@operator);
+            //return null;
 
 
             #region inner Method
             Expression GetRightValueExpression()
             {
-                return this.GetRightValueExpression(rule, parameter, leftFieldType);
+                return this.GetRightValueExpression(rule, parameter, leftValueType);
             }
 
             Expression IsNull()
             {
-                var isNullable = !leftFieldType.IsValueType || Nullable.GetUnderlyingType(leftFieldType) != null;
+                var isNullable = !leftValueType.IsValueType || Nullable.GetUnderlyingType(leftValueType) != null;
 
                 if (isNullable)
                 {
-                    var nullValue = Expression.Constant(null, leftFieldType);
+                    var nullValue = Expression.Constant(null, leftValueType);
                     return Expression.Equal(leftValueExpression, nullValue);
                 }
                 return Expression.Constant(false, typeof(bool));
@@ -424,21 +404,17 @@ namespace Vit.Linq.Filter
             Expression In()
             {
                 // #1 using Enumerable<>.Contains
-                //Expression arrayExp = null;
-                //Type valueType = typeof(IEnumerable<>).MakeGenericType(leftFieldType);
-                //arrayExp = this.GetRightValueExpression(rule, parameter, valueType);
+                //Type valueType = typeof(IEnumerable<>).MakeGenericType(leftValueType);
+                //var rightValueExpression = this.GetRightValueExpression(rule, parameter, valueType);
 
-                //var inCheck = Expression.Call(typeof(System.Linq.Enumerable), "Contains", new[] { leftFieldType }, arrayExp, leftValueExpression);
-                //return inCheck;
+                //return Expression.Call(typeof(System.Linq.Enumerable), "Contains", new[] { leftValueType }, rightValueExpression, leftValueExpression);
 
                 //-------------------------------------
                 // #2 using List<>.Contains
-                Expression arrayExp = null;
-                Type valueType = typeof(List<>).MakeGenericType(leftFieldType);
-                arrayExp = this.GetRightValueExpression(rule, parameter, valueType);
+                Type valueType = typeof(List<>).MakeGenericType(leftValueType);
+                var rightValueExpression = this.GetRightValueExpression(rule, parameter, valueType);
 
-                var inCheck = Expression.Call(arrayExp, "Contains", null, leftValueExpression);
-                return inCheck;
+                return Expression.Call(rightValueExpression, "Contains", null, leftValueExpression);
             }
             #endregion
         }
@@ -448,9 +424,9 @@ namespace Vit.Linq.Filter
         /// </summary>
         /// <param name="rules"></param>
         /// <param name="parameter"></param>
-        /// <param name="condition"> only could be And or Or</param>
+        /// <param name="isAnd"> true : and     false: or </param>
         /// <returns></returns>
-        Expression ConvertToExpression(IEnumerable<IFilterRule> rules, ParameterExpression parameter, ECondition condition = ECondition.And)
+        Expression ConvertToExpression(IEnumerable<IFilterRule> rules, ParameterExpression parameter, bool isAnd = true)
         {
             if (rules?.Any() != true)
             {
@@ -481,7 +457,7 @@ namespace Vit.Linq.Filter
                 {
                     return exp1;
                 }
-                return condition == ECondition.And ? Expression.AndAlso(exp1, exp2) : Expression.OrElse(exp1, exp2);
+                return isAnd ? Expression.AndAlso(exp1, exp2) : Expression.OrElse(exp1, exp2);
             }
             #endregion
 
