@@ -3,18 +3,23 @@ using System.Linq.Expressions;
 using System.Linq;
 using Vit.Linq.ExpressionTree.ComponentModel;
 using System.Collections.Generic;
-using Vitorm;
 
-namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Other_Methods
+namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
 {
 
-    public class Db_Methods : MethodConvertor_Base
+    public class MethodConvertor_ForType : MethodConvertor_Base
     {
+        public MethodConvertor_ForType(Type methodType, List<string> methodNames = null, int priority = 10000)
+        {
+            this.methodType = methodType;
+            this.methodNames = methodNames ?? methodType.GetMethods().Select(m => m.Name).ToList();
+            this.priority = priority;
+        }
 
-        public Type methodType { get; } = typeof(DbFunction);
+        public Type methodType { get; protected set; }
 
-        static readonly List<string> methodNames = typeof(DbFunction).GetMethods().Select(m => m.Name).ToList();
-        public override int priority => 10000;
+        public List<string> methodNames { get; protected set; }
+        public override int priority { get; set; }
 
         public override bool PredicateToData(DataConvertArgument arg, MethodCallExpression call)
         {

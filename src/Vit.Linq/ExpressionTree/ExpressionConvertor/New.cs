@@ -97,12 +97,9 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             {
                 type = newNode.New_GetType();
             }
-            if (type == null && constructorArgExpressions?.Any() == true)
+            if (type == null)
             {
-                var properties = constructorArgExpressions
-                    .Select((item, i) => new { name = newNode.constructorArgs[i].name, Type = item.Type })
-                    .ToDictionary(member => member.name, member => member.Type);
-                type = ModelGenerator.CreateType(properties);
+                throw new NotSupportedException("type could not be null");
             }
 
             var constructor = type.GetConstructor(constructorArgExpressions?.Select(member => member.Type).ToArray() ?? Type.EmptyTypes);

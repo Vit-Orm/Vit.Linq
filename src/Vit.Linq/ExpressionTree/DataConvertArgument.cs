@@ -4,25 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
-using Vitorm;
 
 namespace Vit.Linq.ExpressionTree
 {
-    public enum EValueType
-    {
-        /// <summary>
-        /// constant value like 1.5 or int[]{1,2,3}
-        /// </summary>
-        constant,
-        /// <summary>
-        /// QueryableArgument
-        /// </summary>
-        argument,
-        /// <summary>
-        /// like parameter from lambda argument  or combined value
-        /// </summary>
-        other,
-    }
     public class DataConvertArgument
     {
         public bool autoReduce { get; set; } = false;
@@ -110,7 +94,14 @@ namespace Vit.Linq.ExpressionTree
                     }
                 case MethodCallExpression call:
                     {
-                        if (call.Method.DeclaringType == typeof(DbFunction)) return EValueType.other;
+                        // get ValueType from ValueTypeAttribute
+                        {
+                            var attribute = call.Method.GetCustomAttributes(typeof(ValueTypeAttribute), inherit: true).FirstOrDefault() as ValueTypeAttribute;
+                            if (attribute != null) return attribute.valueType;
+
+                            attribute = call.Method.DeclaringType.GetCustomAttributes(typeof(ValueTypeAttribute), inherit: true).FirstOrDefault() as ValueTypeAttribute;
+                            if (attribute != null) return attribute.valueType;
+                        }
 
                         childrenTypes = new();
                         if (call.Arguments?.Any() == true) childrenTypes.AddRange(call.Arguments.Select(GetEValueType));
