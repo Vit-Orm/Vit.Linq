@@ -17,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Vit.Linq\Vit.Linq.csproj" />
+        <ProjectReference Include="..\..\src\Vit.Linq\Vit.Linq.csproj" />
     </ItemGroup>
 
 </Project>

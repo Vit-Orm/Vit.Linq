@@ -1,15 +1,4 @@
-﻿
-# TODO: 
-
-
-# TotalCount  : Count without take and skip
-
-# nested stream, like :  group then join when group
-
-# support ExpressionType.Quote
-
-------------------------------------
-# Doc
+﻿# Linq Example
 
 
 # 1. InnerJoin with Queryable.SelectMany
