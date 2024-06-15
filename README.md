@@ -12,7 +12,7 @@
 
  
 Examples:  
-- [ExpressionTree](src/Test/Vit.Linq.ExpressionTree.MsTest)  
-- [Filter](src/Test/Vit.Linq.MsTest/Filter/Filter_TestBase.cs)  
-- [CustomOperator](src/Test/Vit.Linq.MsTest/Filter/FilterService_CustomOperator_Test.cs)  
+- [ExpressionTree](test/Vit.Linq.ExpressionTree.MsTest)  
+- [Filter](test/Vit.Linq.MsTest/Filter/Filter_TestBase.cs)  
+- [CustomOperator](test/Vit.Linq.MsTest/Filter/FilterService_CustomOperator_Test.cs)  
 
