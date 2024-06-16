@@ -8,7 +8,7 @@
 
 | Build | NuGet |
 | -------- | -------- |
-|![](https://github.com/VitormLib/Vit.Linq/workflows/ki_devops3/badge.svg) | [![](https://img.shields.io/nuget/v/Vit.Linq.svg)](https://www.nuget.org/packages/Vit.Linq/) ![](https://img.shields.io/nuget/dt/Vit.Linq.svg) |
+|![](https://github.com/VitormLib/Vit.Linq/workflows/ki_devops3/badge.svg) | [![](https://img.shields.io/nuget/v/Vit.Linq.svg)](https://www.nuget.org/packages/Vit.Linq) ![](https://img.shields.io/nuget/dt/Vit.Linq.svg) |
 
  
 Examples:  
