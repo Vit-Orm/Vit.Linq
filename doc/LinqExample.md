@@ -32,6 +32,7 @@ var query =
     from user in userQuery
     from father in userQuery.Where(father => user.fatherId == father.id).DefaultIfEmpty()
     where user.id > 2
+    orderby user.id
     select new { user, father };
 
 // Lambda Expression
@@ -41,6 +42,7 @@ var query =
       , (user, father) => new { user, father }
   )
   .Where(row => row.user.id > 2)
+  .OrderBy(row => row.user.id)
   .Select(row => new { row.user, row.father });
 
 ```
