@@ -1,5 +1,4 @@
 ﻿using Vit.Extensions.Linq_Extensions;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Linq.ComponentModel;
 
@@ -51,7 +50,7 @@ namespace Vit.Linq.MsTest.Extensions
                         new OrderField { field = "job.departmentId", asc = false },
                         new OrderField { field = "id", asc = true }
                     })
-                    .IQueryable_ToRangeData<Person>(new PageInfo { pageSize = 10, pageIndex = 1 });
+                    .IQueryable_ToRangeData<Person>(RangeInfo.FromPage(pageSize: 10, pageIndex: 1));
 
                 Assert.AreEqual(1000, result.totalCount);
                 Assert.AreEqual(10, result.items.Count);

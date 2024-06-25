@@ -2,6 +2,7 @@
 using System.Linq;
 
 using Vit.Linq.ComponentModel;
+using Vit.Linq.Filter.ComponentModel;
 
 
 namespace Vit.Extensions.Linq_Extensions
@@ -9,19 +10,27 @@ namespace Vit.Extensions.Linq_Extensions
 
     public static partial class Queryable_ToRangeData_Extensions
     {
-
-        public static RangeData<T> ToRangeData<T>(this IQueryable<T> query, RangeInfo range, IEnumerable<OrderField> orders = null)
+        public static RangeData<T> ToRangeData<T>(this IQueryable<T> query, RangeInfo range)
         {
             if (query == null) return null;
-
-            return new RangeData<T>(range) { totalCount = query.Count(), items = query.OrderBy(orders).Range(range).ToList() };
+            return new RangeData<T>(range) { totalCount = query.Count(), items = query.Range(range).ToList() };
         }
 
-        public static RangeData<T> ToRangeData<T>(this IQueryable<T> query, PageInfo page, IEnumerable<OrderField> orders = null)
+        public static RangeData<T> ToRangeData<T>(this IQueryable<T> query, IEnumerable<OrderField> orders, RangeInfo range)
         {
-            return ToRangeData(query, page.ToRange(), orders);
+            return ToRangeData(query?.OrderBy(orders), range);
         }
 
+        public static RangeData<T> ToRangeData<T>(this IQueryable<T> query, FilterRule filter, IEnumerable<OrderField> orders, RangeInfo range)
+        {
+            return ToRangeData(query?.Where(filter)?.OrderBy(orders), range);
+        }
+
+
+        public static RangeData<T> ToRangeData<T>(this IQueryable<T> query, FilterRule filter, RangeInfo range)
+        {
+            return ToRangeData(query?.Where(filter), range);
+        }
 
     }
 }

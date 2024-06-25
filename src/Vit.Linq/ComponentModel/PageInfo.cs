@@ -23,7 +23,7 @@
 
         public RangeInfo ToRange()
         {
-            return new RangeInfo { skip = pageSize * (pageIndex - 1), take = pageSize };
+            return RangeInfo.FromPage(this);
         }
 
 

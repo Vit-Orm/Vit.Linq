@@ -10,7 +10,7 @@ namespace Vit.Extensions.Linq_Extensions
 
         public static IQueryable<T> Page<T>(this IQueryable<T> query, PageInfo page)
         {
-            return query.Range(page.ToRange());
+            return query?.Range(page.ToRange());
         }
 
 
@@ -24,7 +24,7 @@ namespace Vit.Extensions.Linq_Extensions
         /// <returns></returns>
         public static IQueryable<T> Page<T>(this IQueryable<T> query, int pageSize, int pageIndex = 1)
         {
-            return query.Page(new PageInfo(pageSize: pageSize, pageIndex: pageIndex));
+            return Page(query, new PageInfo(pageSize: pageSize, pageIndex: pageIndex));
         }
     }
 }

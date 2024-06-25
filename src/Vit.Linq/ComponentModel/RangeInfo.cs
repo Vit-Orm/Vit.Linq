@@ -24,5 +24,15 @@ namespace Vit.Linq.ComponentModel
             this.skip = skip;
             this.take = take;
         }
+
+        public static RangeInfo FromPage(int pageSize, int pageIndex = 1)
+        {
+            return new RangeInfo { skip = pageSize * (pageIndex - 1), take = pageSize };
+        }
+
+        public static RangeInfo FromPage(PageInfo page)
+        {
+            return FromPage(page.pageSize, page.pageIndex);
+        }
     }
 }
