@@ -81,13 +81,16 @@ public enum ExpressionType
 	//     dim2) in Visual Basic.
 	NewArrayBounds = 33,
 
-
-
 	//
 	// Summary:
 	//     A reference to a parameter or variable that is defined in the context of the
 	//     expression. For more information, see System.Linq.Expressions.ParameterExpression.
 	Parameter = 38,
+
+	//
+	// Summary:
+	//      A mathematical operation that raises a number to a power, such as (a ^ b)
+	Power = 39,
 
 	//
 	// Summary:

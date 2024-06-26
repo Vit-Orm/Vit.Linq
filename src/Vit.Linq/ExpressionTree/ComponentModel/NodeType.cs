@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Vit.Linq.ExpressionTree.ComponentModel
+﻿namespace Vit.Linq.ExpressionTree.ComponentModel
 {
     public static class NodeType
     {
@@ -27,10 +23,6 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         public const string ArrayIndex = nameof(ArrayIndex);
 
         public const string New = nameof(New);
-
-
-        public const string Bitwise_And = nameof(Bitwise_And);
-
     }
 
 }

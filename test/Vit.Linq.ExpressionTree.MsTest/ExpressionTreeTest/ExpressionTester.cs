@@ -81,7 +81,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionTreeTest
 
             #region #12 Divide, A division operation, such as (a / b), for numeric operands.
             {
-                predicate = u => u.id / 10 == 10;
+                predicate = u => u.id / 10.0 == 10.0;
                 var rows = Test(query, predicate);
             }
             #endregion
@@ -166,13 +166,6 @@ namespace Vit.Linq.ExpressionTree.ExpressionTreeTest
             #region #37 OrElse,  A short-circuiting conditional OR operation, such as (a || b)
             {
                 predicate = u => u.id == 2 || u.id == 3;
-                var rows = Test(query, predicate);
-            }
-            #endregion
-
-            #region #39 Power,  A mathematical operation that raises a number to a power, such as (a ^ b)
-            {
-                predicate = u => (u.id ^ 2) == 9;
                 var rows = Test(query, predicate);
             }
             #endregion
