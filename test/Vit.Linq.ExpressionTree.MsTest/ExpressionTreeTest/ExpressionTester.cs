@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Vit.Extensions.Linq_Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -177,6 +178,13 @@ namespace Vit.Linq.ExpressionTree.ExpressionTreeTest
             }
             #endregion
 
+
+            #region Test the priority of mathematical calculations
+            {
+                predicate = u => 10 + u.id * 10 == 110;
+                var rows = Test(query, predicate);
+            }
+            #endregion
         }
 
 
