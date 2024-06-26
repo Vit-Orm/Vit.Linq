@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 
@@ -137,7 +135,7 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
                                             throw new Exception("not supported Where filter with index");
                                         }
                                     }
-                                    return (true, ExpressionNode.And(left: left, right: predicateFilter));
+                                    return (true, ExpressionNode.AndAlso(left: left, right: predicateFilter));
                                 }
                             case "FirstOrDefault" or "First" or "LastOrDefault" or "Last":
                             case "Count":

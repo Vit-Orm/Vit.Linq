@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Linq;
 using System.Linq.Expressions;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
+
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 {
@@ -25,19 +25,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
                 switch (binary.NodeType)
                 {
-                    case ExpressionType.AndAlso: return ExpressionNode.And(left: left, right: right);
-                    case ExpressionType.OrElse: return ExpressionNode.Or(left: left, right: right);
 
-                    //case ExpressionType.ArrayIndex: return ExpressionNode.ArrayIndex(left: left, right: right);
-
-                    //case ExpressionType.Equal: return ExpressionNode.Equal(left: left, right: right);
-                    //case ExpressionType.NotEqual: return ExpressionNode.NotEqual(left: left, right: right);
-                    //case ExpressionType.GreaterThan: return ExpressionNode.GreaterThan(left: left, right: right);
-                    //case ExpressionType.GreaterThanOrEqual: return ExpressionNode.GreaterThanOrEqual(left: left, right: right);
-                    //case ExpressionType.LessThan: return ExpressionNode.LessThan(left: left, right: right);
-                    //case ExpressionType.LessThanOrEqual: return ExpressionNode.LessThanOrEqual(left: left, right: right);
-
-                    //case ExpressionType.Add: return new ExpressionNode { nodeType = binary.NodeType.ToString(), expressionType = "Binary", left = left, right = right };
                     case ExpressionType.Add:
                         {
                             ComponentModel.ValueType valueType = null;
@@ -46,7 +34,20 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                             return new ExpressionNode { nodeType = binary.NodeType.ToString(), expressionType = "Binary", left = left, right = right, valueType = valueType };
                         }
 
-                    default: return new ExpressionNode { nodeType = binary.NodeType.ToString(), expressionType = "Binary", left = left, right = right };
+                    //case ExpressionType.AndAlso:
+                    //case ExpressionType.OrElse:
+
+                    //case ExpressionType.ArrayIndex:
+                    //case ExpressionType.Divide:
+
+                    //case ExpressionType.Equal:
+                    //case ExpressionType.NotEqual:
+                    //case ExpressionType.GreaterThan:
+                    //case ExpressionType.GreaterThanOrEqual:
+                    //case ExpressionType.LessThan:
+                    //case ExpressionType.LessThanOrEqual:
+
+                    default: return ExpressionNode.Binary(nodeType: binary.NodeType.ToString(), left: left, right: right);
                 }
                 throw new NotSupportedException($"Unsupported binary operator: {binary.NodeType}");
             }
@@ -63,22 +64,6 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
             switch (data.nodeType)
             {
-                case NodeType.And:
-                    return Expression.AndAlso(left, right);
-
-                case NodeType.Or:
-                    return Expression.OrElse(left, right);
-
-                case NodeType.ArrayIndex:
-                    return Expression.ArrayIndex(left, right);
-
-                //case NodeType.Equal: return Expression.Equal(ToExpression(arg, data.left) ?? Expression.Constant(null), ToExpression(arg, data.right) ?? Expression.Constant(null));
-                //case NodeType.NotEqual: return Expression.NotEqual(ToExpression(arg, data.left) ?? Expression.Constant(null), ToExpression(arg, data.right) ?? Expression.Constant(null));
-                //case NodeType.LessThan: return Expression.LessThan(ToExpression(arg, data.left) ?? Expression.Constant(null), ToExpression(arg, data.right) ?? Expression.Constant(null));
-                //case NodeType.LessThanOrEqual: return Expression.LessThanOrEqual(ToExpression(arg, data.left) ?? Expression.Constant(null), ToExpression(arg, data.right) ?? Expression.Constant(null));
-                //case NodeType.GreaterThan: return Expression.GreaterThan(ToExpression(arg, data.left) ?? Expression.Constant(null), ToExpression(arg, data.right) ?? Expression.Constant(null));
-                //case NodeType.GreaterThanOrEqual: return Expression.GreaterThanOrEqual(ToExpression(arg, data.left) ?? Expression.Constant(null), ToExpression(arg, data.right) ?? Expression.Constant(null));
-
                 case nameof(ExpressionType.Add):
                     {
                         left ??= Expression.Constant(null);
@@ -90,6 +75,21 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                         }
                         return Expression.Add(left, right);
                     }
+
+                //case nameof(ExpressionType.AndAlso):  return Expression.AndAlso(left, right);
+                //case nameof(ExpressionType.OrElse):
+
+                //case nameof(ExpressionType.ArrayIndex):
+                //case nameof(ExpressionType.Divide):
+
+                //case nameof(ExpressionType.Equal): return Expression.Equal(left ?? Expression.Constant(null), right ?? Expression.Constant(null));
+                //case nameof(ExpressionType.NotEqual):
+                //case nameof(ExpressionType.LessThan):
+                //case nameof(ExpressionType.LessThanOrEqual):
+                //case nameof(ExpressionType.GreaterThan):
+                //case nameof(ExpressionType.GreaterThanOrEqual):
+
+
                 default:
                     {
                         left ??= Expression.Constant(null);

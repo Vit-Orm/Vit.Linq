@@ -16,71 +16,59 @@ namespace Vit.Linq.ExpressionTree.MsTest
     public class QueryAction_Test
     {
 
-        public ExpressionConvertService convertService => ExpressionConvertService.Instance;
-
 
         IQueryable<Person> GetQuery()
         {
+            var convertService = ExpressionConvertService.Instance;
+            var queryTypeName = "TestQuery";
+            var sourceData = DataSource.GetQueryable();
+
             Func<Expression, Type, object> QueryExecutor = (expression, type) =>
             {
                 ExpressionNode node;
 
-                #region ExpressinNode
-                {
-                    // #1 Code to Data
-                    // query => query.Where().OrderBy().Skip().Take().Select().ToList();
-                    var isArgument = QueryableBuilder.QueryTypeNameCompare("TestQuery");
-                    node = convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
-                    var strNode = Json.Serialize(node);
+                // #1 Code to Data
+                // query => query.Where().OrderBy().Skip().Take().Select().ToList();
+                var isArgument = QueryableBuilder.QueryTypeNameCompare(queryTypeName);
+                node = convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
+                var strNode = Json.Serialize(node);
 
-
-                    // #2 Data to Code
-                    // query => query.Where(person => (person.id >= 10))
-                    var lambdaExp = convertService.ToLambdaExpression(node, typeof(IQueryable<Person>));
-                    //var exp3 = (Expression<Func<IQueryable<Person>, IQueryable<Person>>>)lambdaExp;
-                    var predicate_ = lambdaExp.Compile();
-                }
-                #endregion
-
-                // As Filter
+                // #2 Filter by QueryAction
                 var queryAction = new QueryAction(node);
                 var strQuery = Json.Serialize(queryAction);
                 var predicate = convertService.ToPredicateExpression<Person>(queryAction.filter);
                 //var lambdaExp = (Expression<Func<Person, bool>>)convertService.ToLambdaExpression(queryAction.filter, typeof(Person));
 
+                var query = sourceData.Where(predicate);
 
-                var list = DataSource.GetQueryable().Where(predicate);
-
-
-                list = list.OrderBy(queryAction.orders);
+                query = query.OrderBy(queryAction.orders);
 
                 var methodName = queryAction.method;
 
-                if (methodName == "TotalCount") return list.Count();
+                if (methodName == "TotalCount") return query.Count();
 
                 if (queryAction.skip.HasValue)
-                    list = list.Skip(queryAction.skip.Value);
+                    query = query.Skip(queryAction.skip.Value);
                 if (queryAction.take.HasValue)
-                    list = list.Take(queryAction.take.Value);
+                    query = query.Take(queryAction.take.Value);
 
                 switch (methodName)
                 {
-                    case "First": return list.First();
-                    case "FirstOrDefault": return list.FirstOrDefault();
-                    case "Last": return list.Last();
-                    case "LastOrDefault": return list.LastOrDefault();
-                    case "Count": return list.Count();
+                    case "First": return query.First();
+                    case "FirstOrDefault": return query.FirstOrDefault();
+                    case "Last": return query.Last();
+                    case "LastOrDefault": return query.LastOrDefault();
+                    case "Count": return query.Count();
                     case "ToList":
                     case "":
                     case null:
-                        return list;
+                        return query;
                 }
 
                 throw new NotSupportedException("Method not support:" + methodName);
             };
 
-            var query = QueryableBuilder.Build<Person>(QueryExecutor,"TestQuery");
-            return query;
+            return QueryableBuilder.Build<Person>(QueryExecutor, queryTypeName);
         }
 
 

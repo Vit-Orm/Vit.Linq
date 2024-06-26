@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Text;
+﻿using System.Linq.Expressions;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 
@@ -10,7 +7,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
     /// <summary>
     ///  a > b ? a : b
-    ///  Node arguments: [  condition, valueForTrue, valueForFalse ]
+    ///  Node arguments: [ condition, valueForTrue, valueForFalse ]
     /// </summary>
     public class Conditional : IExpressionConvertor
     {
@@ -24,7 +21,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
                 return new ExpressionNode
                 {
-                    nodeType = "Conditional",
+                    nodeType = nameof(ExpressionType.Conditional),
                     arguments = new ExpressionNode[] { condition, valueForTrue, valueForFalse }
                 };
             }
@@ -33,7 +30,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
         public Expression ConvertToCode(CodeConvertArgument arg, ExpressionNode data)
         {
-            if (data.nodeType == "Conditional")
+            if (data.nodeType == nameof(ExpressionType.Conditional))
             {
                 var condition = arg.convertService.ToExpression(arg, data.arguments[0]);
                 var valueForTrue = arg.convertService.ToExpression(arg, data.arguments[1]);

@@ -24,16 +24,13 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                     case ExpressionType.Quote:
                         return arg.convertService.ConvertToData(arg, unary.Operand);
 
-                    case ExpressionType.Not:
-                        return ExpressionNode.Not(body: arg.convertService.ConvertToData(arg, unary.Operand));
+                    //case ExpressionType.Not:
+                    //case ExpressionType.ArrayLength:
+
 
                     default:
-                        return new ExpressionNode
-                        {
-                            nodeType = unary.NodeType.ToString(),
-                            expressionType = "Unary",
-                            body = arg.convertService.ConvertToData(arg, unary.Operand),
-                        };
+                        return ExpressionNode.Unary(nodeType: unary.NodeType.ToString(), body: arg.convertService.ConvertToData(arg, unary.Operand));
+
                 }
                 throw new NotSupportedException($"Unsupported binary operator: {unary.NodeType}");
             }
@@ -47,7 +44,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
             switch (data.nodeType)
             {
-                case NodeType.Convert:
+                case nameof(ExpressionType.Convert):
                     {
                         ExpressionNode_Convert convert = data;
                         var value = arg.convertService.ToExpression(arg, convert.body);
@@ -58,24 +55,27 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                         return Expression.Convert(value, type);
                     }
 
-                case NodeType.Not:
-                    {
-                        ExpressionNode_Not not = data;
-                        return Expression.Not(arg.convertService.ToExpression(arg, not.body));
-                    }
+                //case nameof(ExpressionType.Not):
+                //case nameof(ExpressionType.ArrayLength):
+
+                //case nameof(ExpressionType.Negate):
+                //    {
+                //        ExpressionNode_Unary unary = data;
+                //        var operand = arg.convertService.ToExpression(arg, unary.body);
+                //        return Expression.Negate(operand);
+                //    }
+
                 default:
                     {
-                        var operand = arg.convertService.ToExpression(arg, data.body);
+                        ExpressionNode_Unary unary = data;
+                        var operand = arg.convertService.ToExpression(arg, unary.body);
 
-                        var method = typeof(Expression).GetMethod(data.nodeType);
+                        var method = typeof(Expression).GetMethod(data.nodeType, new[] { typeof(Expression) });
                         return method?.Invoke(null, new object[] { operand }) as Expression;
                     }
             }
-            return null;
+
         }
-
-
-
 
     }
 }
