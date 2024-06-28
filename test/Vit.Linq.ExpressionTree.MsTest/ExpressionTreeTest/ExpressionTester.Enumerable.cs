@@ -20,7 +20,6 @@ namespace Vit.Linq.ExpressionTree.ExpressionTreeTest
             }
             #endregion
 
-
             #region #4 ArrayLength, An operation that obtains the length of a one-dimensional array, such as array.Length.
             {
                 predicate = u => u.childrenArray != null && u.childrenArray.Length == 2;
@@ -73,7 +72,6 @@ namespace Vit.Linq.ExpressionTree.ExpressionTreeTest
                 var rows = Test(query, predicate);
             }
             #endregion
-
 
             #region #41 RightShift,  A bitwise right-shift operation, such as (a >> b).
             {
