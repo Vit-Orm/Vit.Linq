@@ -38,7 +38,7 @@ namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest
 
                 // #1 Code to Data
                 // query => query.Where().OrderBy().Skip().Take().Select().ToList();
-                var isArgument = QueryableBuilder.QueryTypeNameCompare(queryTypeName);
+                var isArgument = QueryableBuilder.CompareQueryByName(queryTypeName);
                 node = convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
                 var strNode = Json.Serialize(node);
 

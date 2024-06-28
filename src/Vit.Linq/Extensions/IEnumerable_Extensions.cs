@@ -8,7 +8,7 @@ namespace Vit.Extensions.Linq_Extensions
     /// <summary>
     ///  
     /// </summary>
-    public static partial class IEnumerableExtensions
+    public static partial class IEnumerable_Extensions
     {
 
         public static void ForEach<T>(this IEnumerable<T> data, Action<T> action)
