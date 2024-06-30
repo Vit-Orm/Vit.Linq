@@ -60,10 +60,8 @@ namespace Vit.Linq
         /// <returns></returns>
         public static Expression GetFieldMemberExpression(Type type, string fieldPath)
         {
-            return GetFieldMemberExpression(Expression.Parameter(type), fieldPath);
+            return GetFieldMemberExpression(LinqHelp.CreateParameter(type, "Member"), fieldPath);
         }
-
-
 
         public static Expression<Func<T, object>> GetFieldExpression<T>(string fieldPath)
         {
@@ -74,7 +72,10 @@ namespace Vit.Linq
         }
 
 
-
+        public static ParameterExpression CreateParameter(Type type, string parameterPrefix = "Param")
+        {
+            return Expression.Parameter(type, "m" + parameterPrefix + new Object().GetHashCode());
+        }
 
     }
 }

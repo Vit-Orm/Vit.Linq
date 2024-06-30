@@ -59,7 +59,7 @@ namespace Vit.Linq.Filter
 
         public LambdaExpression ToLambdaExpression(IFilterRule rule, Type targetType)
         {
-            ParameterExpression parameter = Expression.Parameter(targetType);
+            ParameterExpression parameter = LinqHelp.CreateParameter(targetType, "lambdaParam");
             var expression = ConvertToExpression(rule, parameter);
             if (expression == null)
             {

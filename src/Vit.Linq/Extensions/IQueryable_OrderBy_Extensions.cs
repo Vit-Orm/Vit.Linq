@@ -32,7 +32,7 @@ namespace Vit.Extensions.Linq_Extensions
 
 
             var targetType = source.ElementType;
-            ParameterExpression parameter = Expression.Parameter(targetType);
+            ParameterExpression parameter = LinqHelp.CreateParameter(targetType,"orderParam");
 
             Expression queryExpr = source.Expression;
 

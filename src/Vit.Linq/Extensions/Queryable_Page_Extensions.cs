@@ -10,7 +10,7 @@ namespace Vit.Extensions.Linq_Extensions
 
         public static IQueryable<T> Page<T>(this IQueryable<T> query, PageInfo page)
         {
-            return query?.Range(page.ToRange());
+            return query?.Range(page?.ToRange());
         }
 
 

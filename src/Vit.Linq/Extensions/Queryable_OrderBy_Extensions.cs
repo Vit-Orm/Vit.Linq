@@ -20,7 +20,7 @@ namespace Vit.Extensions.Linq_Extensions
         {
             if (query == null || orders?.Any() != true) return query;
 
-            var paramExp = Expression.Parameter(typeof(T));
+            var paramExp = LinqHelp.CreateParameter(typeof(T), "orderParam");
             IOrderedQueryable<T> orderedQuery = null;
 
             foreach (var item in orders)
