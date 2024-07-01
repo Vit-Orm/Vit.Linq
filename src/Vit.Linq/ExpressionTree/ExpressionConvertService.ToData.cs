@@ -13,7 +13,7 @@ namespace Vit.Linq.ExpressionTree
             return ConvertToData(expression, out _, autoReduce: autoReduce, isArgument: isArgument);
         }
 
-        public ExpressionNode ConvertToData(Expression expression, out ParamterInfo[] parameters, bool autoReduce = true, Func<object, Type, bool> isArgument = null)
+        public ExpressionNode ConvertToData(Expression expression, out ParameterInfo[] parameters, bool autoReduce = true, Func<object, Type, bool> isArgument = null)
         {
             var arg = new DataConvertArgument { convertService = this, autoReduce = autoReduce, isArgument = isArgument };
 

@@ -11,23 +11,23 @@ namespace Vit.Linq.ExpressionTree
     {
         public bool autoReduce { get; set; } = false;
 
-        public Func<object,Type, bool> isArgument { get; set; }
+        public Func<object, Type, bool> isArgument { get; set; }
 
 
-        public virtual bool IsArgument(ConstantExpression constant) 
+        public virtual bool IsArgument(ConstantExpression constant)
         {
             var value = constant.Value;
             var type = constant.Type;
 
-            return IsArgument(value,type);
+            return IsArgument(value, type);
         }
 
-        public virtual bool IsArgument(object value,Type type)
+        public virtual bool IsArgument(object value, Type type)
         {
             if (isArgument != null)
-                return isArgument(value,type);
+                return isArgument(value, type);
 
-         
+
             if (!type.IsArray && type.IsGenericType && typeof(IQueryable).IsAssignableFrom(type))
             {
                 return true;
@@ -222,20 +222,20 @@ namespace Vit.Linq.ExpressionTree
 
         }
 
-        internal List<ParamterInfo> globalParameters { get; private set; }
+        internal List<ParameterInfo> globalParameters { get; private set; }
 
 
         public ExpressionNode CreateParameter(object value, Type type)
         {
-            ParamterInfo parameter;
+            ParameterInfo parameter;
 
             parameter = globalParameters?.FirstOrDefault(p => p.value?.GetHashCode() == value.GetHashCode());
 
             if (parameter == null)
             {
-                if (globalParameters == null) globalParameters = new List<ParamterInfo>();
+                if (globalParameters == null) globalParameters = new List<ParameterInfo>();
 
-                parameter = new ParamterInfo(value: value, type: type);
+                parameter = new ParameterInfo(value: value, type: type);
                 globalParameters.Add(parameter);
             }
             return ExpressionNode_FreeParameter.Member(parameter);

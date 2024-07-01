@@ -5,8 +5,8 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
 
     public interface ExpressionNode_Member : IExpressionNode
     {
-        public string parameterName { get;   }
-        public ExpressionNode objectValue { get;  }
+        public string parameterName { get; }
+        public ExpressionNode objectValue { get; }
 
         public string memberName { get; }
 
@@ -64,9 +64,9 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         }
     }
 
-    public class ParamterInfo
+    public class ParameterInfo
     {
-        internal ParamterInfo(object value, Type type)
+        internal ParameterInfo(object value, Type type)
         {
             this.value = value;
             this.type = type;
@@ -81,7 +81,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
     }
     public class ExpressionNode_FreeParameter : ExpressionNode
     {
-        protected ParamterInfo parameter;
+        protected ParameterInfo parameter;
 
         public override string parameterName
         {
@@ -89,7 +89,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
             get => parameter?.parameterName;
         }
 
-        public static ExpressionNode Member(ParamterInfo parameter)
+        public static ExpressionNode Member(ParameterInfo parameter)
         {
             var node = new ExpressionNode_FreeParameter
             {

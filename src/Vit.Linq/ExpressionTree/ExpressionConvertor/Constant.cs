@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Data;
-using System.Linq;
 using System.Linq.Expressions;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
