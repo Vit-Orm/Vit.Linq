@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter;
-using Vit.Extensions.Linq_Extensions;
+using Vit.Linq;
 using Newtonsoft.Json.Linq;
 using Vit.Linq.Filter.ComponentModel;
 

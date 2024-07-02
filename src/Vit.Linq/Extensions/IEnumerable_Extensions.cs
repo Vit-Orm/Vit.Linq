@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Vit.Extensions.Linq_Extensions
+namespace Vit.Linq
 {
     /// <summary>
     ///  

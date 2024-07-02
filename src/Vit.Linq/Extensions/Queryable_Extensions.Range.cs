@@ -2,10 +2,10 @@
 
 using Vit.Linq.ComponentModel;
 
-namespace Vit.Extensions.Linq_Extensions
+namespace Vit.Linq
 {
 
-    public static partial class Queryable_Range_Extensions
+    public static partial class Queryable_Extensions
     {
         public static IQueryable<T> Range<T>(this IQueryable<T> query, RangeInfo range)
         {

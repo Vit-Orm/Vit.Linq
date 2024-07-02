@@ -5,10 +5,10 @@ using Vit.Linq.ComponentModel;
 using Vit.Linq.Filter.ComponentModel;
 
 
-namespace Vit.Extensions.Linq_Extensions
+namespace Vit.Linq
 {
 
-    public static partial class Queryable_ToPageData_Extensions
+    public static partial class Queryable_Extensions
     {
         public static PageData<T> ToPageData<T>(this IQueryable<T> query, PageInfo page)
         {
@@ -19,14 +19,14 @@ namespace Vit.Extensions.Linq_Extensions
 
         public static PageData<T> ToPageData<T>(this IQueryable<T> query, IEnumerable<OrderField> orders, PageInfo page)
         {
-            return ToPageData(query?.OrderBy(orders), page);
+            return ToPageData(query?.OrderByMemberExpression(orders), page);
         }
 
 
 
         public static PageData<T> ToPageData<T>(this IQueryable<T> query, FilterRule filter, IEnumerable<OrderField> orders, PageInfo page)
         {
-            return ToPageData(query?.Where(filter)?.OrderBy(orders), page);
+            return ToPageData(query?.Where(filter)?.OrderByMemberExpression(orders), page);
         }
 
 

@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-using Vit.Linq;
 using Vit.Linq.ComponentModel;
 
-namespace Vit.Extensions.Linq_Extensions
+namespace Vit.Linq
 {
 
-    public static partial class IQueryable_OrderBy_Extensions
+    public static partial class IQueryable_Extensions
     {
 
 
-        public static IQueryable IQueryable_OrderBy(this IQueryable source, IEnumerable<OrderField> orders)
+        public static IQueryable IQueryable_OrderByMemberExpression(this IQueryable source, IEnumerable<OrderField> orders)
         {
             if (source == null || orders?.Any() != true) return source;
 
@@ -63,9 +62,9 @@ namespace Vit.Extensions.Linq_Extensions
         /// <param name="field"></param>
         /// <param name="asc"> whether sort by asc</param>
         /// <returns></returns>
-        public static IQueryable IQueryable_OrderBy(this IQueryable query, string field, bool asc = true)
+        public static IQueryable IQueryable_OrderByMemberExpression(this IQueryable query, string field, bool asc = true)
         {
-            return query.IQueryable_OrderBy(new[] { new OrderField { field = field, asc = asc } });
+            return query.IQueryable_OrderByMemberExpression(new[] { new OrderField { field = field, asc = asc } });
         }
 
     }

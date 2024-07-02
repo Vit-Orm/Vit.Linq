@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using System.Linq;
 using Vit.Linq.ExpressionTree.ComponentModel;
 using System.Collections.Generic;
-using Vit.Extensions.Linq_Extensions;
+using Vit.Linq;
 
 namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Extensions_Methods
 {

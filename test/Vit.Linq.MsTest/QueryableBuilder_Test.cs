@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vit.Core.Module.Serialization;
-using Vit.Extensions.Linq_Extensions;
+using Vit.Linq;
 using Vit.Linq.Filter;
 
 namespace Vit.Linq.MsTest
@@ -29,7 +29,7 @@ namespace Vit.Linq.MsTest
 
 
                     var list = DataSource.GetQueryable().Where(queryAction.filter);
-                    list = list.OrderBy(queryAction.orders);
+                    list = list.OrderByMemberExpression(queryAction.orders);
 
 
                     if (queryAction.skip.HasValue)

@@ -3,7 +3,7 @@
 using Vit.Linq.Filter;
 using Vit.Linq.Filter.ComponentModel;
 
-namespace Vit.Extensions.Linq_Extensions
+namespace Vit.Linq
 {
     public static partial class Queryable_Where_Extensions
     {

@@ -1,4 +1,4 @@
-﻿using Vit.Extensions.Linq_Extensions;
+﻿using Vit.Linq;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Linq.ComponentModel;
@@ -17,7 +17,7 @@ namespace Vit.Linq.MsTest.Extensions
             #region #1 OrderBy_Reflection
             {
                 var result = query
-                    .OrderBy_Reflection(new[] {
+                    .OrderByReflection(new[] {
                         new OrderField { field = "job.departmentId", asc = false },
                         new OrderField { field = "id", asc = true }
                     })
@@ -33,7 +33,7 @@ namespace Vit.Linq.MsTest.Extensions
             #region #2 OrderBy_Reflection
             {
                 var result = query
-                    .OrderBy_Reflection("id", false)
+                    .OrderByReflection("id", false)
                     .Page(pageSize: 10, pageIndex: 2)
                     .ToList();
 
@@ -46,7 +46,7 @@ namespace Vit.Linq.MsTest.Extensions
             #region #3 ToPageData
             {
                 var result = query
-                    .OrderBy_Reflection(new[] {
+                    .OrderByReflection(new[] {
                         new OrderField { field = "job.departmentId", asc = false },
                         new OrderField { field = "id", asc = true }
                     })

@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
 using Vit.Linq.ExpressionTree.CollectionQuery;
 using Vit.Linq.ExpressionTree.ComponentModel;
-using Vit.Extensions.Linq_Extensions;
+using Vit.Linq;
 using Vit.Linq.ExpressionTree.ExpressionTreeTest;
 
 namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest

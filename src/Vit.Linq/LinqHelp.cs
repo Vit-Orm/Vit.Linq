@@ -37,14 +37,14 @@ namespace Vit.Linq
         /// 
         /// </summary>
         /// <param name="parameter"></param>
-        /// <param name="fieldPath"> could be nasted , example: "name"  "depart.name"  "departs[1].name" "departs.1.name"</param>
+        /// <param name="memberPath"> could be nasted , example: "name"  "depart.name"  "departs[1].name" "departs.1.name"</param>
         /// <returns></returns>
-        public static Expression GetFieldMemberExpression(Expression parameter, string fieldPath)
+        public static Expression GetFieldMemberExpression(Expression parameter, string memberPath)
         {
-            if (string.IsNullOrWhiteSpace(fieldPath)) return parameter;
+            if (string.IsNullOrWhiteSpace(memberPath)) return parameter;
 
-            fieldPath = fieldPath.Replace("]", "").Replace("[", ".");
-            foreach (var fieldName in fieldPath.Split('.'))
+            memberPath = memberPath.Replace("]", "").Replace("[", ".");
+            foreach (var fieldName in memberPath.Split('.'))
             {
                 parameter = GetFieldMemberExpression_ByName(parameter, fieldName);
             }

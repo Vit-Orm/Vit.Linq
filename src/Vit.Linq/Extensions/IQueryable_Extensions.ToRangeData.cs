@@ -5,10 +5,10 @@ using Vit.Linq.ComponentModel;
 using Vit.Linq.Filter.ComponentModel;
 
 
-namespace Vit.Extensions.Linq_Extensions
+namespace Vit.Linq
 {
 
-    public static partial class IQueryable_ToRangeData_Extensions
+    public static partial class IQueryable_Extensions
     {
 
         public static RangeData<T> IQueryable_ToRangeData<T>(this IQueryable query, RangeInfo range)
@@ -19,12 +19,12 @@ namespace Vit.Extensions.Linq_Extensions
 
         public static RangeData<T> IQueryable_ToRangeData<T>(this IQueryable query, IEnumerable<OrderField> orders, RangeInfo range)
         {
-            return IQueryable_ToRangeData<T>(query?.IQueryable_OrderBy(orders), range);
+            return IQueryable_ToRangeData<T>(query?.IQueryable_OrderByMemberExpression(orders), range);
         }
 
         public static RangeData<T> IQueryable_ToRangeData<T>(this IQueryable query, FilterRule filter, IEnumerable<OrderField> orders, RangeInfo range)
         {
-            return IQueryable_ToRangeData<T>(query?.IQueryable_Where(filter)?.IQueryable_OrderBy(orders), range);
+            return IQueryable_ToRangeData<T>(query?.IQueryable_Where(filter)?.IQueryable_OrderByMemberExpression(orders), range);
         }
 
 

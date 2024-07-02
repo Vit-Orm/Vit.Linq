@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-using Vit.Extensions.Linq_Extensions;
+using Vit.Linq;
 
 
 namespace Vit.Linq.ExpressionTree.ComponentModel

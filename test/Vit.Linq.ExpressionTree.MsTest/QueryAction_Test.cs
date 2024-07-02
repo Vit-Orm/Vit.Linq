@@ -2,7 +2,7 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
-using Vit.Extensions.Linq_Extensions;
+using Vit.Linq;
 using System.Data;
 using Vit.Linq.ExpressionTree.ComponentModel;
 using System;
