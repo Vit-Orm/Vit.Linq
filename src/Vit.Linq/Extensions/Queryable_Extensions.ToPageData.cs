@@ -19,14 +19,14 @@ namespace Vit.Linq
 
         public static PageData<T> ToPageData<T>(this IQueryable<T> query, IEnumerable<OrderField> orders, PageInfo page)
         {
-            return ToPageData(query?.OrderByMemberExpression(orders), page);
+            return ToPageData(query?.OrderBy(orders), page);
         }
 
 
 
         public static PageData<T> ToPageData<T>(this IQueryable<T> query, FilterRule filter, IEnumerable<OrderField> orders, PageInfo page)
         {
-            return ToPageData(query?.Where(filter)?.OrderByMemberExpression(orders), page);
+            return ToPageData(query?.Where(filter)?.OrderBy(orders), page);
         }
 
 

@@ -17,7 +17,7 @@ namespace Vit.Linq.MsTest.Extensions
             #region #1 OrderBy Range
             {
                 var result = query
-                    .IQueryable_OrderByMemberExpression(new[] {
+                    .IQueryable_OrderBy(new[] {
                         new OrderField { field = "job.departmentId", asc = false },
                         new OrderField { field = "id", asc = true }
                     })
@@ -33,7 +33,7 @@ namespace Vit.Linq.MsTest.Extensions
             #region #2 OrderBy Range
             {
                 var result = query
-                    .IQueryable_OrderByMemberExpression("id", false)
+                    .IQueryable_OrderBy("id", false)
                     .IQueryable_Range(skip: 10, take: 10)
                     .IQueryable_ToList<Person>();
 
@@ -46,7 +46,7 @@ namespace Vit.Linq.MsTest.Extensions
             #region #3 ToRangeData
             {
                 var result = query
-                    .IQueryable_OrderByMemberExpression(new[] {
+                    .IQueryable_OrderBy(new[] {
                         new OrderField { field = "job.departmentId", asc = false },
                         new OrderField { field = "id", asc = true }
                     })

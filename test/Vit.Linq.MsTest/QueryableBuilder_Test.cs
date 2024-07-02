@@ -29,7 +29,7 @@ namespace Vit.Linq.MsTest
 
 
                     var list = DataSource.GetQueryable().Where(queryAction.filter);
-                    list = list.OrderByMemberExpression(queryAction.orders);
+                    list = list.OrderBy(queryAction.orders);
 
 
                     if (queryAction.skip.HasValue)

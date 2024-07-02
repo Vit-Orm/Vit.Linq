@@ -17,7 +17,7 @@ namespace Vit.Linq.MsTest.Extensions
             #region #1 OrderBy Page
             {
                 var result = query
-                    .IQueryable_OrderByMemberExpression(new[] {
+                    .IQueryable_OrderBy(new[] {
                         new OrderField { field = "job.departmentId", asc = false },
                         new OrderField { field = "id", asc = true }
                     })
@@ -33,7 +33,7 @@ namespace Vit.Linq.MsTest.Extensions
             #region #2 OrderBy Page
             {
                 var result = query
-                    .IQueryable_OrderByMemberExpression("id", false)
+                    .IQueryable_OrderBy("id", false)
                     .IQueryable_Page(pageSize: 10, pageIndex: 2)
                     .IQueryable_ToList<Person>();
 
@@ -46,7 +46,7 @@ namespace Vit.Linq.MsTest.Extensions
             #region #3 ToPageData
             {
                 var result = query
-                    .IQueryable_OrderByMemberExpression(new[] {
+                    .IQueryable_OrderBy(new[] {
                         new OrderField { field = "job.departmentId", asc = false },
                         new OrderField { field = "id", asc = true }
                     })

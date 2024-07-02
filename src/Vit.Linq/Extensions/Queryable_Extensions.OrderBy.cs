@@ -4,38 +4,50 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-using Vit.Linq.ExpressionTree;
-using Vit.Linq.ExpressionTree.ComponentModel;
+using Vit.Linq.ComponentModel;
 
 namespace Vit.Linq
 {
+
     public static partial class Queryable_Extensions
     {
 
-        public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, IEnumerable<OrderField> orders, ExpressionConvertService Instance = null)
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, IEnumerable<OrderField> orders)
         {
             if (query == null || orders?.Any() != true) return query;
 
+            var paramExp = LinqHelp.CreateParameter(typeof(T), "orderParam");
             IOrderedQueryable<T> orderedQuery = null;
-            if (Instance == null) Instance = ExpressionConvertService.Instance;
 
             foreach (var item in orders)
             {
-                LambdaExpression exp = Instance.ToLambdaExpression(item.member, typeof(T));
+                var memberExp = LinqHelp.GetFieldMemberExpression(paramExp, item.field);
+                LambdaExpression exp = Expression.Lambda(memberExp, paramExp);
 
                 if (orderedQuery == null)
                 {
-                    orderedQuery = Extensions_OrderBy.OrderBy(query, exp, item.asc);
+                    orderedQuery = Extensions_OrderByMemberExpression.OrderBy(query, exp, item.asc);
                 }
                 else
                 {
-                    orderedQuery = Extensions_OrderBy.ThenBy(orderedQuery, exp, item.asc);
+                    orderedQuery = Extensions_OrderByMemberExpression.ThenBy(orderedQuery, exp, item.asc);
                 }
             }
             return orderedQuery;
         }
 
-        internal static class Extensions_OrderBy
+
+
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, string field, bool asc = true)
+        {
+            if (query == null || string.IsNullOrEmpty(field)) return query;
+
+            return OrderBy(query, new[] { new OrderField(field, asc) });
+        }
+
+
+
+        internal static class Extensions_OrderByMemberExpression
         {
 
             #region OrderBy
@@ -70,7 +82,7 @@ namespace Vit.Linq
             private static MethodInfo MethodInfo_OrderBy_;
             static MethodInfo MethodInfo_OrderBy(Type sourceType, Type returnType) =>
                 (MethodInfo_OrderBy_ ??=
-                    new Func<IQueryable<object>, Expression<Func<object, object>>, IOrderedQueryable<object>>(System.Linq.Queryable.OrderBy<object, object>)
+                    new Func<IQueryable<object>, Expression<Func<object, string>>, IOrderedQueryable<object>>(Queryable.OrderBy<object, string>)
                     .GetMethodInfo().GetGenericMethodDefinition())
                 .MakeGenericMethod(sourceType, returnType);
 
@@ -78,7 +90,7 @@ namespace Vit.Linq
             private static MethodInfo MethodInfo_OrderByDescending_;
             static MethodInfo MethodInfo_OrderByDescending(Type sourceType, Type returnType) =>
                 (MethodInfo_OrderByDescending_ ??=
-                    new Func<IQueryable<object>, Expression<Func<object, object>>, IOrderedQueryable<object>>(System.Linq.Queryable.OrderByDescending<object, object>)
+                    new Func<IQueryable<object>, Expression<Func<object, string>>, IOrderedQueryable<object>>(Queryable.OrderByDescending<object, string>)
                     .GetMethodInfo().GetGenericMethodDefinition())
                 .MakeGenericMethod(sourceType, returnType);
 
@@ -86,19 +98,18 @@ namespace Vit.Linq
             private static MethodInfo MethodInfo_ThenBy_;
             static MethodInfo MethodInfo_ThenBy(Type sourceType, Type returnType) =>
                 (MethodInfo_ThenBy_ ??=
-                    new Func<IOrderedQueryable<object>, Expression<Func<object, object>>, IOrderedQueryable<object>>(System.Linq.Queryable.ThenBy<object, object>)
+                    new Func<IOrderedQueryable<object>, Expression<Func<object, string>>, IOrderedQueryable<object>>(Queryable.ThenBy<object, string>)
                     .GetMethodInfo().GetGenericMethodDefinition())
                 .MakeGenericMethod(sourceType, returnType);
 
             private static MethodInfo MethodInfo_ThenByDescending_;
             static MethodInfo MethodInfo_ThenByDescending(Type sourceType, Type returnType) =>
                 (MethodInfo_ThenByDescending_ ??=
-                    new Func<IOrderedQueryable<object>, Expression<Func<object, object>>, IOrderedQueryable<object>>(System.Linq.Queryable.ThenByDescending<object, object>)
+                    new Func<IOrderedQueryable<object>, Expression<Func<object, string>>, IOrderedQueryable<object>>(Queryable.ThenByDescending<object, string>)
                     .GetMethodInfo().GetGenericMethodDefinition())
                 .MakeGenericMethod(sourceType, returnType);
 
             #endregion
-
         }
     }
 }

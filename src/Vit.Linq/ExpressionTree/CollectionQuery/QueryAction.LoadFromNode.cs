@@ -83,7 +83,7 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
 
                                         var memberField = call.arguments[1];
 
-                                        var orderField = new OrderField { member = memberField, asc = !methodName.EndsWith("Descending") };
+                                        var orderField = new ExpressionNodeOrderField { member = memberField, asc = !methodName.EndsWith("Descending") };
 
                                         if (methodName.StartsWith("Order"))
                                         {
@@ -91,7 +91,7 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
                                         }
 
                                         if (arg.queryAction.orders == null)
-                                            arg.queryAction.orders = new List<OrderField>();
+                                            arg.queryAction.orders = new List<ExpressionNodeOrderField>();
 
                                         arg.queryAction.orders.Insert(0, orderField);
 

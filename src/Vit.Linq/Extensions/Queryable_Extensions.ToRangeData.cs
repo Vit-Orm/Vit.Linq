@@ -18,12 +18,12 @@ namespace Vit.Linq
 
         public static RangeData<T> ToRangeData<T>(this IQueryable<T> query, IEnumerable<OrderField> orders, RangeInfo range)
         {
-            return ToRangeData(query?.OrderByMemberExpression(orders), range);
+            return ToRangeData(query?.OrderBy(orders), range);
         }
 
         public static RangeData<T> ToRangeData<T>(this IQueryable<T> query, FilterRule filter, IEnumerable<OrderField> orders, RangeInfo range)
         {
-            return ToRangeData(query?.Where(filter)?.OrderByMemberExpression(orders), range);
+            return ToRangeData(query?.Where(filter)?.OrderBy(orders), range);
         }
 
 

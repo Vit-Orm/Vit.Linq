@@ -17,7 +17,7 @@ namespace Vit.Linq.MsTest.Extensions
             #region #1 OrderBy Range
             {
                 var result = query
-                    .OrderByMemberExpression(new[] {
+                    .OrderBy(new[] {
                         new OrderField { field = "job.departmentId", asc = false },
                         new OrderField { field = "id", asc = true }
                     })
@@ -46,7 +46,7 @@ namespace Vit.Linq.MsTest.Extensions
             #region #3 ToRangeData
             {
                 var result = query
-                    .OrderByMemberExpression(new[] {
+                    .OrderBy(new[] {
                         new OrderField { field = "job.departmentId", asc = false },
                         new OrderField { field = "id", asc = true }
                     })

@@ -5,7 +5,7 @@ using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Linq
 {
-    public static partial class Queryable_Where_Extensions
+    public static partial class Queryable_Extensions
     {
 
         public static IQueryable<T> Where<T>(this IQueryable<T> query, IFilterRule rule, FilterService service = null)
