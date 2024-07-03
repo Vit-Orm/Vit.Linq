@@ -1,18 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
-using Vit.Linq;
 using Vit.Linq.ComponentModel;
 
-namespace Vit.Extensions.Linq_Extensions
+namespace Vit.Linq
 {
-
-    public static partial class Queryable_OrderBy_Reflection_Extensions
+    public static partial class Queryable_Extensions
     {
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable<T> OrderBy_Reflection<T>(this IQueryable<T> query, IEnumerable<OrderField> sort)
+        public static IQueryable<T> OrderByReflection<T>(this IQueryable<T> query, IEnumerable<OrderField> sort)
             where T : class
         {
             if (query == null || sort?.Any() != true) return query;
@@ -53,21 +49,12 @@ namespace Vit.Extensions.Linq_Extensions
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="query"></param>
-        /// <param name="field"></param>
-        /// <param name="asc"> whether sort by asc</param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IQueryable<T> OrderBy_Reflection<T>(this IQueryable<T> query, string field, bool asc = true)
+        public static IQueryable<T> OrderByReflection<T>(this IQueryable<T> query, string field, bool asc = true)
            where T : class
         {
             if (query == null || string.IsNullOrEmpty(field)) return query;
 
-            return OrderBy_Reflection(query, new[] { new OrderField(field, asc) });
+            return OrderByReflection(query, new[] { new OrderField(field, asc) });
         }
 
     }

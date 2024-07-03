@@ -10,7 +10,7 @@ namespace Vit.Linq.ExpressionTree
     public partial class ExpressionConvertService
     {
         public static ExpressionConvertService Instance = new ExpressionConvertService();
- 
+
         public ExpressionConvertService()
         {
             // populate ExpressionConvertor

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Linq;
+using System.Linq.Expressions;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 
@@ -37,7 +37,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
 
 
             var method = (new Func<
-                IQueryable<string>, 
+                IQueryable<string>,
                 Expression<Func<string, IEnumerable<string>>>,
                 Expression<Func<string, string, string>>,
                 IQueryable<string>>(Queryable.SelectMany)

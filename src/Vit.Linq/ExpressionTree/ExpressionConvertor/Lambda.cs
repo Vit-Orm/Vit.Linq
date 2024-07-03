@@ -41,8 +41,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             {
                 var type = paramTypes.Length > i ? paramTypes[i] : typeof(object);
 
-                if (string.IsNullOrWhiteSpace(name))
-                    return Expression.Parameter(type);
+                if (string.IsNullOrWhiteSpace(name)) return LinqHelp.CreateParameter(type, "lambdaParam");
                 return Expression.Parameter(type, name);
             }).ToArray();
 

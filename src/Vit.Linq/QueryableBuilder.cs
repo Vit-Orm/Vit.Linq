@@ -1,37 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace Vit.Linq
 {
     public static class QueryableBuilder
     {
-        public static IQueryable<Model> Build<Model>(Func<Expression, Type, object> QueryExecutor, string queryTypeName = null)
+        public static IQueryable<Model> Build<Model>(Func<Expression, Type, object> QueryExecutor, object queryConfig = null)
         {
             var queryProvider = new QueryProvider(QueryExecutor);
-            return new OrderedQueryable<Model>(queryProvider, queryTypeName);
+            return new OrderedQueryable<Model>(queryProvider, queryConfig);
         }
 
-        public static string GetQueryTypeName (IQueryable  query)
+        public static IQueryable<Model> Build<Model>(Func<Expression, Type, object> QueryExecutor, string queryName) => Build<Model>(QueryExecutor, (object)queryName);
+
+        public static object GetQueryConfig(IQueryable query)
         {
-            return (query as IQueryType)?.queryTypeName;
+            return (query as IQueryWithConfig)?.queryConfig;
         }
 
 
-        public static Func<object, Type, bool> QueryTypeNameCompare(string queryTypeName)
+        public static Func<object, Type, bool> CompareQueryByName(string queryName)
         {
-            return (value, type) => GetQueryTypeName(value as IQueryable) == queryTypeName;
+            return (query, elementType) => queryName == GetQueryConfig(query as IQueryable) as string;
         }
 
 
         internal static Type GetElementType(Type seqType)
         {
-            Type ienum = FindIEnumerable(seqType);
-            if (ienum == null) return seqType;
-            return ienum.GetGenericArguments()[0];
+            Type enumerableType = FindIEnumerable(seqType);
+            if (enumerableType == null) return seqType;
+            return enumerableType.GetGenericArguments()[0];
         }
 
         internal static Type FindIEnumerable(Type seqType)
@@ -73,22 +74,22 @@ namespace Vit.Linq
         }
     }
 
-    interface IQueryType 
+    interface IQueryWithConfig
     {
-        string queryTypeName { get; }
+        object queryConfig { get; }
     }
-    internal class OrderedQueryable<T> : IOrderedQueryable<T>, IQueryType
+    internal class OrderedQueryable<T> : IOrderedQueryable<T>, IQueryWithConfig
     {
         protected readonly Expression _expression;
         protected readonly QueryProvider _provider;
 
-        public string queryTypeName { get;  set; }
+        public object queryConfig { get; set; }
 
-        public OrderedQueryable(QueryProvider provider, string queryTypeName = null)
+        public OrderedQueryable(QueryProvider provider, object queryConfig = null)
         {
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
             _expression = Expression.Constant(this);
-            this.queryTypeName = queryTypeName;
+            this.queryConfig = queryConfig;
         }
 
         public OrderedQueryable(QueryProvider provider, Expression expression)
@@ -127,7 +128,7 @@ namespace Vit.Linq
 
     internal class QueryProvider : IQueryProvider
     {
-        Func<Expression, Type, object> QueryExecutor;
+        readonly Func<Expression, Type, object> QueryExecutor;
 
 
         public QueryProvider(Func<Expression, Type, object> QueryExecutor)

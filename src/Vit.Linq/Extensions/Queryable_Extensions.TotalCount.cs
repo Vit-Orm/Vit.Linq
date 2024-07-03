@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Vit.Extensions.Linq_Extensions
+namespace Vit.Linq
 {
 
     public static partial class Queryable_Extensions

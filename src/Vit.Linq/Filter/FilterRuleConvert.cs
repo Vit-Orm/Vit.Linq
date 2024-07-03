@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 
-using Vit.Extensions.Linq_Extensions;
+using Vit.Linq;
 using Vit.Linq.Filter.ComponentModel;
 using Vit.Linq.Filter.MethodCalls;
 
@@ -132,6 +132,6 @@ namespace Vit.Linq.Filter
 
 
 
-   
+
     }
 }

@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 
-using Vit.Linq;
 using Vit.Linq.ComponentModel;
 
-namespace Vit.Extensions.Linq_Extensions
+namespace Vit.Linq
 {
 
-    public static partial class IQueryable_OrderBy_Extensions
+    public static partial class IQueryable_Extensions
     {
 
 
@@ -32,8 +30,8 @@ namespace Vit.Extensions.Linq_Extensions
             #endregion
 
 
-            var targetType = source.ElementType;
-            ParameterExpression parameter = Expression.Parameter(targetType);
+            var elementType = source.ElementType;
+            ParameterExpression parameter = LinqHelp.CreateParameter(elementType, "orderParam");
 
             Expression queryExpr = source.Expression;
 

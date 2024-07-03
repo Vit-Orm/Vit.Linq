@@ -2,15 +2,15 @@
 
 using Vit.Linq.ComponentModel;
 
-namespace Vit.Extensions.Linq_Extensions
+namespace Vit.Linq
 {
 
-    public static partial class Queryable_Page_Extensions
+    public static partial class Queryable_Extensions
     {
 
         public static IQueryable<T> Page<T>(this IQueryable<T> query, PageInfo page)
         {
-            return query.Range(page.ToRange());
+            return query?.Range(page?.ToRange());
         }
 
 
@@ -24,7 +24,7 @@ namespace Vit.Extensions.Linq_Extensions
         /// <returns></returns>
         public static IQueryable<T> Page<T>(this IQueryable<T> query, int pageSize, int pageIndex = 1)
         {
-            return query.Page(new PageInfo(pageSize: pageSize, pageIndex: pageIndex));
+            return Page(query, new PageInfo(pageSize: pageSize, pageIndex: pageIndex));
         }
     }
 }

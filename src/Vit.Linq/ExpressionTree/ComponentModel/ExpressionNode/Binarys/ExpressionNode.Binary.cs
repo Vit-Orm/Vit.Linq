@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Vit.Linq.Filter;
-
-
-
-
-namespace Vit.Linq.ExpressionTree.ComponentModel
+﻿namespace Vit.Linq.ExpressionTree.ComponentModel
 {
 
     public interface ExpressionNode_Binary : IExpressionNode
@@ -30,8 +20,8 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         ExpressionNode_LessThan, ExpressionNode_LessThanOrEqual,
         ExpressionNode_GreaterThan, ExpressionNode_GreaterThanOrEqual
     {
-        //public ExpressionNode left { get; set; }
-        //public ExpressionNode right { get; set; }
+        public ExpressionNode left { get; set; }
+        public ExpressionNode right { get; set; }
 
 
         public static ExpressionNode Binary(string nodeType, ExpressionNode left, ExpressionNode right)

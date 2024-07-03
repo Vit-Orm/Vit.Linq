@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 
@@ -36,16 +34,16 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
         }
 
         static (bool success, ExpressionNode dest) Clone(ConvertArgument arg, ExpressionNode node)
-        { 
+        {
             if (node == null) return default;
 
-            switch (node.nodeType) 
+            switch (node.nodeType)
             {
                 case NodeType.Lambda:
                     {
                         ExpressionNode_Lambda lambda = node;
                         if (lambda.parameterNames?.Length == 1)
-                            return (true,ConvertFilter(arg, lambda.body));
+                            return (true, ConvertFilter(arg, lambda.body));
                         break;
                     }
                 case NodeType.Member:
@@ -58,7 +56,7 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
                         {
                             objectValue = ConvertFilter(arg, objectValue);
                         }
-                        return (true,ExpressionNode.Member(objectValue: objectValue, memberName: member.memberName, parameterName: parameterName));
+                        return (true, ExpressionNode.Member(objectValue: objectValue, memberName: member.memberName, parameterName: parameterName));
                     }
                 case NodeType.MethodCall:
                     {
@@ -85,15 +83,14 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
 
                                         var memberField = call.arguments[1];
 
-                                        var orderField = new OrderField { member = memberField, asc = !methodName.EndsWith("Descending") };
+                                        var orderField = new ExpressionNodeOrderField { member = memberField, asc = !methodName.EndsWith("Descending") };
 
                                         if (methodName.StartsWith("Order"))
                                         {
                                             arg.gettedOrder = true;
                                         }
 
-                                        if (arg.queryAction.orders == null)
-                                            arg.queryAction.orders = new List<OrderField>();
+                                        arg.queryAction.orders ??= new List<ExpressionNodeOrderField>();
 
                                         arg.queryAction.orders.Insert(0, orderField);
 
@@ -137,7 +134,7 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
                                             throw new Exception("not supported Where filter with index");
                                         }
                                     }
-                                    return (true, ExpressionNode.And(left: left, right: predicateFilter));
+                                    return (true, ExpressionNode.AndAlso(left: left, right: predicateFilter));
                                 }
                             case "FirstOrDefault" or "First" or "LastOrDefault" or "Last":
                             case "Count":

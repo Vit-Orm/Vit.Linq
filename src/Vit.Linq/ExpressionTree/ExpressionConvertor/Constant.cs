@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Data;
-using System.Linq;
 using System.Linq.Expressions;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
@@ -25,8 +22,8 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                         }
                         return ExpressionNode.Constant(value: constant.Value, type: type);
                     }
-                case NewArrayExpression newArray:
-                case ListInitExpression listInit:
+                case NewArrayExpression:
+                case ListInitExpression:
                     {
                         if (arg.CanCalculateToConstant(expression))
                         {

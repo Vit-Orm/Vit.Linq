@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Linq.Expressions;
 using System.Linq;
+using System.Linq.Expressions;
+
 using Vit.Linq.ExpressionTree.ComponentModel;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Other_Methods
 {
@@ -52,12 +51,12 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Other_Methods
 
         public override bool PredicateToData(DataConvertArgument arg, MethodCallExpression call)
         {
-            return (call.Method.Name == "Add"|| call.Method.Name == "Concat") && methodType == call.Method.DeclaringType;
+            return (call.Method.Name == "Add" || call.Method.Name == "Concat") && methodType == call.Method.DeclaringType;
         }
 
         public override bool PredicateToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
         {
-            return (call.methodName == "Add"|| call.methodName == "Concat") && (methodType == null || methodType.Name == call.methodCall_typeName);
+            return (call.methodName == "Add" || call.methodName == "Concat") && (methodType == null || methodType.Name == call.methodCall_typeName);
         }
 
         public override Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
