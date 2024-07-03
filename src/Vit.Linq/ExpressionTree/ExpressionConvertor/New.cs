@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
-using System.Xml.Linq;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 
@@ -73,10 +71,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                 node = ExpressionNode.New(constructorArgs: constructorArgs, memberArgs: memberArgs);
             }
 
-            if (node != null)
-            {
-                node.New_SetType(expression.Type);
-            }
+            node?.New_SetType(expression.Type);
             return node;
         }
 
@@ -92,15 +87,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                 ?.Select(member => arg.convertService.ToExpression(arg, member.value)).ToArray();
             constructorArgExpressions ??= new Expression[0];
 
-            Type type = arg?.getResultTypeForNewNode?.Invoke(newNode);
-            if (type == null)
-            {
-                type = newNode.New_GetType();
-            }
-            if (type == null)
-            {
-                throw new NotSupportedException("type could not be null");
-            }
+            Type type = arg?.getResultTypeForNewNode?.Invoke(newNode) ?? newNode.New_GetType() ?? throw new NotSupportedException("type could not be null");
 
             var constructor = type.GetConstructor(constructorArgExpressions?.Select(member => member.Type).ToArray() ?? Type.EmptyTypes);
 

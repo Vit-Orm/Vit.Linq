@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
-using System.Linq;
-using Vit.Linq.ExpressionTree.ComponentModel;
-using System.Collections.Generic;
-using System.Reflection;
+
 using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Linq.Filter.MethodCalls.String_Methods

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -42,7 +41,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             {
                 var type = paramTypes.Length > i ? paramTypes[i] : typeof(object);
 
-                if (string.IsNullOrWhiteSpace(name)) return LinqHelp.CreateParameter(type,"lambdaParam");
+                if (string.IsNullOrWhiteSpace(name)) return LinqHelp.CreateParameter(type, "lambdaParam");
                 return Expression.Parameter(type, name);
             }).ToArray();
 

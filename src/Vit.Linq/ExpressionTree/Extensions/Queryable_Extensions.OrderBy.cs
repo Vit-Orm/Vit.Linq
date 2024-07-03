@@ -17,7 +17,7 @@ namespace Vit.Linq
             if (query == null || orders?.Any() != true) return query;
 
             IOrderedQueryable<T> orderedQuery = null;
-            if (Instance == null) Instance = ExpressionConvertService.Instance;
+            Instance ??= ExpressionConvertService.Instance;
 
             foreach (var item in orders)
             {

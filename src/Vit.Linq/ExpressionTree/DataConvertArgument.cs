@@ -35,7 +35,7 @@ namespace Vit.Linq.ExpressionTree
             return false;
         }
 
-        private Dictionary<int, EValueType> eTypeMap = new Dictionary<int, EValueType>();
+        private readonly Dictionary<int, EValueType> eTypeMap = new Dictionary<int, EValueType>();
 
 
         protected EValueType GetEValueType(Expression expression)
@@ -96,8 +96,7 @@ namespace Vit.Linq.ExpressionTree
                     {
                         // get ValueType from ValueTypeAttribute
                         {
-                            var attribute = call.Method.GetCustomAttributes(typeof(ValueTypeAttribute), inherit: true).FirstOrDefault() as ValueTypeAttribute;
-                            if (attribute != null) return attribute.valueType;
+                            if (call.Method.GetCustomAttributes(typeof(ValueTypeAttribute), inherit: true).FirstOrDefault() is ValueTypeAttribute attribute) return attribute.valueType;
 
                             attribute = call.Method.DeclaringType.GetCustomAttributes(typeof(ValueTypeAttribute), inherit: true).FirstOrDefault() as ValueTypeAttribute;
                             if (attribute != null) return attribute.valueType;
@@ -127,9 +126,7 @@ namespace Vit.Linq.ExpressionTree
                     return true;
                 }
             }
-            catch (Exception ex)
-            {
-            }
+            catch { }
             value = default;
             return false;
         }
@@ -233,7 +230,7 @@ namespace Vit.Linq.ExpressionTree
 
             if (parameter == null)
             {
-                if (globalParameters == null) globalParameters = new List<ParameterInfo>();
+                globalParameters ??= new List<ParameterInfo>();
 
                 parameter = new ParameterInfo(value: value, type: type);
                 globalParameters.Add(parameter);

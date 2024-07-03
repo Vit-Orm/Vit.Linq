@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 
-using Vit.Linq;
-
 
 namespace Vit.Linq.ExpressionTree.ComponentModel
 {
@@ -43,5 +41,5 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
     }
 
 
-   
+
 }

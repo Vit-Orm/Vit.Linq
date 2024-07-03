@@ -22,8 +22,8 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                         }
                         return ExpressionNode.Constant(value: constant.Value, type: type);
                     }
-                case NewArrayExpression newArray:
-                case ListInitExpression listInit:
+                case NewArrayExpression:
+                case ListInitExpression:
                     {
                         if (arg.CanCalculateToConstant(expression))
                         {

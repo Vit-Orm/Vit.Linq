@@ -34,16 +34,16 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
         }
 
         static (bool success, ExpressionNode dest) Clone(ConvertArgument arg, ExpressionNode node)
-        { 
+        {
             if (node == null) return default;
 
-            switch (node.nodeType) 
+            switch (node.nodeType)
             {
                 case NodeType.Lambda:
                     {
                         ExpressionNode_Lambda lambda = node;
                         if (lambda.parameterNames?.Length == 1)
-                            return (true,ConvertFilter(arg, lambda.body));
+                            return (true, ConvertFilter(arg, lambda.body));
                         break;
                     }
                 case NodeType.Member:
@@ -56,7 +56,7 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
                         {
                             objectValue = ConvertFilter(arg, objectValue);
                         }
-                        return (true,ExpressionNode.Member(objectValue: objectValue, memberName: member.memberName, parameterName: parameterName));
+                        return (true, ExpressionNode.Member(objectValue: objectValue, memberName: member.memberName, parameterName: parameterName));
                     }
                 case NodeType.MethodCall:
                     {
@@ -90,8 +90,7 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
                                             arg.gettedOrder = true;
                                         }
 
-                                        if (arg.queryAction.orders == null)
-                                            arg.queryAction.orders = new List<ExpressionNodeOrderField>();
+                                        arg.queryAction.orders ??= new List<ExpressionNodeOrderField>();
 
                                         arg.queryAction.orders.Insert(0, orderField);
 

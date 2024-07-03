@@ -32,8 +32,8 @@ namespace Vit.Linq.Filter
 
         public FilterService AddOperatorMap(IEnumerable<(string operatorName, string operatorType)> maps)
         {
-            foreach (var map in maps)
-                AddOperatorMap(map.operatorName, map.operatorType);
+            foreach (var (operatorName, operatorType) in maps)
+                AddOperatorMap(operatorName, operatorType);
             return this;
         }
         #endregion
@@ -131,8 +131,7 @@ namespace Vit.Linq.Filter
                 ))
             {
                 var elementType = valueType.GetGenericArguments()[0];
-                var list = value as IEnumerable<object>;
-                if (list == null) return (false, null);
+                if (value is not IEnumerable<object> list) return (false, null);
                 return (true, ToList(list, elementType));
             }
             else
@@ -199,7 +198,7 @@ namespace Vit.Linq.Filter
 
 
 
-   
+
 
 
         #region ConvertToExpression

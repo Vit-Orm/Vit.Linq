@@ -14,13 +14,13 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
 
             if (clone != null)
             {
-                var result = clone(node);
-                if (result.success) return result.dest;
+                var (success, dest) = clone(node);
+                if (success) return dest;
             }
             return CloneChildren(node, new ExpressionNode());
         }
 
-        static PropertyInfo[] properties = typeof(ExpressionNode).GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        static readonly PropertyInfo[] properties = typeof(ExpressionNode).GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         public virtual ExpressionNode CloneChildren(ExpressionNode source, ExpressionNode destination)
         {
             foreach (var p in properties)

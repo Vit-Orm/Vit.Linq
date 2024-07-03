@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -128,7 +128,7 @@ namespace Vit.Linq
 
     internal class QueryProvider : IQueryProvider
     {
-        Func<Expression, Type, object> QueryExecutor;
+        readonly Func<Expression, Type, object> QueryExecutor;
 
 
         public QueryProvider(Func<Expression, Type, object> QueryExecutor)

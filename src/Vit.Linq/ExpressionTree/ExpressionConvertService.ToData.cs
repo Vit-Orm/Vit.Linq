@@ -25,7 +25,7 @@ namespace Vit.Linq.ExpressionTree
             return ExpressionNode.Lambda(parameterNames: parameterNames, body: body);
         }
 
-        public  ExpressionNode ConvertToData(DataConvertArgument arg, Expression expression)
+        public ExpressionNode ConvertToData(DataConvertArgument arg, Expression expression)
         {
             foreach (var expressionConvertor in expressionConvertors)
             {

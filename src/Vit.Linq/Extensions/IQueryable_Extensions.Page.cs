@@ -10,7 +10,7 @@ namespace Vit.Linq
 
 
         public static IQueryable IQueryable_Page(this IQueryable query, PageInfo page)
-        { 
+        {
             return query.IQueryable_Range(page.ToRange());
         }
 

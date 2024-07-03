@@ -16,7 +16,7 @@ namespace Vit.Linq
         public static Expression GetFieldMemberExpression_ByName(Expression parameter, string propertyOrFieldName)
         {
             var valueType = parameter.Type;
-  
+
             if (valueType.IsArray)
             {
                 // Array

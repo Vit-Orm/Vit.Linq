@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Linq;
 using System.Linq.Expressions;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
@@ -14,25 +12,17 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
         {
             if (expression is UnaryExpression unary)
             {
-                switch (unary.NodeType)
+                return unary.NodeType switch
                 {
-                    case ExpressionType.Convert:
-                        return ExpressionNode.Convert(
-                            valueType: ComponentModel.ValueType.FromType(unary.Type),
-                            body: arg.convertService.ConvertToData(arg, unary.Operand)
-                            );
-                    case ExpressionType.Quote:
-                        return arg.convertService.ConvertToData(arg, unary.Operand);
-
-                    //case ExpressionType.Not:
-                    //case ExpressionType.ArrayLength:
-
-
-                    default:
-                        return ExpressionNode.Unary(nodeType: unary.NodeType.ToString(), body: arg.convertService.ConvertToData(arg, unary.Operand));
-
-                }
-                throw new NotSupportedException($"Unsupported binary operator: {unary.NodeType}");
+                    ExpressionType.Convert => ExpressionNode.Convert(
+                                                valueType: ComponentModel.ValueType.FromType(unary.Type),
+                                                body: arg.convertService.ConvertToData(arg, unary.Operand)
+                                                ),
+                    ExpressionType.Quote => arg.convertService.ConvertToData(arg, unary.Operand),
+                    // ExpressionType.Not:
+                    // ExpressionType.ArrayLength:
+                    _ => ExpressionNode.Unary(nodeType: unary.NodeType.ToString(), body: arg.convertService.ConvertToData(arg, unary.Operand)),
+                };
             }
 
             return null;
@@ -49,9 +39,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                         ExpressionNode_Convert convert = data;
                         var value = arg.convertService.ToExpression(arg, convert.body);
 
-                        Type type = convert.valueType?.ToType();
-                        if (type == null) type = value?.Type;
-
+                        Type type = convert.valueType?.ToType() ?? value?.Type;
                         return Expression.Convert(value, type);
                     }
 

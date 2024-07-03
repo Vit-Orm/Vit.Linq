@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-using Vit.Linq;
-using Vit.Linq.ComponentModel;
 using Vit.Linq.Filter.ComponentModel;
 using Vit.Linq.Filter.MethodCalls;
 

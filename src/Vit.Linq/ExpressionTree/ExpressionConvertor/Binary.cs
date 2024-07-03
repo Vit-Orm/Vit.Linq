@@ -3,8 +3,6 @@ using System.Linq.Expressions;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 
-using static System.Net.Mime.MediaTypeNames;
-
 namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 {
 

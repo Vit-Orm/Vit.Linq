@@ -26,7 +26,7 @@ namespace Vit.Linq.Filter
     {
         #region Custom Operator
 
-        Dictionary<string, Func<OperatorBuilderArgs, Expression>> customOperator = new Dictionary<string, Func<OperatorBuilderArgs, Expression>>();
+        readonly Dictionary<string, Func<OperatorBuilderArgs, Expression>> customOperator = new Dictionary<string, Func<OperatorBuilderArgs, Expression>>();
 
         protected virtual Expression CustomOperator_ToExpression(OperatorBuilderArgs args)
         {

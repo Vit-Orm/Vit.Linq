@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Xml.Linq;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 
@@ -28,7 +26,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                     return ExpressionNode.Member(parameterName: parameter.Name, memberName: name).Member_SetType(expression.Type);
 
                 var objectValue = arg.convertService.ConvertToData(arg, member.Expression);
-                
+
                 return ExpressionNode.Member(objectValue: objectValue, memberName: name).Member_SetType(expression.Type);
             }
             else if (expression is ParameterExpression parameter)

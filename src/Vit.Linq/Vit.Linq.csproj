@@ -18,6 +18,16 @@
 
     <PropertyGroup>
         <DocumentationFile>bin\Debug\netstandard2.0\Vit.Linq.xml</DocumentationFile>
+        <RepositoryUrl>https://github.com/VitormLib/Vit.Linq</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>linq</PackageTags>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
 
 </Project>
