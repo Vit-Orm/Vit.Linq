@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Text;
+﻿using System.Linq.Expressions;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 
@@ -10,7 +7,6 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
     /// <summary>
     ///  a > b ? a : b
-    ///  Node arguments: [  condition, valueForTrue, valueForFalse ]
     /// </summary>
     public class Conditional : IExpressionConvertor
     {
@@ -18,28 +14,26 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
         {
             if (expression is ConditionalExpression conditionExp)
             {
-                var condition = arg.convertService.ConvertToData(arg, conditionExp.Test);
-                var valueForTrue = arg.convertService.ConvertToData(arg, conditionExp.IfTrue);
-                var valueForFalse = arg.convertService.ConvertToData(arg, conditionExp.IfFalse);
+                var test = arg.convertService.ConvertToData(arg, conditionExp.Test);
+                var ifTrue = arg.convertService.ConvertToData(arg, conditionExp.IfTrue);
+                var ifFalse = arg.convertService.ConvertToData(arg, conditionExp.IfFalse);
 
-                return new ExpressionNode
-                {
-                    nodeType = "Conditional",
-                    arguments = new ExpressionNode[] { condition, valueForTrue, valueForFalse }
-                };
+                return ExpressionNode.Conditional(test: test, ifTrue: ifTrue, ifFalse: ifFalse);
             }
             return null;
         }
 
         public Expression ConvertToCode(CodeConvertArgument arg, ExpressionNode data)
         {
-            if (data.nodeType == "Conditional")
+            if (data.nodeType == nameof(ExpressionType.Conditional))
             {
-                var condition = arg.convertService.ToExpression(arg, data.arguments[0]);
-                var valueForTrue = arg.convertService.ToExpression(arg, data.arguments[1]);
-                var valueForFalse = arg.convertService.ToExpression(arg, data.arguments[2]);
+                ExpressionNode_Conditional conditional = data;
 
-                return Expression.Condition(condition, valueForTrue, valueForFalse);
+                var test = arg.convertService.ToExpression(arg, conditional.Conditional_GetTest());
+                var ifTrue = arg.convertService.ToExpression(arg, conditional.Conditional_GetIfTrue());
+                var ifFalse = arg.convertService.ToExpression(arg, conditional.Conditional_GetIfFalse());
+
+                return Expression.Condition(test, ifTrue, ifFalse);
             }
             return null;
         }

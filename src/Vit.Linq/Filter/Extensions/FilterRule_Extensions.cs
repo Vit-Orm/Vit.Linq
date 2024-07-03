@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Vit.Linq.Filter.ComponentModel;
 
-namespace Vit.Extensions.Linq_Extensions
+namespace Vit.Linq
 {
     public static partial class FilterRule_Extensions
     {
-
-
         public static FilterRule And<FilterRule>(this FilterRule left, params FilterRule[] rights)
             where FilterRule : FilterRuleBase<FilterRule>, new()
         {

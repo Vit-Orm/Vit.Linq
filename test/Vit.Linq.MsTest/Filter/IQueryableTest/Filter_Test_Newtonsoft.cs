@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Newtonsoft.Json.Linq;
-using Vit.Extensions.Linq_Extensions;
+using Vit.Linq;
 using Vit.Linq.Filter;
 using Queryable = System.Linq.IQueryable;
 using Vit.Linq.Filter.ComponentModel;

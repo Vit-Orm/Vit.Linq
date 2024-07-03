@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-using Vit.Linq.Filter;
 
- 
 
 namespace Vit.Linq.ExpressionTree.ComponentModel
 {
@@ -14,10 +10,10 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         /// <summary>
         ///     the System.Linq.Expressions.Expression that represents the instance for instance method calls or null for static method calls.
         /// </summary>
-        public ExpressionNode @object { get;}
+        public ExpressionNode @object { get; }
 
         public string methodCall_typeName { get; }
-        public string methodName { get;  }
+        public string methodName { get; }
 
         public ExpressionNode[] arguments { get; }
 

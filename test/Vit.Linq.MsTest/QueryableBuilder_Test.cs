@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vit.Core.Module.Serialization;
-using Vit.Extensions.Linq_Extensions;
+using Vit.Linq;
 using Vit.Linq.Filter;
 
 namespace Vit.Linq.MsTest

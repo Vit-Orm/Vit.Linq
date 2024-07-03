@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
-namespace Vit.Extensions.Linq_Extensions
+namespace Vit.Linq
 {
 
 

@@ -16,7 +16,7 @@ namespace Vit.Linq
         public static Expression GetFieldMemberExpression_ByName(Expression parameter, string propertyOrFieldName)
         {
             var valueType = parameter.Type;
-  
+
             if (valueType.IsArray)
             {
                 // Array
@@ -37,14 +37,14 @@ namespace Vit.Linq
         /// 
         /// </summary>
         /// <param name="parameter"></param>
-        /// <param name="fieldPath"> could be nasted , example: "name"  "depart.name"  "departs[1].name" "departs.1.name"</param>
+        /// <param name="memberPath"> could be nasted , example: "name"  "depart.name"  "departs[1].name" "departs.1.name"</param>
         /// <returns></returns>
-        public static Expression GetFieldMemberExpression(Expression parameter, string fieldPath)
+        public static Expression GetFieldMemberExpression(Expression parameter, string memberPath)
         {
-            if (string.IsNullOrWhiteSpace(fieldPath)) return parameter;
+            if (string.IsNullOrWhiteSpace(memberPath)) return parameter;
 
-            fieldPath = fieldPath.Replace("]", "").Replace("[", ".");
-            foreach (var fieldName in fieldPath.Split('.'))
+            memberPath = memberPath.Replace("]", "").Replace("[", ".");
+            foreach (var fieldName in memberPath.Split('.'))
             {
                 parameter = GetFieldMemberExpression_ByName(parameter, fieldName);
             }
@@ -60,10 +60,8 @@ namespace Vit.Linq
         /// <returns></returns>
         public static Expression GetFieldMemberExpression(Type type, string fieldPath)
         {
-            return GetFieldMemberExpression(Expression.Parameter(type), fieldPath);
+            return GetFieldMemberExpression(LinqHelp.CreateParameter(type, "Member"), fieldPath);
         }
-
-
 
         public static Expression<Func<T, object>> GetFieldExpression<T>(string fieldPath)
         {
@@ -74,7 +72,10 @@ namespace Vit.Linq
         }
 
 
-
+        public static ParameterExpression CreateParameter(Type type, string parameterPrefix = "Param")
+        {
+            return Expression.Parameter(type, "m" + parameterPrefix + new Object().GetHashCode());
+        }
 
     }
 }

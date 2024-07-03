@@ -19,7 +19,7 @@ namespace Vit.Linq.ComponentModel
         public PageData(int pageSize, int pageIndex = 1) : base(pageSize, pageIndex) { }
 
 
-        public PageData(PageInfo pageInfo) : base(pageInfo.pageSize, pageInfo.pageIndex) { }
+        public PageData(PageInfo pageInfo) : base(pageInfo?.pageSize ?? 0, pageInfo?.pageIndex ?? 0) { }
 
 
         /// <summary>

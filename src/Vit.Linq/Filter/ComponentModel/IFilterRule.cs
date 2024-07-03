@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Vit.Linq.Filter.ComponentModel
@@ -21,13 +20,13 @@ namespace Vit.Linq.Filter.ComponentModel
 
 
         /// <summary>
-        ///  Supported value : 
-        ///  
+        ///  Supported value :
+        ///
         ///     "IsNull", "IsNotNull" ,
         ///     "=", "!=", "&gt;", "&lt;" , "&gt;=", "&lt;=", 
         ///     "In" , "NotIn" ,
         ///     "Contains", "NotContains", "StartsWith", "EndsWith" , "IsNullOrEmpty", "IsNotNullOrEmpty"
-        ///     
+        ///
         ///    //TODO [array]   "is empty", "is not empty"
         /// </summary>
         string @operator { get; set; }

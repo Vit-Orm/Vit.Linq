@@ -1,7 +1,7 @@
 ﻿namespace Vit.Linq.ExpressionTree.ComponentModel
 {
 
-    public class OrderField
+    public class ExpressionNodeOrderField
     {
         /// <summary>
         ///

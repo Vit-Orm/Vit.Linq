@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Xml.Linq;
+using System.Reflection;
 
-namespace Vit.Linq.ExpressionTree.ComponentModel 
+namespace Vit.Linq.ExpressionTree.ComponentModel
 {
     public class ExpressionNodeCloner
     {
@@ -15,15 +14,16 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
 
             if (clone != null)
             {
-                var result = clone(node);
-                if (result.success) return result.dest;
+                var (success, dest) = clone(node);
+                if (success) return dest;
             }
             return CloneChildren(node, new ExpressionNode());
         }
 
-        public virtual ExpressionNode CloneChildren(ExpressionNode source, ExpressionNode dest)
+        static readonly PropertyInfo[] properties = typeof(ExpressionNode).GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        public virtual ExpressionNode CloneChildren(ExpressionNode source, ExpressionNode destination)
         {
-            foreach (var p in typeof(ExpressionNode).GetProperties())
+            foreach (var p in properties)
             {
                 if (p.CanRead && p.CanWrite)
                 {
@@ -45,16 +45,16 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
                     {
                         value = members.Select(member => new MemberBind { name = member.name, value = Clone(member.value) }).ToList();
                     }
-                    p.SetValue(dest, value);
+                    p.SetValue(destination, value);
                 }
             }
             var codeArg = source.GetCodeArg();
             if (codeArg != null)
             {
                 foreach (var kv in codeArg)
-                    dest.SetCodeArg(kv.Key, kv.Value);
+                    destination.SetCodeArg(kv.Key, kv.Value);
             }
-            return dest;
+            return destination;
         }
     }
 }
