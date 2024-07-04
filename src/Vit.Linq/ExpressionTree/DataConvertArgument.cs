@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
+
+using ParameterInfo = Vit.Linq.ExpressionTree.ComponentModel.ParameterInfo;
 
 namespace Vit.Linq.ExpressionTree
 {
@@ -131,10 +134,21 @@ namespace Vit.Linq.ExpressionTree
             return false;
         }
 
-        public static object InvokeExpression(Expression expression)
+        public static bool InvokeExpression_ReduceMemberAccess = true;
+        public object InvokeExpression(Expression expression)
         {
+            if (InvokeExpression_ReduceMemberAccess
+                && expression is MemberExpression member
+                && member.Expression is ConstantExpression constant
+                && member.Member is FieldInfo memberInfo
+                )
+            {
+                return memberInfo.GetValue(constant.Value);
+            }
+
             return Expression.Lambda(expression).Compile().DynamicInvoke();
         }
+
 
         public bool CanCalculateToConstant(Expression expression)
         {
