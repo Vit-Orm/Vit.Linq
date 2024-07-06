@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 
@@ -10,19 +9,16 @@ using ParameterInfo = Vit.Linq.ExpressionTree.ComponentModel.ParameterInfo;
 
 namespace Vit.Linq.ExpressionTree
 {
-    public class DataConvertArgument
+    public partial class DataConvertArgument
     {
-        public bool autoReduce { get; set; } = false;
+
 
         public Func<object, Type, bool> isArgument { get; set; }
 
 
         public virtual bool IsArgument(ConstantExpression constant)
         {
-            var value = constant.Value;
-            var type = constant.Type;
-
-            return IsArgument(value, type);
+            return IsArgument(constant.Value, constant.Type);
         }
 
         public virtual bool IsArgument(object value, Type type)
@@ -38,18 +34,18 @@ namespace Vit.Linq.ExpressionTree
             return false;
         }
 
-        private readonly Dictionary<int, EValueType> eTypeMap = new Dictionary<int, EValueType>();
+        #region GetEValueType
 
-
+        private readonly Dictionary<int, EValueType> eValueTypeCache = new Dictionary<int, EValueType>();
         protected EValueType GetEValueType(Expression expression)
         {
             //if (expression == null) return EValueType.constant;
 
             var hashCode = expression.GetHashCode();
-            if (eTypeMap.TryGetValue(hashCode, out var type)) return type;
+            if (eValueTypeCache.TryGetValue(hashCode, out var type)) return type;
 
             type = GetEValueType_Directly(expression);
-            eTypeMap[hashCode] = type;
+            eValueTypeCache[hashCode] = type;
 
             return type;
         }
@@ -118,42 +114,9 @@ namespace Vit.Linq.ExpressionTree
             return EValueType.other;
         }
 
-
-        public bool ReduceValue<T>(Expression expression, out T value)
-        {
-            try
-            {
-                if (autoReduce && CanCalculateToConstant(expression))
-                {
-                    value = (T)InvokeExpression(expression);
-                    return true;
-                }
-            }
-            catch { }
-            value = default;
-            return false;
-        }
-
-        public static bool InvokeExpression_ReduceMemberAccess = true;
-        public object InvokeExpression(Expression expression)
-        {
-            if (InvokeExpression_ReduceMemberAccess
-                && expression is MemberExpression member
-                && member.Expression is ConstantExpression constant
-                && member.Member is FieldInfo memberInfo
-                )
-            {
-                return memberInfo.GetValue(constant.Value);
-            }
-
-            return Expression.Lambda(expression).Compile().DynamicInvoke();
-        }
+        #endregion
 
 
-        public bool CanCalculateToConstant(Expression expression)
-        {
-            return GetEValueType(expression) == EValueType.constant;
-        }
 
         #region Type
 
