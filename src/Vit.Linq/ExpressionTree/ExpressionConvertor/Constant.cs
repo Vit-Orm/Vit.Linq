@@ -27,7 +27,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                     {
                         if (arg.CanCalculateToConstant(expression))
                         {
-                            return ExpressionNode.Constant(value: DataConvertArgument.InvokeExpression(expression), type: expression.Type);
+                            return ExpressionNode.Constant(value: arg.CalculateToConstant(expression), type: expression.Type);
                         }
                         break;
                     }
@@ -35,7 +35,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                     {
                         if (arg.autoReduce && arg.CanCalculateToConstant(expression))
                         {
-                            var value = DataConvertArgument.InvokeExpression(expression);
+                            var value = arg.CalculateToConstant(expression);
                             var type = expression.Type;
 
                             if (arg.IsArgument(value: value, type: type))
