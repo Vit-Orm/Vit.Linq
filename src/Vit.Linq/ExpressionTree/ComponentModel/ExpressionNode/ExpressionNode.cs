@@ -12,7 +12,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         string expressionType { get; }
 
         object GetCodeArg(string key);
-        void SetCodeArg(string key, object arg);
+        ExpressionNode SetCodeArg(string key, object arg);
     }
 
     public partial class ExpressionNode : IExpressionNode
@@ -28,10 +28,11 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         protected Dictionary<string, object> codeArg;
         public object GetCodeArg(string key) => codeArg?.TryGetValue(key, out var value) == true ? value : null;
         public Dictionary<string, object> GetCodeArg() => codeArg;
-        public void SetCodeArg(string key, object arg)
+        public ExpressionNode SetCodeArg(string key, object arg)
         {
             codeArg ??= new();
             codeArg[key] = arg;
+            return this;
         }
     }
 }

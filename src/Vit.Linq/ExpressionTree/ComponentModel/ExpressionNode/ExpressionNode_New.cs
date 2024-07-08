@@ -18,6 +18,10 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
 
         Type New_GetType();
         ExpressionNode New_SetType(Type type);
+
+        ExpressionNode New_SetConstructorArgTypes(Type[] types);
+        Type[] New_GetConstructorArgTypes();
+
     }
 
     public partial class ExpressionNode : ExpressionNode_New
@@ -36,16 +40,14 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         }
 
 
-        public Type New_GetType()
-        {
-            return GetCodeArg("New_Type") as Type;
-        }
 
-        public ExpressionNode New_SetType(Type type)
-        {
-            SetCodeArg("New_Type", type);
-            return this;
-        }
+        public ExpressionNode New_SetType(Type type) => SetCodeArg("New_Type", type);
+        public Type New_GetType() => GetCodeArg("New_Type") as Type;
+
+
+        public ExpressionNode New_SetConstructorArgTypes(Type[] types) => SetCodeArg("New_ConstructorArgTypes", types);
+        public Type[] New_GetConstructorArgTypes() => GetCodeArg("New_ConstructorArgTypes") as Type[];
+
     }
 
 }

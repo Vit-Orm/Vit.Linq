@@ -10,28 +10,33 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
     public class New : IExpressionConvertor
     {
 
-        List<MemberBind> GetConstractorArgs(DataConvertArgument arg, NewExpression newExp)
+        (List<MemberBind> constructorArgs, Type[] constructorArgTypes) GetConstractorArgs(DataConvertArgument arg, NewExpression newExp)
         {
             List<MemberBind> constructorArgs;
+            Type[] constructorArgTypes;
 
             if (newExp.Members == null)
             {
                 // #1 constructor   NewExpression{args=[v1,v2]]} -> new(1,2)
                 constructorArgs = newExp.Arguments?.Select(value => new MemberBind { name = null, value = arg.convertService.ConvertToData(arg, value) }).ToList();
+                constructorArgTypes = newExp.Arguments?.Select(value => value.Type).ToArray();
             }
             else
             {
                 // #2 constructor and memberInit    NewExpression{args=[v1,v2],members=["m1","m2"]} -> new(1,2)
                 constructorArgs = new List<MemberBind>();
+                List<Type> argTypes = new();
                 for (var i = 0; i < newExp.Arguments.Count; i++)
                 {
                     var name = newExp.Members[i].Name;
                     var valueExp = newExp.Arguments[i];
                     var value = arg.convertService.ConvertToData(arg, valueExp);
                     constructorArgs.Add(new MemberBind { name = name, value = value });
+                    argTypes.Add(valueExp.Type);
                 }
+                constructorArgTypes = argTypes.ToArray();
             }
-            return constructorArgs;
+            return (constructorArgs, constructorArgTypes);
         }
 
 
@@ -44,31 +49,33 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                 {
                     return ExpressionNode.Constant(value: time, type: typeof(DateTime));
                 }
-                List<MemberBind> constructorArgs = GetConstractorArgs(arg, newExp);
+                var (constructorArgs, constructorArgTypes) = GetConstractorArgs(arg, newExp);
+
                 node = ExpressionNode.New(constructorArgs: constructorArgs, memberArgs: null);
+                if (constructorArgTypes?.Any() == true) node.New_SetConstructorArgTypes(constructorArgTypes);
             }
             else if (expression is MemberInitExpression memberInit)
             {
                 // #3 constructor and memberInit    MemberInitExpression{Bindings=[{name:"m3",value:v3}],NewExpression} -> new(v1,v2){m3=v3}
 
                 // ##1 constructorArgs
-                List<MemberBind> constructorArgs = GetConstractorArgs(arg, memberInit.NewExpression);
+                var (constructorArgs, constructorArgTypes) = GetConstractorArgs(arg, memberInit.NewExpression);
 
                 // ##2 memberArgs
-                var memberArgs = new List<MemberBind>();
-                foreach (MemberBinding binding in memberInit.Bindings)
+                var memberArgs = memberInit.Bindings.Select((MemberBinding binding) =>
                 {
-                    if (binding is MemberAssignment assign)
-                    {
-                        var name = assign.Member.Name;
-                        var valueExp = assign.Expression;
-                        var value = arg.convertService.ConvertToData(arg, valueExp);
-                        memberArgs.Add(new MemberBind { name = name, value = value });
-                        continue;
-                    }
-                    throw new NotSupportedException($"Unsupported MemberInitExpression Binding: {binding.GetType()}");
-                }
+                    if (binding is not MemberAssignment assign)
+                        throw new NotSupportedException($"Unsupported MemberInitExpression Binding: {binding.GetType()}");
+
+                    var name = assign.Member.Name;
+                    var valueExp = assign.Expression;
+                    var value = arg.convertService.ConvertToData(arg, valueExp);
+                    return new MemberBind { name = name, value = value };
+                }).ToList();
+
+
                 node = ExpressionNode.New(constructorArgs: constructorArgs, memberArgs: memberArgs);
+                if (constructorArgTypes?.Any() == true) node.New_SetConstructorArgTypes(constructorArgTypes);
             }
 
             node?.New_SetType(expression.Type);
