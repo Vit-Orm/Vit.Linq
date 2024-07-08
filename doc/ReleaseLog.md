@@ -1,9 +1,15 @@
-﻿
+﻿# Vit.Library ReleaseLog
+
+-----------------------
+# 2.2.25
+
+- [ExpressionNode_New] store ConstructorArgTypes to CodeArg
+- fix treat String.Add as Numeric.Add issue
 
 -----------------------
 # 2.2.23
 
-1. support bitwise and other binary operators
+- support bitwise and other binary operators
 
 
 

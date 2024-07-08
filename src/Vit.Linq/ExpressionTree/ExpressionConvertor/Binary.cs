@@ -26,10 +26,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
                     case ExpressionType.Add:
                         {
-                            ComponentModel.ValueType valueType = null;
-                            if (binary.Left.Type == typeof(string) || binary.Right.Type == typeof(string))
-                                valueType = ComponentModel.ValueType.FromType(typeof(string));
-                            return new ExpressionNode { nodeType = binary.NodeType.ToString(), expressionType = "Binary", left = left, right = right, valueType = valueType };
+                            return ExpressionNode.Add(left: left, right: right, valueType: binary.Type);
                         }
 
                     //case ExpressionType.AndAlso:
