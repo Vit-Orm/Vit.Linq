@@ -19,7 +19,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
 
             // #1 to ExpressionNode
             // () =>  (query)=> query.isEven
-            var node = convertService.ConvertToData(predicate);
+            var node = convertService.ConvertToLambdaData(predicate);
             var str = Json.Serialize(node);
 
             // #2 convert to predicate

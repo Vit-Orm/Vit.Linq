@@ -30,7 +30,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 // #1 Code to Data
                 // query => query.Where().OrderBy().Skip().Take().Select().ToList();
                 var isArgument = QueryableBuilder.CompareQueryByName(queryTypeName);
-                node = convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
+                node = convertService.ConvertToLambdaData(expression, autoReduce: true, isArgument: isArgument);
                 var strNode = Json.Serialize(node);
 
                 // #2 Filter by QueryAction

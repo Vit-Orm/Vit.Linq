@@ -46,7 +46,7 @@ namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest
                 // #1 Code to Data
                 // query => query.Where().OrderBy().Skip().Take().Select().ToList();
                 var isArgument = QueryableBuilder.CompareQueryByName(queryTypeName);
-                node = convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
+                node = convertService.ConvertToLambdaData(expression, autoReduce: true, isArgument: isArgument);
                 var strNode = Json.Serialize(node);
 
                 // #2 Data to Code
@@ -75,7 +75,7 @@ namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest
                 // #1 Code to Data
                 // query => query.Where().OrderBy().Skip().Take().Select().ToList();
                 var isArgument = QueryableBuilder.CompareQueryByName(queryTypeName);
-                node = convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
+                node = convertService.ConvertToLambdaData(expression, autoReduce: true, reduceConvertExpression: false, isArgument: isArgument);
                 var strNode = Json.Serialize(node);
 
                 node = Json.Deserialize<ExpressionNode>(strNode);

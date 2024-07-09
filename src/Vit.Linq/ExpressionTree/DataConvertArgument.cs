@@ -69,8 +69,8 @@ namespace Vit.Linq.ExpressionTree
                     }
                 case UnaryExpression unary:
                     {
-                        return EValueType.other;
-                        //return GetEValueType(unary.Operand) == EValueType.constant ? EValueType.constant : EValueType.other;
+                        if (!reduceConvertExpression && unary.NodeType == ExpressionType.Convert) return EValueType.other;
+                        return GetEValueType(unary.Operand) == EValueType.constant ? EValueType.constant : EValueType.other;
                     }
                 case BinaryExpression binary:
                     {

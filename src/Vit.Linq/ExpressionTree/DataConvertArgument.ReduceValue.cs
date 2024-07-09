@@ -6,6 +6,7 @@ namespace Vit.Linq.ExpressionTree
     public partial class DataConvertArgument
     {
         public bool autoReduce { get; set; } = false;
+        public bool reduceConvertExpression { get; set; } = true;
 
         public bool ReduceValue<T>(Expression expression, out T value)
         {

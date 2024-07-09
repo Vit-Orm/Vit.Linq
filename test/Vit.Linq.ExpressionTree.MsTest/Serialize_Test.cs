@@ -23,7 +23,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 Expression<Func<Person, bool>> predicate = person => person.id > 0;
 
                 Expression expression = predicate;
-                ExpressionNode_New node = service.ConvertToData(expression);
+                ExpressionNode node = service.ConvertToLambdaData(expression);
 
                 var str = Json.Serialize(node);
 
@@ -45,7 +45,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 Expression<Func<Person, bool>> predicate = person => person.id > 0;
 
                 Expression expression = predicate;
-                ExpressionNode_New node = service.ConvertToData(expression);
+                ExpressionNode node = service.ConvertToLambdaData(expression);
 
                 var str = Json.Serialize(node);
 
