@@ -262,7 +262,9 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
             // double -> int         "12.1"  12.1  ->  12
             if (typeName.Contains("int") || typeName.Contains("byte"))
             {
-                oriValue = ((decimal)Convert.ChangeType(oriValue, typeof(decimal))).ToString("#");
+                var strValue = ((decimal)Convert.ChangeType(oriValue, typeof(decimal))).ToString("#");
+                if (string.IsNullOrEmpty(strValue)) strValue = "0";  // strValue will be "" if oriValue is 0
+                oriValue = strValue;
             }
             // bool -> string       true/false  -> "true" / "false"
             else if (targetType == typeof(string) && oriValue is bool b)

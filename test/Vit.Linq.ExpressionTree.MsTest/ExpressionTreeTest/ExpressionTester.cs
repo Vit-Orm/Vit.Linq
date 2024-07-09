@@ -15,6 +15,8 @@ namespace Vit.Linq.ExpressionTree.ExpressionTreeTest
         public static List<User> Test(IQueryable<User> query, Expression<Func<User, bool>> predicate)
         {
             var expected = GetSourceData().AsQueryable().Where(predicate).ToList();
+            if (expected.Count == 0) throw new Exception("result of predicate must not be empty");
+
             {
                 var actual = query.Where(predicate).ToList();
                 Check(expected, actual);

@@ -18,6 +18,7 @@ namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest
         public void TestQueryable()
         {
             ExpressionTester.TestQueryable(GetQuery());
+            ExpressionTester.TestQueryable(GetQueryWithExtraSerialize());
         }
 
 
@@ -25,6 +26,9 @@ namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest
         public void TestEnumerable()
         {
             ExpressionTester.TestEnumerable(GetQuery());
+            ExpressionTester.TestEnumerable(GetQueryWithExtraSerialize());
+
+            ExpressionTester.TestEnumerable_NoSerializable(GetQuery());
         }
 
 
@@ -44,6 +48,37 @@ namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest
                 var isArgument = QueryableBuilder.CompareQueryByName(queryTypeName);
                 node = convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
                 var strNode = Json.Serialize(node);
+
+                // #2 Data to Code
+                // query => query.Where(person => (person.id >= 10))
+                var lambdaExp = convertService.ToLambdaExpression(node, typeof(IQueryable<ExpressionTester.User>));
+                //var predicate_ = lambdaExp.Compile();
+                var exp3 = (Expression<Func<IQueryable<ExpressionTester.User>, IQueryable<ExpressionTester.User>>>)lambdaExp;
+                var predicate = exp3.Compile();
+
+                return predicate(sourceData);
+            };
+
+            return QueryableBuilder.Build<ExpressionTester.User>(QueryExecutor, queryTypeName);
+        }
+
+        static IQueryable<ExpressionTester.User> GetQueryWithExtraSerialize()
+        {
+            var convertService = ExpressionConvertService.Instance;
+            var queryTypeName = "TestQueryWithExtraSerialize";
+            var sourceData = ExpressionTester.GetSourceData().AsQueryable();
+
+            Func<Expression, Type, object> QueryExecutor = (expression, type) =>
+            {
+                ExpressionNode node;
+
+                // #1 Code to Data
+                // query => query.Where().OrderBy().Skip().Take().Select().ToList();
+                var isArgument = QueryableBuilder.CompareQueryByName(queryTypeName);
+                node = convertService.ConvertToData(expression, autoReduce: true, isArgument: isArgument);
+                var strNode = Json.Serialize(node);
+
+                node = Json.Deserialize<ExpressionNode>(strNode);
 
                 // #2 Data to Code
                 // query => query.Where(person => (person.id >= 10))

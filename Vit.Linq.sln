@@ -13,7 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.MsTest31", "test\V
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{75C25D0B-8529-4E3F-AF43-6EC1E9E40828}"
 	ProjectSection(SolutionItems) = preProject
+		doc\ExpressionTree.NotSupported.md = doc\ExpressionTree.NotSupported.md
+		doc\LinqExample.md = doc\LinqExample.md
 		README.md = README.md
+		doc\ReleaseLog.md = doc\ReleaseLog.md
+		doc\TODO.md = doc\TODO.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.ExpressionTree.MsTest", "test\Vit.Linq.ExpressionTree.MsTest\Vit.Linq.ExpressionTree.MsTest.csproj", "{5A6CE1E2-07A4-4C8D-AB99-D7AED536DAA6}"

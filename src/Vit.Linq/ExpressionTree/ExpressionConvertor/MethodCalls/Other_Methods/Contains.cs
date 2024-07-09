@@ -38,7 +38,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Other_Methods
             // #2 static Method
             MethodInfo method;
             var argType = methodArguments[0].Type;
-            var modelType = argType.GetGenericArguments()[0];
+            Type modelType = argType.IsArray ? argType.GetElementType() : argType.GetGenericArguments()[0];
             if (typeof(IQueryable).IsAssignableFrom(argType))
             {
                 // ##1 Queryable.Contains
