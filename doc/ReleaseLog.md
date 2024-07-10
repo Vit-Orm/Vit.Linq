@@ -14,7 +14,7 @@
     - 44 TypeAs
     - 45 TypeIs
     - 51 Default
-
+- [ExpressionNode] remove config of reduceConvertExpression, judge by ConvertExpression.Type.IsValueType
 
 -----------------------
 # 2.2.23
