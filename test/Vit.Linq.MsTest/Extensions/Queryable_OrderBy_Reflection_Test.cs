@@ -1,6 +1,7 @@
-﻿using Vit.Linq;
-using System.Linq;
+﻿using System.Linq;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Vit.Linq.ComponentModel;
 
 namespace Vit.Linq.MsTest.Extensions
@@ -24,7 +25,7 @@ namespace Vit.Linq.MsTest.Extensions
                     .Page(new PageInfo { pageSize = 10, pageIndex = 1 })
                     .ToList();
 
-                Assert.AreEqual(10,result.Count);
+                Assert.AreEqual(10, result.Count);
                 Assert.AreEqual(990, result[0].id);
             }
             #endregion

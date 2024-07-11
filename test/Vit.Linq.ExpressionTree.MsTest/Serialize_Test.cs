@@ -1,9 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using System;
+﻿using System;
 using System.Linq.Expressions;
 
-using Vit.Linq.ExpressionTree;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Vit.Linq.ExpressionTree.ComponentModel;
 
 namespace Vit.Linq.ExpressionTree.MsTest

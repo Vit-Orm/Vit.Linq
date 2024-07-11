@@ -1,14 +1,16 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using Newtonsoft.Json.Linq;
-using Vit.Linq;
-using Vit.Linq.Filter;
-using Queryable = System.Linq.IQueryable<Vit.Linq.MsTest.Person>;
-using Vit.Linq.Filter.ComponentModel;
-using Newtonsoft.Json;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Collections.Generic;
 using System.Linq;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+using Vit.Linq.Filter;
+using Vit.Linq.Filter.ComponentModel;
+
+using Queryable = System.Linq.IQueryable<Vit.Linq.MsTest.Person>;
 
 namespace Vit.Linq.MsTest.Filter.QueryableTest
 {
@@ -41,7 +43,7 @@ namespace Vit.Linq.MsTest.Filter.QueryableTest
             return service;
         }
 
-      
+
 
         static object GetPrimitiveValue_Newtonsoft(object value)
         {
@@ -55,7 +57,7 @@ namespace Vit.Linq.MsTest.Filter.QueryableTest
             }
             return value;
         }
-         
+
 
 
     }

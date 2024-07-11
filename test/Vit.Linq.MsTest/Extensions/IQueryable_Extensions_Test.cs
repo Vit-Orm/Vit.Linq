@@ -1,6 +1,6 @@
-﻿using Vit.Linq;
+﻿using System.Collections.Generic;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 
 namespace Vit.Linq.MsTest.Extensions
 {

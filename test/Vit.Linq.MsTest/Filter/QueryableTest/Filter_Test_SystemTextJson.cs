@@ -5,7 +5,6 @@ using System.Text.Json;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using Vit.Linq;
 using Vit.Linq.Filter;
 using Vit.Linq.Filter.ComponentModel;
 
@@ -50,14 +49,14 @@ namespace Vit.Linq.MsTest.Filter.QueryableTest
             {
                 switch (elem.ValueKind)
                 {
-                    case JsonValueKind.Null:  
+                    case JsonValueKind.Null:
                     case JsonValueKind.Undefined: return null;
                     case JsonValueKind.True: return true;
                     case JsonValueKind.False: return false;
                     case JsonValueKind.Number: return elem.GetDecimal();
                     case JsonValueKind.String: return elem.GetString();
                     case JsonValueKind.Array:
-                        return elem.EnumerateArray().Select(item=> GetPrimitiveValue_Text(item)).ToList();
+                        return elem.EnumerateArray().Select(item => GetPrimitiveValue_Text(item)).ToList();
                 }
             }
             return value;

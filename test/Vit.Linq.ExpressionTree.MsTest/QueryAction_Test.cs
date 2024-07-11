@@ -1,14 +1,15 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Vit.Core.Module.Serialization;
 using Vit.Linq;
-using System.Data;
-using Vit.Linq.ExpressionTree.ComponentModel;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using Vit.Linq.ExpressionTree.CollectionQuery;
+using Vit.Linq.ExpressionTree.ComponentModel;
 
 namespace Vit.Linq.ExpressionTree.MsTest
 {

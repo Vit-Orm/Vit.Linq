@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -55,7 +54,7 @@ namespace Vit.Linq.MsTest
     public class Job
     {
         public int? departmentId;
- 
+
         public int? personId;
         public string name;
         public string GetJobName()

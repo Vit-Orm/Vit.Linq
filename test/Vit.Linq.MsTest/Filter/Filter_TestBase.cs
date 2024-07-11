@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter
@@ -488,7 +489,7 @@ namespace Vit.Linq.MsTest.Filter
                 // ##3 DateTime =
                 {
                     var query = GetQueryable();
-                    var model = query.Skip(100).First(); 
+                    var model = query.Skip(100).First();
                     var strRule = $"{{'field':'addTime',  'operator': '=' }}".Replace("'", "\"");
                     var rule = GetRule(strRule);
                     rule.value = model.addTime;

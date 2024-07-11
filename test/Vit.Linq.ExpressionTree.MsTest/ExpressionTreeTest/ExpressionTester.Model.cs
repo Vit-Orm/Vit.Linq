@@ -41,7 +41,6 @@ namespace Vit.Linq.ExpressionTree.ExpressionTreeTest
         }
 
 
-        static List<User> sourceData = null;
         public static List<User> GetSourceData()
         {
             int count = 1000;

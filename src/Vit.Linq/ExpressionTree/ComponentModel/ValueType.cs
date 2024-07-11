@@ -12,11 +12,11 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         ///   ValueType:      String | Int32 | Int64 | Single | Double | Boolean | DateTime | ...
         ///   Nullable:       int?
         ///   Object:         Object
-        ///   List:           List<String>
+        ///   List:           List String
         ///   Array:          String[]
-        ///   Queryable:      IQueryable<string>
-        ///   Enumerable:     IEnumerable<string>
-        ///   Collection:     ICollection<string>
+        ///   Queryable:      IQueryable string
+        ///   Enumerable:     IEnumerable string
+        ///   Collection:     ICollection string
         /// </summary>
         public string typeName { get; set; }
 
