@@ -246,7 +246,7 @@ namespace Vit.Linq.MsTest.Filter
             #endregion
 
 
-            #region #3  In | NotIn
+            #region #3 In | NotIn
 
             #region ##1 In
             {
@@ -453,7 +453,7 @@ namespace Vit.Linq.MsTest.Filter
             #endregion
 
 
-            #region #5  DateTime
+            #region #5 DateTime
             {
                 // ##1 string =
                 {
@@ -518,7 +518,7 @@ namespace Vit.Linq.MsTest.Filter
 
 
 
-            #region #6  nested field
+            #region #6 nested field
             {
                 var query = GetQueryable();
                 var strRule = "{'field':'job.name',  'operator': '=',  'value': 'name987_job1' }".Replace("'", "\"");
