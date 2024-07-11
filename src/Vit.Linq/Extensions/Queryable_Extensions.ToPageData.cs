@@ -2,6 +2,7 @@
 using System.Linq;
 
 using Vit.Linq.ComponentModel;
+using Vit.Linq.Filter;
 using Vit.Linq.Filter.ComponentModel;
 
 
@@ -24,15 +25,20 @@ namespace Vit.Linq
 
 
 
-        public static PageData<T> ToPageData<T>(this IQueryable<T> query, FilterRule filter, IEnumerable<OrderField> orders, PageInfo page)
+        public static PageData<T> ToPageData<T>(this IQueryable<T> query, FilterRule filter, IEnumerable<OrderField> orders, PageInfo page, FilterService filterService = null)
         {
-            return ToPageData(query?.Where(filter)?.OrderBy(orders), page);
+            return ToPageData(query?.Where(filter, filterService)?.OrderBy(orders), page);
         }
 
 
-        public static PageData<T> ToPageData<T>(this IQueryable<T> query, FilterRule filter, PageInfo page)
+        public static PageData<T> ToPageData<T>(this IQueryable<T> query, FilterRule filter, PageInfo page, FilterService filterService = null)
         {
-            return ToPageData(query?.Where(filter), page);
+            return ToPageData(query?.Where(filter, filterService), page);
+        }
+
+        public static PageData<T> ToPageData<T>(this IQueryable<T> query, PagedQuery pagedQuery, FilterService filterService = null)
+        {
+            return ToPageData(query, pagedQuery?.filter, pagedQuery?.orders, pagedQuery.page, filterService);
         }
     }
 }

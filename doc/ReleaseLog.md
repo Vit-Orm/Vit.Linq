@@ -18,6 +18,9 @@
 
 - support TotalCount (Vit.Linq.Queryable_Extensions.TotalCount) 
 - support ToListAndTotalCount (Vit.Linq.Queryable_Extensions.ToListAndTotalCount)
+- PagedQuery and RangedQuery
+
+
 
 -----------------------
 # 2.2.23
