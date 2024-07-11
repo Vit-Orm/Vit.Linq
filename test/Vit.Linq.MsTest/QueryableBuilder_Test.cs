@@ -28,26 +28,31 @@ namespace Vit.Linq.MsTest
                     var strQuery2 = Json.Serialize(query2);
 
 
-                    var list = DataSource.GetQueryable().Where(queryAction.filter);
-                    list = list.OrderBy(queryAction.orders);
+                    var query = DataSource.GetQueryable().Where(queryAction.filter);
+                    query = query.OrderBy(queryAction.orders);
 
+                    var rangedQuery = query;
 
                     if (queryAction.skip.HasValue)
-                        list = list.Skip(queryAction.skip.Value);
+                        rangedQuery = rangedQuery.Skip(queryAction.skip.Value);
                     if (queryAction.take.HasValue)
-                        list = list.Take(queryAction.take.Value);
+                        rangedQuery = rangedQuery.Take(queryAction.take.Value);
 
                     switch (queryAction.method)
                     {
-                        case "First": return list.First();
-                        case "FirstOrDefault": return list.FirstOrDefault();
-                        case "Last": return list.Last();
-                        case "LastOrDefault": return list.LastOrDefault();
-                        case "Count": return list.Count();
+                        case nameof(Queryable.First): return rangedQuery.First();
+                        case nameof(Queryable.FirstOrDefault): return rangedQuery.FirstOrDefault();
+                        case nameof(Queryable.Last): return rangedQuery.Last();
+                        case nameof(Queryable.LastOrDefault): return rangedQuery.LastOrDefault();
+                        case nameof(Queryable.Count): return rangedQuery.Count();
+                        case nameof(Queryable_Extensions.TotalCount): return query.Count();
+                        case nameof(Queryable_Extensions.ToListAndTotalCount): return (rangedQuery.ToList(), query.Count());
+                        default:
+                            // ToList
+                            return rangedQuery;
                     }
 
-                    // ToList
-                    return list;
+
                 };
 
                 var query = QueryableBuilder.Build<Person>(QueryExecutor);
@@ -64,13 +69,41 @@ namespace Vit.Linq.MsTest
                     .Skip(1)
                     .Take(5);
 
-                var list = query.ToList();
-                var count = query.Count();
-             
+                #region Count
+                {
+                    var count = query.Count();
+                    Assert.AreEqual(5, count);
+                }
+                #endregion
 
-                Assert.AreEqual(5, list.Count);
-                Assert.AreEqual(17, list[0].id);
-                Assert.AreEqual(15, list[1].id);
+                #region TotalCount
+                {
+                    var totalCount = query.TotalCount();
+                    Assert.AreEqual(8, totalCount);
+                }
+                #endregion
+
+                #region ToListAndTotalCount
+                {
+                    var (list, totalCount) = query.ToListAndTotalCount();
+
+                    Assert.AreEqual(8, totalCount);
+
+                    Assert.AreEqual(5, list.Count);
+                    Assert.AreEqual(17, list[0].id);
+                    Assert.AreEqual(15, list[1].id);
+                }
+                #endregion
+
+                #region ToList
+                {
+                    var list = query.ToList();
+                    Assert.AreEqual(5, list.Count);
+                    Assert.AreEqual(17, list[0].id);
+                    Assert.AreEqual(15, list[1].id);
+                }
+                #endregion
+
             }
 
 

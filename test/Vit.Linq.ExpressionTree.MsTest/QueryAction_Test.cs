@@ -43,29 +43,30 @@ namespace Vit.Linq.ExpressionTree.MsTest
 
                 query = query.OrderBy(queryAction.orders);
 
-                var methodName = queryAction.method;
-
-                if (methodName == "TotalCount") return query.Count();
+                var rangedQuery = query;
 
                 if (queryAction.skip.HasValue)
-                    query = query.Skip(queryAction.skip.Value);
+                    rangedQuery = rangedQuery.Skip(queryAction.skip.Value);
                 if (queryAction.take.HasValue)
-                    query = query.Take(queryAction.take.Value);
+                    rangedQuery = rangedQuery.Take(queryAction.take.Value);
 
-                switch (methodName)
+                switch (queryAction.method)
                 {
-                    case "First": return query.First();
-                    case "FirstOrDefault": return query.FirstOrDefault();
-                    case "Last": return query.Last();
-                    case "LastOrDefault": return query.LastOrDefault();
-                    case "Count": return query.Count();
+                    case nameof(Queryable.First): return rangedQuery.First();
+                    case nameof(Queryable.FirstOrDefault): return rangedQuery.FirstOrDefault();
+                    case nameof(Queryable.Last): return rangedQuery.Last();
+                    case nameof(Queryable.LastOrDefault): return rangedQuery.LastOrDefault();
+                    case nameof(Queryable.Count): return rangedQuery.Count();
+                    case nameof(Queryable_Extensions.TotalCount): return query.Count();
+                    case nameof(Queryable_Extensions.ToListAndTotalCount): return (rangedQuery.ToList(), query.Count());
                     case "ToList":
                     case "":
                     case null:
-                        return query;
+                        //default: 
+                        return rangedQuery;
                 }
 
-                throw new NotSupportedException("Method not support:" + methodName);
+                throw new NotSupportedException("Method not support:" + queryAction.method);
             };
 
             return QueryableBuilder.Build<Person>(QueryExecutor, queryTypeName);
@@ -86,6 +87,33 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 .Skip(1)
                 .Take(5);
 
+            #region Count
+            {
+                var count = query.Count();
+                Assert.AreEqual(5, count);
+            }
+            #endregion
+
+            #region TotalCount
+            {
+                var totalCount = query.TotalCount();
+                Assert.AreEqual(999, totalCount);
+            }
+            #endregion
+
+            #region ToListAndTotalCount
+            {
+                var (list, totalCount) = query.ToListAndTotalCount();
+
+                Assert.AreEqual(999, totalCount);
+
+                Assert.AreEqual(5, list.Count);
+                Assert.AreEqual(998, list.First().id);
+                Assert.AreEqual(994, list.Last().id);
+            }
+            #endregion
+
+
             #region ToList
             {
                 var list = query.ToList();
@@ -95,12 +123,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
             }
             #endregion
 
-            #region Count
-            {
-                var count = query.Count();
-                Assert.AreEqual(5, count);
-            }
-            #endregion
+
 
             #region First FirstOrDefault
             {

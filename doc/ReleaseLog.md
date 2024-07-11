@@ -16,6 +16,9 @@
     - 51 Default
 - [ExpressionNode] remove config of reduceConvertExpression, judge by ConvertExpression.Type.IsValueType
 
+- support TotalCount (Vit.Linq.Queryable_Extensions.TotalCount) 
+- support ToListAndTotalCount (Vit.Linq.Queryable_Extensions.ToListAndTotalCount)
+
 -----------------------
 # 2.2.23
 
