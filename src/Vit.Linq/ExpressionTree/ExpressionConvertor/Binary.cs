@@ -11,6 +11,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
     public class Binary : IExpressionConvertor
     {
+        public virtual int priority { get; set; } = 100;
         public ExpressionNode ConvertToData(ToDataArgument arg, Expression expression)
         {
             switch (expression)

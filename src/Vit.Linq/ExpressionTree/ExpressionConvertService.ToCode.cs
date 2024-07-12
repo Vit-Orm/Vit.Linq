@@ -36,7 +36,7 @@ namespace Vit.Linq.ExpressionTree
             return ConvertToCode_PredicateExpression<T>(data)?.Compile();
         }
 
-        public string ConvertToCode_ExpressionString<T>(ExpressionNode data)
+        public string ConvertToCode_PredicateExpressionString<T>(ExpressionNode data)
         {
             return ConvertToCode_PredicateExpression<T>(data)?.ToString();
         }

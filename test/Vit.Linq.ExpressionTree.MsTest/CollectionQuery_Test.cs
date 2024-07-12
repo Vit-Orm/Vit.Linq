@@ -14,7 +14,7 @@ using Vit.Linq.ExpressionTree.Query;
 namespace Vit.Linq.ExpressionTree.MsTest
 {
     [TestClass]
-    public class QueryAction_Test
+    public class CollectionQuery_Test
     {
 
 

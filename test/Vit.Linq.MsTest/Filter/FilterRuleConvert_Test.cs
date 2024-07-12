@@ -28,7 +28,7 @@ namespace Vit.Linq.MsTest.Filter
             {
                 Expression<Func<Person, bool>> predicate = x => (x.Age > 5 || x.Name.Contains("lith")) && (x.Age < 10 || x.Name == "lith2");
 
-                var rule = new FilterRuleConvert().ConvertToFilterRule(predicate);
+                FilterRule rule = FilterGenerateService.Instance.ConvertToData(predicate);
                 var str = Json.Serialize(rule);
                 rule = Json.Deserialize<FilterRule>(str);
 
@@ -45,10 +45,10 @@ namespace Vit.Linq.MsTest.Filter
                      .Replace("'", "\"");
                 var expectedRule = Json.Deserialize<FilterRule>(strRule);
 
-                Expression<Func<Person, bool>> predicate = FilterService.Instance.ToExpression<Person>(expectedRule);
+                Expression<Func<Person, bool>> predicate = FilterService.Instance.ConvertToCode_PredicateExpression<Person>(expectedRule);
 
 
-                var rule = new FilterRuleConvert().ConvertToFilterRule(predicate);
+                FilterRule rule = FilterGenerateService.Instance.ConvertToData(predicate);
                 var str = Json.Serialize(rule);
                 rule = Json.Deserialize<FilterRule>(str);
 

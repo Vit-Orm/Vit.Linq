@@ -41,7 +41,7 @@ namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest
 
             Func<Expression, Type, object> QueryExecutor = (expression, type) =>
             {
-                ExpressionNode node;
+                ExpressionNode_Lambda node;
 
                 // #1 Code to Data
                 // query => query.Where().OrderBy().Skip().Take().Select().ToList();
@@ -70,7 +70,7 @@ namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest
 
             Func<Expression, Type, object> QueryExecutor = (expression, type) =>
             {
-                ExpressionNode node;
+                ExpressionNode_Lambda node;
 
                 // #1 Code to Data
                 // query => query.Where().OrderBy().Skip().Take().Select().ToList();

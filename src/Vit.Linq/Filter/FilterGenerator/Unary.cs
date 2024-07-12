@@ -2,17 +2,23 @@
 using System.Linq.Expressions;
 
 using Vit.Linq.Filter.ComponentModel;
+using Vit.Linq.Filter.MethodCalls;
 
-namespace Vit.Linq.Filter
+namespace Vit.Linq.Filter.FilterGenerator
 {
-    public partial class FilterRuleConvert
+
+    public class Unary : IFilterGenerator
     {
-        protected virtual FilterRule ConvertToData_Unary(QueryAction queryAction, UnaryExpression unary)
+        public virtual int priority { get; set; } = 300;
+
+        public FilterRule ConvertToData(FilterGenerateArgument arg, Expression expression)
         {
+            if (expression is not UnaryExpression unary) return null;
+
             switch (unary.NodeType)
             {
                 case ExpressionType.Not:
-                    var rule = ConvertToFilterRule(queryAction, unary.Operand);
+                    var rule = arg.convertService.ConvertToData(arg, unary.Operand);
                     if (rule.condition?.StartsWith(RuleCondition.Not, StringComparison.OrdinalIgnoreCase) == true)
                     {
                         rule.condition = rule.condition.Substring(3);
@@ -24,10 +30,12 @@ namespace Vit.Linq.Filter
                     return rule;
                 case ExpressionType.Quote:
                     var exp = unary.Operand;
-                    return ConvertToFilterRule(queryAction, exp);
+                    return arg.convertService.ConvertToData(arg, exp);
             }
             throw new NotSupportedException($"Unsupported binary operator: {unary.NodeType}");
+
         }
+
 
     }
 }

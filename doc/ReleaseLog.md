@@ -10,7 +10,8 @@
     - change returnType of ExpressionNode.Lambda to ExpressionNode_Lambda from ExpressionNode
     - rename ValueType to NodeValueType
     - rename Binarys to Binary, Unarys to Unary
-
+    - [ExpressionTree] Queryable.Where With ExpressionNode_Lambda
+    - [Filter] refactor FilterRuleConvert to FilterGenerateService
 
 
 -----------------------

@@ -11,9 +11,9 @@ namespace Vit.Linq
     public static partial class IQueryable_Extensions
     {
 
-        public static IQueryable OrderBy(this IQueryable query, IEnumerable<ExpressionNodeOrderField> orders, ExpressionConvertService Instance = null)
+        public static IQueryable OrderBy(this IQueryable query, IEnumerable<ExpressionNodeOrderField> orders, ExpressionConvertService expressionConvertService = null)
         {
-            return Extensions_OrderByExpressionNode.MethodInfo_OrderBy(query.ElementType).Invoke(null, new object[] { query, orders, Instance }) as IOrderedQueryable;
+            return Extensions_OrderByExpressionNode.MethodInfo_OrderBy(query.ElementType).Invoke(null, new object[] { query, orders, expressionConvertService }) as IOrderedQueryable;
         }
 
         static class Extensions_OrderByExpressionNode

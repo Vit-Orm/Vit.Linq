@@ -8,7 +8,7 @@ namespace Vit.Linq.Filter.MethodCalls
     {
         int priority { get; }
 
-        bool PredicateToData(DataConvertArgument arg, MethodCallExpression call);
-        FilterRule ToData(DataConvertArgument arg, MethodCallExpression call);
+        bool PredicateToData(FilterGenerateArgument arg, MethodCallExpression call);
+        FilterRule ToData(FilterGenerateArgument arg, MethodCallExpression call);
     }
 }

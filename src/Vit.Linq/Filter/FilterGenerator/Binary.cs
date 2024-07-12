@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 
 using Vit.Linq.Filter.ComponentModel;
+using Vit.Linq.Filter.MethodCalls;
 
-namespace Vit.Linq.Filter
+namespace Vit.Linq.Filter.FilterGenerator
 {
-    public partial class FilterRuleConvert
-    {
 
-        protected virtual FilterRule ConvertToData_Binary(QueryAction queryAction, BinaryExpression binary)
+    public class Binary : IFilterGenerator
+    {
+        public virtual int priority { get; set; } = 200;
+
+        public FilterRule ConvertToData(FilterGenerateArgument arg, Expression expression)
         {
+            if (expression is not BinaryExpression binary) return null;
+
             switch (binary.NodeType)
             {
                 case ExpressionType.Equal:
@@ -29,17 +34,26 @@ namespace Vit.Linq.Filter
                         case ExpressionType.LessThan: opt = "<"; break;
                         case ExpressionType.LessThanOrEqual: opt = "<="; break;
                     }
-                    var left = GetMemberName(binary.Left);
-                    var right = GetValue(binary.Right);
+                    var left = arg.convertService.GetMemberName(binary.Left);
+                    var right = arg.convertService.GetValue(binary.Right);
                     return new FilterRule { field = left?.ToString(), @operator = opt, value = right };
-
                 case ExpressionType.AndAlso:
-                    return new FilterRule { condition = "and", rules = new List<FilterRule> { ConvertToFilterRule(queryAction, binary.Left), ConvertToFilterRule(queryAction, binary.Right) } };
+                    return new FilterRule
+                    {
+                        condition = "and",
+                        rules = new List<FilterRule> { arg.convertService.ConvertToData(arg, binary.Left), arg.convertService.ConvertToData(arg, binary.Right) }
+                    };
 
                 case ExpressionType.OrElse:
-                    return new FilterRule { condition = "or", rules = new List<FilterRule> { ConvertToFilterRule(queryAction, binary.Left), ConvertToFilterRule(queryAction, binary.Right) } };
+                    return new FilterRule
+                    {
+                        condition = "or",
+                        rules = new List<FilterRule> { arg.convertService.ConvertToData(arg, binary.Left), arg.convertService.ConvertToData(arg, binary.Right) }
+                    };
             }
+
             throw new NotSupportedException($"Unsupported binary operator: {binary.NodeType}");
+
         }
 
 

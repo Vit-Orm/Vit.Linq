@@ -3,9 +3,9 @@
 namespace Vit.Linq.Filter.MethodCalls
 {
 
-    public class DataConvertArgument
+    public class FilterGenerateArgument
     {
-        public FilterRuleConvert convertService { get; set; }
+        public FilterGenerateService convertService { get; set; }
         public QueryAction queryAction { get; set; }
 
     }

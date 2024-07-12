@@ -54,6 +54,8 @@ String.EndsWith
 
     public class MethodCall : IExpressionConvertor
     {
+        public virtual int priority { get; set; } = 100;
+
         protected List<IMethodConvertor> methodConvertors = new List<IMethodConvertor>();
 
         public virtual void RegisterMethodConvertor(IMethodConvertor convertor)

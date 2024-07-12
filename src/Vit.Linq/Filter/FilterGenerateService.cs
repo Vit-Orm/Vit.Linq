@@ -1,74 +1,82 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
 using Vit.Linq;
+ 
 using Vit.Linq.Filter.ComponentModel;
+using Vit.Linq.Filter.FilterGenerator;
 using Vit.Linq.Filter.MethodCalls;
 
 namespace Vit.Linq.Filter
 {
-    public partial class FilterRuleConvert
+    public partial class FilterGenerateService
     {
 
+        public static FilterGenerateService Instance = new FilterGenerateService();
 
-        public FilterRuleConvert()
+        protected List<IFilterGenerator> filterGenerators = new();
+
+
+        public virtual void AddGenerator(IFilterGenerator generator)
         {
-            // populate MethodConvertor
-            var types = GetType().Assembly.GetTypes().Where(type => type.IsClass
-                    && !type.IsAbstract
-                    && typeof(IMethodConvertor).IsAssignableFrom(type)
-                    && type.GetConstructor(Type.EmptyTypes) != null
-            ).ToList();
-
-            types.ForEach(type => RegisterMethodConvertor(Activator.CreateInstance(type) as IMethodConvertor));
+            filterGenerators.Add(generator);
+            filterGenerators.Sort((a, b) => a.priority - b.priority);
         }
 
 
-        public virtual IFilterRule ConvertToFilterRule<T>(Expression<Func<T, bool>> predicate)
+        public virtual bool RegisterMethodConvertor(IMethodConvertor convertor)
         {
-            return ConvertToQueryAction(predicate.Body).filter;
+            var methodCallConvertor = filterGenerators.FirstOrDefault(m => m is MethodCall) as MethodCall;
+            if (methodCallConvertor == null) return false;
+            methodCallConvertor.RegisterMethodConvertor(convertor);
+            return true;
         }
 
 
-        public virtual IFilterRule ConvertToFilterRule(Expression expression)
+        public FilterGenerateService()
+        {
+            // populate FilterGenerator
+            {
+                var types = GetType().Assembly.GetTypes().Where(type => type.IsClass
+                        && !type.IsAbstract
+                        && typeof(IFilterGenerator).IsAssignableFrom(type)
+                        && type.GetConstructor(Type.EmptyTypes) != null
+                ).ToList();
+
+                types.ForEach(type => AddGenerator(Activator.CreateInstance(type) as IFilterGenerator));
+            }
+        }
+
+
+        public virtual FilterRule ConvertToData(FilterGenerateArgument arg, Expression expression)
+        {
+            foreach (var filterGenerator in filterGenerators)
+            {
+                var filter = filterGenerator.ConvertToData(arg, expression);
+                if (filter != null) return filter;
+            }
+
+            throw new NotSupportedException($"Unsupported expression type: {expression.GetType()}");
+        }
+
+
+        public virtual FilterRule ConvertToData(Expression expression)
         {
             return ConvertToQueryAction(expression).filter;
         }
 
         public virtual QueryAction ConvertToQueryAction(Expression expression)
         {
-            var queryAction = new QueryAction();
-            queryAction.filter = ConvertToFilterRule(queryAction, expression);
+            QueryAction queryAction = new();
+
+            var arg = new FilterGenerateArgument { convertService = this, queryAction = queryAction };
+            queryAction.filter = ConvertToData(arg, expression);
+
             return queryAction;
         }
 
-
-        public virtual FilterRule ConvertToFilterRule(QueryAction queryAction, Expression expression)
-        {
-            if (expression is ConstantExpression constant && constant.Value is bool v)
-            {
-                return new FilterRule { @operator = v ? "true" : "false" };
-            }
-            else if (expression is BinaryExpression binary)
-            {
-                return ConvertToData_Binary(queryAction, binary);
-            }
-            else if (expression is UnaryExpression unary)
-            {
-                return ConvertToData_Unary(queryAction, unary);
-            }
-            else if (expression is LambdaExpression lambda)
-            {
-                return ConvertToData_Lambda(queryAction, lambda);
-            }
-            else if (expression is MethodCallExpression call)
-            {
-                return ConvertToData_MethodCall(queryAction, call);
-            }
-
-            throw new NotSupportedException($"Unsupported expression type: {expression.GetType()}");
-        }
 
 
         public virtual object GetValue(Expression expression)

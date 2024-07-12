@@ -23,14 +23,14 @@ namespace Vit.Linq.Filter
         protected Dictionary<string, string> operatorMap = new Dictionary<string, string>();
 
 
-        public FilterService AddOperatorMap(string operatorName, string operatorType)
+        public virtual FilterService AddOperatorMap(string operatorName, string operatorType)
         {
             if (operatorIsIgnoreCase) operatorName = operatorName?.ToLower();
             operatorMap[operatorName] = operatorType;
             return this;
         }
 
-        public FilterService AddOperatorMap(IEnumerable<(string operatorName, string operatorType)> maps)
+        public virtual FilterService AddOperatorMap(IEnumerable<(string operatorName, string operatorType)> maps)
         {
             foreach (var (operatorName, operatorType) in maps)
                 AddOperatorMap(operatorName, operatorType);
@@ -39,28 +39,28 @@ namespace Vit.Linq.Filter
         #endregion
 
 
-        public Func<T, bool> ToPredicate<T>(IFilterRule rule)
+        public virtual Func<T, bool> ConvertToCode_Predicate<T>(IFilterRule rule)
         {
-            return ToExpression<T>(rule)?.Compile();
+            return ConvertToCode_PredicateExpression<T>(rule)?.Compile();
         }
 
-        public string ToExpressionString<T>(IFilterRule rule)
+        public virtual string ConvertToCode_PredicateExpressionString<T>(IFilterRule rule)
         {
-            return ToExpression<T>(rule)?.ToString();
+            return ConvertToCode_PredicateExpression<T>(rule)?.ToString();
         }
 
 
-        public Expression<Func<T, bool>> ToExpression<T>(IFilterRule rule)
+        public virtual Expression<Func<T, bool>> ConvertToCode_PredicateExpression<T>(IFilterRule rule)
         {
-            var exp = ToLambdaExpression(rule, typeof(T));
+            var exp = ConvertToCode_LambdaExpression(rule, typeof(T));
             return (Expression<Func<T, bool>>)exp;
         }
 
 
-        public LambdaExpression ToLambdaExpression(IFilterRule rule, Type targetType)
+        public virtual LambdaExpression ConvertToCode_LambdaExpression(IFilterRule rule, Type targetType)
         {
             ParameterExpression parameter = LinqHelp.CreateParameter(targetType, "lambdaParam");
-            var expression = ConvertToExpression(rule, parameter);
+            var expression = ConvertToCode(rule, parameter);
             if (expression == null)
             {
                 return null;
@@ -201,46 +201,46 @@ namespace Vit.Linq.Filter
 
 
 
-        #region ConvertToExpression
+        #region ConvertToCode
 
-        Expression ConvertToExpression(IFilterRule rule, ParameterExpression parameter)
+        protected virtual Expression ConvertToCode(IFilterRule rule, ParameterExpression parameter)
         {
             if (rule == null) return null;
 
-            return ConvertToExpression(rule, parameter, GetCondition(rule));
+            return ConvertToCode(rule, parameter, GetCondition(rule));
         }
 
-        Expression ConvertToExpression(IFilterRule rule, ParameterExpression parameter, string condition)
+        protected virtual Expression ConvertToCode(IFilterRule rule, ParameterExpression parameter, string condition)
         {
             if (condition == null)
-                return ConvertToExpressionNonNested(rule, parameter);
+                return ConvertToCode_NonNested(rule, parameter);
 
             //  nested filter rules
             if (RuleCondition.And.Equals(condition, StringComparison.OrdinalIgnoreCase))
             {
                 if (rule.rules == null)
-                    return ConvertToExpressionNonNested(rule, parameter);
+                    return ConvertToCode_NonNested(rule, parameter);
                 else
-                    return ConvertToExpression(rule.rules, parameter, isAnd: true);
+                    return ConvertToCode(rule.rules, parameter, isAnd: true);
             }
             else if (RuleCondition.Or.Equals(condition, StringComparison.OrdinalIgnoreCase))
             {
                 if (rule.rules == null)
-                    return ConvertToExpressionNonNested(rule, parameter);
+                    return ConvertToCode_NonNested(rule, parameter);
                 else
-                    return ConvertToExpression(rule.rules, parameter, isAnd: false);
+                    return ConvertToCode(rule.rules, parameter, isAnd: false);
             }
             else if (RuleCondition.Not.Equals(condition, StringComparison.OrdinalIgnoreCase))
             {
-                return Expression.Not(ConvertToExpression(rule, parameter, null));
+                return Expression.Not(ConvertToCode(rule, parameter, null));
             }
             else if (RuleCondition.NotAnd.Equals(condition, StringComparison.OrdinalIgnoreCase))
             {
-                return Expression.Not(ConvertToExpression(rule, parameter, RuleCondition.And));
+                return Expression.Not(ConvertToCode(rule, parameter, RuleCondition.And));
             }
             else if (RuleCondition.NotOr.Equals(condition, StringComparison.OrdinalIgnoreCase))
             {
-                return Expression.Not(ConvertToExpression(rule, parameter, RuleCondition.Or));
+                return Expression.Not(ConvertToCode(rule, parameter, RuleCondition.Or));
             }
 
             throw new Exception("unrecognized condition : " + rule.condition);
@@ -248,7 +248,7 @@ namespace Vit.Linq.Filter
 
 
 
-        Expression ConvertToExpressionNonNested(IFilterRule rule, ParameterExpression parameter)
+        protected virtual Expression ConvertToCode_NonNested(IFilterRule rule, ParameterExpression parameter)
         {
             // non-nested rule
 
@@ -425,7 +425,7 @@ namespace Vit.Linq.Filter
         /// <param name="parameter"></param>
         /// <param name="isAnd"> true : and     false: or </param>
         /// <returns></returns>
-        Expression ConvertToExpression(IEnumerable<IFilterRule> rules, ParameterExpression parameter, bool isAnd = true)
+        protected virtual Expression ConvertToCode(IEnumerable<IFilterRule> rules, ParameterExpression parameter, bool isAnd = true)
         {
             if (rules?.Any() != true)
             {
@@ -436,7 +436,7 @@ namespace Vit.Linq.Filter
 
             foreach (var rule in rules)
             {
-                var curExp = ConvertToExpression(rule, parameter);
+                var curExp = ConvertToCode(rule, parameter);
                 if (curExp != null)
                     expression = Append(expression, curExp);
             }

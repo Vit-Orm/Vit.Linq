@@ -12,7 +12,7 @@ namespace Vit.Linq
         #region Where
         public static IQueryable IQueryable_Where(this IQueryable query, IFilterRule rule, FilterService service = null)
         {
-            LambdaExpression lambda = (service ?? FilterService.Instance).ToLambdaExpression(rule, query.ElementType);
+            LambdaExpression lambda = (service ?? FilterService.Instance).ConvertToCode_LambdaExpression(rule, query.ElementType);
             if (lambda == null) return query;
             return query.Provider.CreateQuery(
                 Expression.Call(

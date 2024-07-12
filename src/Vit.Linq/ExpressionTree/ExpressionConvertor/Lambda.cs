@@ -9,6 +9,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
     public class Lambda : IExpressionConvertor
     {
+        public virtual int priority { get; set; } = 100;
         public ExpressionNode ConvertToData(ToDataArgument arg, Expression expression)
         {
             if (expression is LambdaExpression lambda)

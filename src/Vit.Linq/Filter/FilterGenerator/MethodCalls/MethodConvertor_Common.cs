@@ -21,12 +21,12 @@ namespace Vit.Linq.Filter.MethodCalls
             this.priority = priority;
         }
 
-        public virtual bool PredicateToData(DataConvertArgument arg, MethodCallExpression call)
+        public virtual bool PredicateToData(FilterGenerateArgument arg, MethodCallExpression call)
         {
             return call.Method.Name == methodName && (methodType == null || methodType == call.Method.DeclaringType);
         }
 
-        public abstract FilterRule ToData(DataConvertArgument arg, MethodCallExpression call);
+        public abstract FilterRule ToData(FilterGenerateArgument arg, MethodCallExpression call);
 
     }
 

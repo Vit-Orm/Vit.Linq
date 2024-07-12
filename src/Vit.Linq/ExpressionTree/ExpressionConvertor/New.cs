@@ -14,6 +14,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
     /// </summary>
     public class New : IExpressionConvertor
     {
+        public virtual int priority { get; set; } = 100;
         public ExpressionNode ConvertToData(ToDataArgument arg, Expression expression)
         {
             ExpressionNode node = null;
