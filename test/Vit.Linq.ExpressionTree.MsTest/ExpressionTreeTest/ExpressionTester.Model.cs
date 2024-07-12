@@ -10,6 +10,9 @@ namespace Vit.Linq.ExpressionTree.ExpressionTreeTest
     {
         public class User
         {
+            public User() { }
+            public User(string name) { this.name = name; }
+            public User(int id) { this.id = id; }
             public int id { get; set; }
             public string name { get; set; }
             public DateTime? birth { get; set; }
@@ -19,17 +22,32 @@ namespace Vit.Linq.ExpressionTree.ExpressionTreeTest
             public User[] childrenArray { get; set; }
 
             public int GetId() => id;
+
+            public object this[string propertyName]
+                => propertyName switch
+                {
+                    "id" => id,
+                    "name" => name,
+                    _ => default,
+                };
+
+            public object this[string propertyName, object defaultValue]
+               => propertyName switch
+               {
+                   "id" => id,
+                   "name" => name,
+                   _ => defaultValue,
+               };
         }
 
 
-        static List<User> sourceData = null;
         public static List<User> GetSourceData()
         {
             int count = 1000;
 
             var Now = DateTime.Now;
             var list = new List<User>(count);
-            for (int i = 1; i < count; i++)
+            for (int i = 1; i <= count; i++)
             {
                 list.Add(new User
                 {

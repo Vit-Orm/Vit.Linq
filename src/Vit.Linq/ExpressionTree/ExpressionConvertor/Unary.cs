@@ -17,12 +17,18 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                     ExpressionType.Convert => ExpressionNode.Convert(
                                                 valueType: ComponentModel.ValueType.FromType(unary.Type),
                                                 body: arg.convertService.ConvertToData(arg, unary.Operand)
-                                                ),
+                                                ).SetCodeArg("Convert_Type", unary.Type),
                     ExpressionType.Quote => arg.convertService.ConvertToData(arg, unary.Operand),
                     // ExpressionType.Not:
                     // ExpressionType.ArrayLength:
                     _ => ExpressionNode.Unary(nodeType: unary.NodeType.ToString(), body: arg.convertService.ConvertToData(arg, unary.Operand)),
                 };
+            }
+            else if (expression is DefaultExpression defaultExp)
+            {
+                var type = defaultExp.Type;
+                var body = ExpressionNode.Constant(value: null, type: type).SetCodeArg("Default_Type", type);
+                return ExpressionNode.Unary(nodeType: nameof(ExpressionType.Default), body: body);
             }
 
             return null;
@@ -34,12 +40,19 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
             switch (data.nodeType)
             {
+                case nameof(ExpressionType.Default):
+                    {
+                        ExpressionNode_Unary unary = data;
+                        var type = unary.body?.GetCodeArg("Default_Type") as Type;
+                        type ??= unary.body?.valueType?.ToType();
+                        return Expression.Default(type);
+                    }
                 case nameof(ExpressionType.Convert):
                     {
                         ExpressionNode_Convert convert = data;
                         var value = arg.convertService.ToExpression(arg, convert.body);
-
-                        Type type = convert.valueType?.ToType() ?? value?.Type;
+                        var type = convert.GetCodeArg("Convert_Type") as Type;
+                        type ??= convert.valueType?.ToType() ?? value?.Type;
                         return Expression.Convert(value, type);
                     }
 

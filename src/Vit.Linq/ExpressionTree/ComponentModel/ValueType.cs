@@ -12,11 +12,11 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         ///   ValueType:      String | Int32 | Int64 | Single | Double | Boolean | DateTime | ...
         ///   Nullable:       int?
         ///   Object:         Object
-        ///   List:           List<String>
+        ///   List:           List String
         ///   Array:          String[]
-        ///   Queryable:      IQueryable<string>
-        ///   Enumerable:     IEnumerable<string>
-        ///   Collection:     ICollection<string>
+        ///   Queryable:      IQueryable string
+        ///   Enumerable:     IEnumerable string
+        ///   Collection:     ICollection string
         /// </summary>
         public string typeName { get; set; }
 
@@ -31,14 +31,14 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
             {
                 return new ValueType
                 {
-                    typeName = "String"
+                    typeName = nameof(String)
                 };
             }
             if (type == typeof(object))
             {
                 return new ValueType
                 {
-                    typeName = "Object"
+                    typeName = nameof(Object)
                 };
             }
 
@@ -83,11 +83,11 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
                 }
                 else if (typeof(IQueryable).IsAssignableFrom(type))
                 {
-                    typeName = "Queryable";
+                    typeName = nameof(Queryable);
                 }
                 else if (typeof(IEnumerable).IsAssignableFrom(type))
                 {
-                    typeName = "Enumerable";
+                    typeName = nameof(Enumerable);
                 }
                 else if (typeof(ICollection).IsAssignableFrom(type))
                 {
@@ -135,13 +135,13 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
                         if (baseType == null) return null;
                         return typeof(List<string>).GetGenericTypeDefinition().MakeGenericType(baseType);
                     }
-                case "Queryable":
+                case nameof(Queryable):
                     {
                         var baseType = genericArgumentTypes[0]?.ToType();
                         if (baseType == null) return null;
                         return typeof(IQueryable<string>).GetGenericTypeDefinition().MakeGenericType(baseType);
                     }
-                case "Enumerable":
+                case nameof(Enumerable):
                     {
                         var baseType = genericArgumentTypes[0]?.ToType();
                         if (baseType == null) return null;
@@ -153,9 +153,13 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
                         if (baseType == null) return null;
                         return typeof(ICollection<string>).GetGenericTypeDefinition().MakeGenericType(baseType);
                     }
-                case "Object":
+                case nameof(Object):
                     {
                         return typeof(object);
+                    }
+                case nameof(String):
+                    {
+                        return typeof(String);
                     }
                 default: return Type.GetType("System." + typeName) ?? typeof(object);
             }
@@ -258,7 +262,9 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
             // double -> int         "12.1"  12.1  ->  12
             if (typeName.Contains("int") || typeName.Contains("byte"))
             {
-                oriValue = ((decimal)Convert.ChangeType(oriValue, typeof(decimal))).ToString("#");
+                var strValue = ((decimal)Convert.ChangeType(oriValue, typeof(decimal))).ToString("#");
+                if (string.IsNullOrEmpty(strValue)) strValue = "0";  // strValue will be "" if oriValue is 0
+                oriValue = strValue;
             }
             // bool -> string       true/false  -> "true" / "false"
             else if (targetType == typeof(string) && oriValue is bool b)

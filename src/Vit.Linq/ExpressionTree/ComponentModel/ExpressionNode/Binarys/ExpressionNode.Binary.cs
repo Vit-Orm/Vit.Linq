@@ -1,4 +1,7 @@
-﻿namespace Vit.Linq.ExpressionTree.ComponentModel
+﻿using System;
+using System.Linq.Expressions;
+
+namespace Vit.Linq.ExpressionTree.ComponentModel
 {
 
     public interface ExpressionNode_Binary : IExpressionNode
@@ -25,7 +28,10 @@
 
 
         public static ExpressionNode Binary(string nodeType, ExpressionNode left, ExpressionNode right)
-            => new ExpressionNode { nodeType = nodeType, expressionType = "Binary", left = left, right = right };
+            => new ExpressionNode { expressionType = "Binary", nodeType = nodeType, left = left, right = right };
+
+        public static ExpressionNode Add(ExpressionNode left, ExpressionNode right, Type valueType)
+            => new ExpressionNode { expressionType = "Binary", nodeType = nameof(ExpressionType.Add), left = left, right = right, valueType = ComponentModel.ValueType.FromType(valueType) };
 
     }
 }

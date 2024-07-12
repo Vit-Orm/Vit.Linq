@@ -1,9 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using System;
+﻿using System;
 using System.Linq.Expressions;
 
-using Vit.Linq.ExpressionTree;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Vit.Linq.ExpressionTree.ComponentModel;
 
 namespace Vit.Linq.ExpressionTree.MsTest
@@ -23,7 +22,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 Expression<Func<Person, bool>> predicate = person => person.id > 0;
 
                 Expression expression = predicate;
-                ExpressionNode_New node = service.ConvertToData(expression);
+                ExpressionNode node = service.ConvertToLambdaData(expression);
 
                 var str = Json.Serialize(node);
 
@@ -45,7 +44,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 Expression<Func<Person, bool>> predicate = person => person.id > 0;
 
                 Expression expression = predicate;
-                ExpressionNode_New node = service.ConvertToData(expression);
+                ExpressionNode node = service.ConvertToLambdaData(expression);
 
                 var str = Json.Serialize(node);
 

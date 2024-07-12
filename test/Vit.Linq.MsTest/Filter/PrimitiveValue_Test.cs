@@ -2,10 +2,11 @@
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Newtonsoft.Json.Linq;
+
 using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter;
-using Vit.Linq;
-using Newtonsoft.Json.Linq;
 using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter

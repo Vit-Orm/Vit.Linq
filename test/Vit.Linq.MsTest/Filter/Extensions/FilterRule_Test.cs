@@ -1,7 +1,7 @@
-﻿using Vit.Linq;
+﻿using System.Linq;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Linq;
+
 using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter.ComponentModel;
 

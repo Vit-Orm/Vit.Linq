@@ -1,16 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter;
-using Vit.Linq;
-using System.Linq.Expressions;
-using System.Data;
-using System.Reflection.Metadata;
-using System.Data.Common;
-using System.Reflection;
-using System.Collections.Generic;
 using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter
@@ -252,7 +249,7 @@ namespace Vit.Linq.MsTest.Filter
                     var rule = Json.Deserialize<FilterRule>(strRule);
                     var result = query.Where(rule, service).ToList();
 
-                    Assert.AreEqual(998, result.Count); 
+                    Assert.AreEqual(998, result.Count);
                 }
 
                 {
