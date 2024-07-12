@@ -56,7 +56,7 @@ namespace Vit.Linq
         /// 
         /// </summary>
         /// <param name="type"></param>
-        /// <param name="fieldPath"> could be nasted , example: "name"  "depart.name"</param>
+        /// <param name="fieldPath"> could be nested , example: "name"  "depart.name"</param>
         /// <returns></returns>
         public static Expression GetFieldMemberExpression(Type type, string fieldPath)
         {

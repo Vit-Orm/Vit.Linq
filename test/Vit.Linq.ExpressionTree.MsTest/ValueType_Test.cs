@@ -1,10 +1,11 @@
 ﻿
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using ValueType = Vit.Linq.ExpressionTree.ComponentModel.ValueType;
 
 namespace Vit.Linq.ExpressionTree.MsTest

@@ -59,7 +59,7 @@ namespace Vit.Linq.Filter.MethodCalls.Queryable_Methods
 
         public Type methodType { get; } = typeof(Queryable);
 
-        static readonly List<string> methodNames = new List<string> { "OrderBy", "OrderByDescending", "ThenBy", "ThenByDescending" };
+        static readonly List<string> methodNames = new List<string> { nameof(Queryable.OrderBy), nameof(Queryable.OrderByDescending), nameof(Queryable.ThenBy), nameof(Queryable.ThenByDescending) };
         public virtual bool PredicateToData(DataConvertArgument arg, MethodCallExpression call)
         {
             return methodType == call.Method.DeclaringType && methodNames.Contains(call.Method.Name);
@@ -140,7 +140,7 @@ namespace Vit.Linq.Filter.MethodCalls.Queryable_Methods
 
         public Type methodType { get; } = typeof(Queryable);
 
-        static readonly List<string> methodNames = new List<string> { "Count", "First", "FirstOrDefault", "Last", "LastOrDefault" };
+        static readonly List<string> methodNames = new List<string> { nameof(Queryable.Count), nameof(Queryable.First), nameof(Queryable.FirstOrDefault), nameof(Queryable.Last), nameof(Queryable.LastOrDefault) };
         public virtual bool PredicateToData(DataConvertArgument arg, MethodCallExpression call)
         {
             return methodType == call.Method.DeclaringType && methodNames.Contains(call.Method.Name);

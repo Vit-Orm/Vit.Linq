@@ -1,14 +1,16 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using Newtonsoft.Json.Linq;
-using Vit.Linq;
-using Vit.Linq.Filter;
-using Queryable = System.Linq.IQueryable;
-using Vit.Linq.Filter.ComponentModel;
-using Newtonsoft.Json;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Collections.Generic;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+using Vit.Linq.Filter;
+using Vit.Linq.Filter.ComponentModel;
+
+using Queryable = System.Linq.IQueryable;
 
 namespace Vit.Linq.MsTest.Filter.IQueryableTest
 {

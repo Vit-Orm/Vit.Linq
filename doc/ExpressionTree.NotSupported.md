@@ -15,7 +15,6 @@ public enum ExpressionType
 	//     the destination type, an exception is thrown.
 	ConvertChecked = 11,
 
-
 	//
 	// Summary:
 	//     An operation that invokes a delegate or lambda expression, such as sampleDelegate.Invoke().
@@ -25,23 +24,6 @@ public enum ExpressionType
 	//     A lambda expression, such as a => a + a in C# or Function(a) a + a in Visual
 	//     Basic.
 	Lambda = 18,
-
-
-
-	//
-	// Summary:
-	//     An operation that creates a new System.Collections.IEnumerable object and initializes
-	//     it from a list of elements, such as new List(){ a, b, c } in C# or Dim sampleList
-	//     = { a, b, c } in Visual Basic.
-	ListInit = 22,
-
-	//
-	// Summary:
-	//     An operation that creates a new object and initializes one or more of its members,
-	//     such as new Point { X = 1, Y = 2 } in C# or New Point With {.X = 1, .Y = 2} in
-	//     Visual Basic.
-	MemberInit = 24,
-
 
 	//
 	// Summary:
@@ -61,37 +43,20 @@ public enum ExpressionType
 	//     An arithmetic negation operation, such as (-a), that has overflow checking. The
 	//     object a should not be modified in place.
 	NegateChecked = 30,
-
-	//
-	// Summary:
-	//     An operation that calls a constructor to create a new object, such as new SampleType().
-	New = 31,
-
-	//
-	// Summary:
-	//     An operation that creates a new one-dimensional array and initializes it from
-	//     a list of elements, such as new SampleType[]{a, b, c} in C# or New SampleType(){a,
-	//     b, c} in Visual Basic.
-	NewArrayInit = 32,
-
-	//
 	// Summary:
 	//     An operation that creates a new array, in which the bounds for each dimension
 	//     are specified, such as new SampleType[dim1, dim2] in C# or New SampleType(dim1,
 	//     dim2) in Visual Basic.
 	NewArrayBounds = 33,
-
 	//
 	// Summary:
 	//     A reference to a parameter or variable that is defined in the context of the
 	//     expression. For more information, see System.Linq.Expressions.ParameterExpression.
 	Parameter = 38,
-
 	//
 	// Summary:
 	//      A mathematical operation that raises a number to a power, such as (a ^ b)
 	Power = 39,
-
 	//
 	// Summary:
 	//     An expression that has a constant value of type System.Linq.Expressions.Expression.
@@ -104,18 +69,6 @@ public enum ExpressionType
 	//     An arithmetic subtraction operation, such as (a - b), that has overflow checking,
 	//     for numeric operands.
 	SubtractChecked = 43,
-	//
-	// Summary:
-	//     An explicit reference or boxing conversion in which null is supplied if the conversion
-	//     fails, such as (obj as SampleType) in C# or TryCast(obj, SampleType) in Visual
-	//     Basic.
-	TypeAs = 44,
-
-	//
-	// Summary:
-	//     A type test, such as obj is SampleType in C# or TypeOf obj is SampleType in Visual
-	//     Basic.
-	TypeIs = 45,
 
 	//
 	// Summary:
@@ -138,10 +91,6 @@ public enum ExpressionType
 	// Summary:
 	//     A dynamic operation.
 	Dynamic = 50,
-	//
-	// Summary:
-	//     A default value.
-	Default = 51,
 	//
 	// Summary:
 	//     An extension expression.

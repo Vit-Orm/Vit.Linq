@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 
@@ -63,19 +64,17 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
                         ExpressionNode_MethodCall call = node;
                         switch (call.methodName)
                         {
-                            case "Take":
+                            case nameof(Queryable.Take):
                                 {
                                     arg.queryAction.take = (call.arguments[1] as ExpressionNode_Constant)?.value as int?;
                                     return (true, ConvertFilter(arg, call.arguments[0]));
                                 }
-
-                            case "Skip":
+                            case nameof(Queryable.Skip):
                                 {
                                     arg.queryAction.skip = (call.arguments[1] as ExpressionNode_Constant)?.value as int?;
                                     return (true, ConvertFilter(arg, call.arguments[0]));
                                 }
-
-                            case "OrderBy" or "OrderByDescending" or "ThenBy" or "ThenByDescending":
+                            case nameof(Queryable.OrderBy) or nameof(Queryable.OrderByDescending) or nameof(Queryable.ThenBy) or nameof(Queryable.ThenByDescending):
                                 {
                                     if (!arg.gettedOrder)
                                     {
@@ -97,7 +96,7 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
                                     }
                                     return (true, ConvertFilter(arg, call.arguments[0]));
                                 }
-                            case "Where":
+                            case nameof(Queryable.Where):
                                 {
                                     var source = call.arguments[0];
                                     var predicate = call.arguments[1];
@@ -136,9 +135,9 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
                                     }
                                     return (true, ExpressionNode.AndAlso(left: left, right: predicateFilter));
                                 }
-                            case "FirstOrDefault" or "First" or "LastOrDefault" or "Last":
-                            case "Count":
-                            case "TotalCount":
+                            case nameof(Queryable.FirstOrDefault) or nameof(Queryable.First) or nameof(Queryable.LastOrDefault) or nameof(Queryable.Last):
+                            case nameof(Queryable.Count):
+                            case nameof(Queryable_Extensions.ToListAndTotalCount) or nameof(Queryable_Extensions.TotalCount):
                                 {
                                     if (!string.IsNullOrWhiteSpace(arg.queryAction.method)) throw new Exception("can not process multiple Method call");
 
@@ -146,10 +145,10 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
                                     return (true, ConvertFilter(arg, call.arguments[0]));
                                 }
 
-                            case "IsNullOrEmpty":
-                            case "ElementAt":
-                            case "Contains":
-                            case "Any":
+                            case nameof(String.IsNullOrEmpty):
+                            case nameof(Enumerable.ElementAt):
+                            case nameof(Enumerable.Contains):
+                            case nameof(Enumerable.Any):
                                 {
                                     return (true, node);
                                 }

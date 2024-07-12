@@ -20,14 +20,14 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                         {
                             return arg.CreateParameter(value, type);
                         }
-                        return ExpressionNode.Constant(value: constant.Value, type: type);
+                        return ExpressionNode.Constant(value: constant.Value, type: type).SetCodeArg("Constant_Type", type);
                     }
                 case NewArrayExpression:
                 case ListInitExpression:
                     {
                         if (arg.CanCalculateToConstant(expression))
                         {
-                            return ExpressionNode.Constant(value: arg.CalculateToConstant(expression), type: expression.Type);
+                            return ExpressionNode.Constant(value: arg.CalculateToConstant(expression), type: expression.Type).SetCodeArg("Constant_Type", expression.Type);
                         }
                         break;
                     }
@@ -43,7 +43,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                                 return arg.CreateParameter(value, type);
                             }
 
-                            return ExpressionNode.Constant(value: value, type: type);
+                            return ExpressionNode.Constant(value: value, type: type).SetCodeArg("Constant_Type", type);
                         }
                         break;
                     }
@@ -57,7 +57,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
             ExpressionNode_Constant constant = data;
             var value = constant.value;
-            Type targetType = constant.valueType?.ToType();
+            Type targetType = (constant.GetCodeArg("Constant_Type") as Type) ?? constant.valueType?.ToType();
 
             if (targetType == null) return Expression.Constant(value);
 
@@ -65,7 +65,16 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             {
                 value = ComponentModel.ValueType.ConvertValueToType(value, targetType);
             }
-            return Expression.Constant(value, targetType);
+
+            var constExp = Expression.Constant(value, targetType);
+
+            //// Nullable<>
+            //if (targetType.IsValueType && targetType.IsGenericType)
+            //{
+            //    return Expression.Convert(constExp, targetType);
+            //}
+
+            return constExp;
         }
 
     }
