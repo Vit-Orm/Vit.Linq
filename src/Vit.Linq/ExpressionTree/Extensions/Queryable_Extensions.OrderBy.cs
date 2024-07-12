@@ -21,7 +21,7 @@ namespace Vit.Linq
 
             foreach (var item in orders)
             {
-                LambdaExpression exp = Instance.ToLambdaExpression(item.member, typeof(T));
+                LambdaExpression exp = Instance.ConvertToCode_LambdaExpression(item.member, typeof(T));
 
                 if (orderedQuery == null)
                 {

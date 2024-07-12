@@ -7,10 +7,10 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
     public interface IMethodConvertor
     {
         int priority { get; }
-        bool PredicateToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call);
-        Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call);
+        bool PredicateToCode(ToCodeArgument arg, ExpressionNode_MethodCall call);
+        Expression ToCode(ToCodeArgument arg, ExpressionNode_MethodCall call);
 
-        bool PredicateToData(DataConvertArgument arg, MethodCallExpression call);
-        ExpressionNode ToData(DataConvertArgument arg, MethodCallExpression call);
+        bool PredicateToData(ToDataArgument arg, MethodCallExpression call);
+        ExpressionNode ToData(ToDataArgument arg, MethodCallExpression call);
     }
 }

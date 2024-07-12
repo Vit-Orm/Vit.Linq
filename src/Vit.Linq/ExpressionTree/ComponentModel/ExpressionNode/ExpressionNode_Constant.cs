@@ -7,7 +7,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
 
     public interface ExpressionNode_Constant : IExpressionNode
     {
-        public ValueType valueType { get; set; }
+        public NodeValueType valueType { get; set; }
 
         public object value { get; set; }
 
@@ -16,7 +16,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
     public partial class ExpressionNode : ExpressionNode_Constant
     {
 
-        public ValueType valueType { get; set; }
+        public NodeValueType valueType { get; set; }
 
         public object value { get; set; }
 
@@ -28,7 +28,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
                 value = query.IQueryable_ToList();
             }
 
-            var valueType = ValueType.FromType(type);
+            var valueType = NodeValueType.FromType(type);
 
             return new ExpressionNode
             {

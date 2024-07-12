@@ -7,9 +7,9 @@ using Vit.Linq.ExpressionTree.ComponentModel;
 
 namespace Vit.Linq.ExpressionTree
 {
-    public class CodeConvertArgument
+    public class ToCodeArgument
     {
-        private CodeConvertArgument()
+        private ToCodeArgument()
         {
         }
 
@@ -18,14 +18,14 @@ namespace Vit.Linq.ExpressionTree
 
         public Func<ExpressionNode_New, Type> getResultTypeForNewNode;
 
-        public static CodeConvertArgument WithParams(ExpressionConvertService convertService, List<ParameterExpression> parameters = null, Func<ExpressionNode_New, Type> getResultTypeForNewNode = null)
+        public static ToCodeArgument WithParams(ExpressionConvertService convertService, List<ParameterExpression> parameters = null, Func<ExpressionNode_New, Type> getResultTypeForNewNode = null)
         {
-            return new CodeConvertArgument { convertService = convertService, parameters = parameters, getResultTypeForNewNode = getResultTypeForNewNode };
+            return new ToCodeArgument { convertService = convertService, parameters = parameters, getResultTypeForNewNode = getResultTypeForNewNode };
         }
 
-        public CodeConvertArgument WithParams(params ParameterExpression[] newParams)
+        public ToCodeArgument WithParams(params ParameterExpression[] newParams)
         {
-            var arg = new CodeConvertArgument { convertService = convertService, getResultTypeForNewNode = getResultTypeForNewNode };
+            var arg = new ToCodeArgument { convertService = convertService, getResultTypeForNewNode = getResultTypeForNewNode };
 
             if (parameters?.Any() == true)
             {

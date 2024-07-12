@@ -6,7 +6,7 @@ namespace Vit.Linq.ExpressionTree
 {
     public interface IExpressionConvertor
     {
-        ExpressionNode ConvertToData(DataConvertArgument arg, Expression expression);
-        Expression ConvertToCode(CodeConvertArgument arg, ExpressionNode data);
+        ExpressionNode ConvertToData(ToDataArgument arg, Expression expression);
+        Expression ConvertToCode(ToCodeArgument arg, ExpressionNode data);
     }
 }

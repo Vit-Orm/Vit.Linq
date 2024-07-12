@@ -9,7 +9,7 @@ using ParameterInfo = Vit.Linq.ExpressionTree.ComponentModel.ParameterInfo;
 
 namespace Vit.Linq.ExpressionTree
 {
-    public partial class DataConvertArgument
+    public partial class ToDataArgument
     {
 
 
@@ -36,8 +36,8 @@ namespace Vit.Linq.ExpressionTree
 
         #region GetEValueType
 
-        private readonly Dictionary<int, EValueType> eValueTypeCache = new Dictionary<int, EValueType>();
-        protected EValueType GetEValueType(Expression expression)
+        private readonly Dictionary<int, EDataValueType> eValueTypeCache = new Dictionary<int, EDataValueType>();
+        protected EDataValueType GetEValueType(Expression expression)
         {
             //if (expression == null) return EValueType.constant;
 
@@ -50,18 +50,18 @@ namespace Vit.Linq.ExpressionTree
             return type;
         }
 
-        protected EValueType GetEValueType_Directly(Expression expression)
+        protected EDataValueType GetEValueType_Directly(Expression expression)
         {
 
-            List<EValueType> childrenTypes;
+            List<EDataValueType> childrenTypes;
             switch (expression)
             {
                 // case null: return EValueType.constant;
 
                 case ConstantExpression constant:
                     {
-                        if (IsArgument(constant)) return EValueType.argument;
-                        return EValueType.constant;
+                        if (IsArgument(constant)) return EDataValueType.argument;
+                        return EDataValueType.constant;
                     }
                 case MemberExpression member:
                     {
@@ -69,12 +69,12 @@ namespace Vit.Linq.ExpressionTree
                     }
                 case UnaryExpression unary:
                     {
-                        if (unary.NodeType == ExpressionType.Convert && !unary.Type.IsValueType) return EValueType.other;
-                        return GetEValueType(unary.Operand) == EValueType.constant ? EValueType.constant : EValueType.other;
+                        if (unary.NodeType == ExpressionType.Convert && !unary.Type.IsValueType) return EDataValueType.other;
+                        return GetEValueType(unary.Operand) == EDataValueType.constant ? EDataValueType.constant : EDataValueType.other;
                     }
                 case BinaryExpression binary:
                     {
-                        childrenTypes = new List<EValueType> { GetEValueType(binary.Left), GetEValueType(binary.Right) };
+                        childrenTypes = new List<EDataValueType> { GetEValueType(binary.Left), GetEValueType(binary.Right) };
                         break;
                     }
                 case NewExpression newExp:
@@ -96,10 +96,10 @@ namespace Vit.Linq.ExpressionTree
                     {
                         // get ValueType from ValueTypeAttribute
                         {
-                            if (call.Method.GetCustomAttributes(typeof(ValueTypeAttribute), inherit: true).FirstOrDefault() is ValueTypeAttribute attribute) return attribute.valueType;
+                            if (call.Method.GetCustomAttributes(typeof(DataValueTypeAttribute), inherit: true).FirstOrDefault() is DataValueTypeAttribute attribute) return attribute.dataValueType;
 
-                            attribute = call.Method.DeclaringType.GetCustomAttributes(typeof(ValueTypeAttribute), inherit: true).FirstOrDefault() as ValueTypeAttribute;
-                            if (attribute != null) return attribute.valueType;
+                            attribute = call.Method.DeclaringType.GetCustomAttributes(typeof(DataValueTypeAttribute), inherit: true).FirstOrDefault() as DataValueTypeAttribute;
+                            if (attribute != null) return attribute.dataValueType;
                         }
 
                         childrenTypes = new();
@@ -107,12 +107,12 @@ namespace Vit.Linq.ExpressionTree
                         if (call.Object != null) childrenTypes.Add(GetEValueType(call.Object));
                         break;
                     }
-                default: return EValueType.other;
+                default: return EDataValueType.other;
             }
-            if (childrenTypes?.Any() != true) return EValueType.constant;
+            if (childrenTypes?.Any() != true) return EDataValueType.constant;
 
-            if (childrenTypes.All(m => m == EValueType.constant)) return EValueType.constant;
-            return EValueType.other;
+            if (childrenTypes.All(m => m == EDataValueType.constant)) return EDataValueType.constant;
+            return EDataValueType.other;
         }
 
         #endregion

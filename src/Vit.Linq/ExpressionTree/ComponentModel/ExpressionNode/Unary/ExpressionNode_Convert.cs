@@ -5,7 +5,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
 
     public interface ExpressionNode_Convert : IExpressionNode
     {
-        public ValueType valueType { get; }
+        public NodeValueType valueType { get; }
 
         public ExpressionNode body { get; }
     }
@@ -17,7 +17,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
 
         //public ExpressionNode body { get; set; }
 
-        public static ExpressionNode Convert(ValueType valueType = null, ExpressionNode body = null)
+        public static ExpressionNode Convert(NodeValueType valueType = null, ExpressionNode body = null)
         {
             return new ExpressionNode
             {

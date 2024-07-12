@@ -6,9 +6,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vit.Core.Module.Serialization;
 using Vit.Linq;
-using Vit.Linq.ExpressionTree.CollectionQuery;
 using Vit.Linq.ExpressionTree.ComponentModel;
 using Vit.Linq.ExpressionTree.ExpressionTreeTest;
+using Vit.Linq.ExpressionTree.Query;
 
 namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest
 {
@@ -34,32 +34,32 @@ namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest
 
             Func<Expression, Type, object> QueryExecutor = (expression, type) =>
             {
-                ExpressionNode node;
+                ExpressionNode_Lambda node;
 
                 // #1 Code to Data
                 // query => query.Where().OrderBy().Skip().Take().Select().ToList();
                 var isArgument = QueryableBuilder.CompareQueryByName(queryTypeName);
-                node = convertService.ConvertToLambdaData(expression, autoReduce: true, isArgument: isArgument);
+                node = convertService.ConvertToData_LambdaNode(expression, autoReduce: true, isArgument: isArgument);
                 var strNode = Json.Serialize(node);
 
-                // #2 Filter by QueryAction
-                var queryAction = new QueryAction(node);
-                var strQuery = Json.Serialize(queryAction);
-                var predicate = convertService.ToPredicateExpression<ExpressionTester.User>(queryAction.filter);
+                // #2 Filter by CollectionQuery
+                var collectionQuery = new CollectionQuery(node);
+                var strQuery = Json.Serialize(collectionQuery);
+                var predicate = convertService.ConvertToCode_PredicateExpression<ExpressionTester.User>(collectionQuery.filter);
                 //var lambdaExp = (Expression<Func<Person, bool>>)convertService.ToLambdaExpression(queryAction.filter, typeof(Person));
 
                 var query = sourceData.Where(predicate);
 
-                query = query.OrderBy(queryAction.orders);
+                query = query.OrderBy(collectionQuery.orders);
 
                 var rangedQuery = query;
 
-                if (queryAction.skip.HasValue)
-                    rangedQuery = rangedQuery.Skip(queryAction.skip.Value);
-                if (queryAction.take.HasValue)
-                    rangedQuery = rangedQuery.Take(queryAction.take.Value);
+                if (collectionQuery.skip.HasValue)
+                    rangedQuery = rangedQuery.Skip(collectionQuery.skip.Value);
+                if (collectionQuery.take.HasValue)
+                    rangedQuery = rangedQuery.Take(collectionQuery.take.Value);
 
-                switch (queryAction.method)
+                switch (collectionQuery.method)
                 {
                     case nameof(Queryable.First): return rangedQuery.First();
                     case nameof(Queryable.FirstOrDefault): return rangedQuery.FirstOrDefault();
@@ -75,7 +75,7 @@ namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest
                         return rangedQuery;
                 }
 
-                throw new NotSupportedException("Method not support:" + queryAction.method);
+                throw new NotSupportedException("Method not support:" + collectionQuery.method);
             };
 
             return QueryableBuilder.Build<ExpressionTester.User>(QueryExecutor, queryTypeName);

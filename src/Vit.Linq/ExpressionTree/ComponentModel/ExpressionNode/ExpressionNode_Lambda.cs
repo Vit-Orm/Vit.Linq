@@ -22,7 +22,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
 
         public ExpressionNode body { get; set; }
 
-        public static ExpressionNode Lambda(string[] parameterNames, ExpressionNode body)
+        public static ExpressionNode_Lambda Lambda(string[] parameterNames, ExpressionNode body)
         {
             return new ExpressionNode
             {

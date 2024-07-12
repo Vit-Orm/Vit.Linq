@@ -8,14 +8,14 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
     public class Unary : IExpressionConvertor
     {
-        public ExpressionNode ConvertToData(DataConvertArgument arg, Expression expression)
+        public ExpressionNode ConvertToData(ToDataArgument arg, Expression expression)
         {
             if (expression is UnaryExpression unary)
             {
                 return unary.NodeType switch
                 {
                     ExpressionType.Convert => ExpressionNode.Convert(
-                                                valueType: ComponentModel.ValueType.FromType(unary.Type),
+                                                valueType: ComponentModel.NodeValueType.FromType(unary.Type),
                                                 body: arg.convertService.ConvertToData(arg, unary.Operand)
                                                 ).SetCodeArg("Convert_Type", unary.Type),
                     ExpressionType.Quote => arg.convertService.ConvertToData(arg, unary.Operand),
@@ -34,7 +34,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             return null;
         }
 
-        public Expression ConvertToCode(CodeConvertArgument arg, ExpressionNode data)
+        public Expression ConvertToCode(ToCodeArgument arg, ExpressionNode data)
         {
             if (data.expressionType != "Unary") return null;
 
@@ -50,7 +50,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                 case nameof(ExpressionType.Convert):
                     {
                         ExpressionNode_Convert convert = data;
-                        var value = arg.convertService.ToExpression(arg, convert.body);
+                        var value = arg.convertService.ConvertToCode(arg, convert.body);
                         var type = convert.GetCodeArg("Convert_Type") as Type;
                         type ??= convert.valueType?.ToType() ?? value?.Type;
                         return Expression.Convert(value, type);
@@ -69,7 +69,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                 default:
                     {
                         ExpressionNode_Unary unary = data;
-                        var operand = arg.convertService.ToExpression(arg, unary.body);
+                        var operand = arg.convertService.ConvertToCode(arg, unary.body);
 
                         var method = typeof(Expression).GetMethod(data.nodeType, new[] { typeof(Expression) });
                         return method?.Invoke(null, new object[] { operand }) as Expression;

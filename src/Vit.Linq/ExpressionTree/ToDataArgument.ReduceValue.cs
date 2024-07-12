@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Vit.Linq.ExpressionTree
 {
-    public partial class DataConvertArgument
+    public partial class ToDataArgument
     {
         public bool autoReduce { get; set; } = false;
 
@@ -25,7 +25,7 @@ namespace Vit.Linq.ExpressionTree
 
         public bool CanCalculateToConstant(Expression expression)
         {
-            return GetEValueType(expression) == EValueType.constant;
+            return GetEValueType(expression) == EDataValueType.constant;
         }
 
         public static bool CalculateToConstant_ManuallyReduceMember { get; set; } = true;

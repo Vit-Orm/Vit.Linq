@@ -6,7 +6,7 @@ using System.Linq;
 namespace Vit.Linq.ExpressionTree.ComponentModel
 {
 
-    public partial class ValueType
+    public partial class NodeValueType
     {
         /// <summary>
         ///   ValueType:      String | Int32 | Int64 | Single | Double | Boolean | DateTime | ...
@@ -20,23 +20,23 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
         /// </summary>
         public string typeName { get; set; }
 
-        public ValueType[] genericArgumentTypes { get; set; }
+        public NodeValueType[] genericArgumentTypes { get; set; }
 
 
         #region FromType
-        public static ValueType FromType(Type type)
+        public static NodeValueType FromType(Type type)
         {
             if (type == null) return null;
             if (type == typeof(string))
             {
-                return new ValueType
+                return new NodeValueType
                 {
                     typeName = nameof(String)
                 };
             }
             if (type == typeof(object))
             {
-                return new ValueType
+                return new NodeValueType
                 {
                     typeName = nameof(Object)
                 };
@@ -48,7 +48,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
                 {
                     var elementType = type.GetGenericArguments()[0];
                     var genericArgumentTypes = new[] { FromType(elementType) };
-                    return new ValueType
+                    return new NodeValueType
                     {
                         typeName = "Nullable",
                         genericArgumentTypes = genericArgumentTypes
@@ -56,7 +56,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
                 }
 
                 var typeName = type.Name;
-                return new ValueType
+                return new NodeValueType
                 {
                     typeName = typeName
                 };
@@ -66,7 +66,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
             {
                 var elementType = type.GetElementType();
                 var genericArgumentTypes = new[] { FromType(elementType) };
-                return new ValueType
+                return new NodeValueType
                 {
                     typeName = "Array",
                     genericArgumentTypes = genericArgumentTypes
@@ -98,7 +98,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
                 {
                     var elementType = type.GetGenericArguments()[0];
                     var genericArgumentTypes = new[] { FromType(elementType) };
-                    return new ValueType
+                    return new NodeValueType
                     {
                         typeName = typeName,
                         genericArgumentTypes = genericArgumentTypes

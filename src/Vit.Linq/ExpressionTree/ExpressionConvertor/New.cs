@@ -14,7 +14,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
     /// </summary>
     public class New : IExpressionConvertor
     {
-        public ExpressionNode ConvertToData(DataConvertArgument arg, Expression expression)
+        public ExpressionNode ConvertToData(ToDataArgument arg, Expression expression)
         {
             ExpressionNode node = null;
             switch (expression)
@@ -80,7 +80,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             return node;
 
         }
-        static (List<MemberBind> constructorArgs, Type[] constructorArgTypes) GetConstractorArgs(DataConvertArgument arg, NewExpression newExp)
+        static (List<MemberBind> constructorArgs, Type[] constructorArgTypes) GetConstractorArgs(ToDataArgument arg, NewExpression newExp)
         {
             List<MemberBind> constructorArgs;
             Type[] constructorArgTypes;
@@ -111,7 +111,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
 
 
-        public Expression ConvertToCode(CodeConvertArgument arg, ExpressionNode data)
+        public Expression ConvertToCode(ToCodeArgument arg, ExpressionNode data)
         {
             if (data.nodeType != NodeType.New) return null;
 
@@ -128,7 +128,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             if (type.IsArray)
             {
                 var initializers = newNode.initializers?
-                     .Select(initializer => arg.convertService.ToExpression(arg, initializer));
+                     .Select(initializer => arg.convertService.ConvertToCode(arg, initializer));
                 return Expression.NewArrayInit(type.GetElementType(), initializers);
             }
 
@@ -142,7 +142,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
                 var addMethod = newExp.Type.GetMethod("Add");
                 var initializers = newNode.initializers
-                     .Select(initializer => Expression.ElementInit(addMethod, arg.convertService.ToExpression(arg, initializer)));
+                     .Select(initializer => Expression.ElementInit(addMethod, arg.convertService.ConvertToCode(arg, initializer)));
 
                 return Expression.ListInit(newExp, initializers);
             }
@@ -151,11 +151,11 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
         }
 
 
-        static Expression ConstructObject(CodeConvertArgument arg, Type type, ExpressionNode_New newNode)
+        static Expression ConstructObject(ToCodeArgument arg, Type type, ExpressionNode_New newNode)
         {
             // #1 constructorArgs
             var constructorArgExpressions = newNode.constructorArgs
-                ?.Select(member => arg.convertService.ToExpression(arg, member.value)).ToArray()
+                ?.Select(member => arg.convertService.ConvertToCode(arg, member.value)).ToArray()
                 ?? Array.Empty<Expression>();
 
             var constructor = type.GetConstructor(constructorArgExpressions?.Select(member => member.Type).ToArray() ?? Type.EmptyTypes);
@@ -167,7 +167,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             {
                 // #2 memberArgs
                 var memberArgs = newNode.memberArgs.Select(
-                     member => new { member.name, value = arg.convertService.ToExpression(arg, member.value) }
+                     member => new { member.name, value = arg.convertService.ConvertToCode(arg, member.value) }
                  ).ToList();
 
                 var bindings = memberArgs.Select(member =>

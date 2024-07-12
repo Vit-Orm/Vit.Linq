@@ -2,7 +2,7 @@
 
 namespace Vit.Linq.ExpressionTree
 {
-    public enum EValueType
+    public enum EDataValueType
     {
         /// <summary>
         /// constant value like 1.5 or int[]{1,2,3}
@@ -20,13 +20,13 @@ namespace Vit.Linq.ExpressionTree
 
 
 
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class ValueTypeAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class)]
+    public class DataValueTypeAttribute : Attribute
     {
-        public EValueType valueType { get; set; }
-        public ValueTypeAttribute(EValueType valueType)
+        public EDataValueType dataValueType { get; set; }
+        public DataValueTypeAttribute(EDataValueType dataValueType)
         {
-            this.valueType = valueType;
+            this.dataValueType = dataValueType;
         }
     }
 

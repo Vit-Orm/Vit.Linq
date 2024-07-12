@@ -10,16 +10,16 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
     {
         public override Type methodType { get; } = typeof(Queryable);
 
-        public override Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
+        public override Expression ToCode(ToCodeArgument arg, ExpressionNode_MethodCall call)
         {
-            var source = arg.convertService.ToExpression(arg, call.arguments[0]);
+            var source = arg.convertService.ConvertToCode(arg, call.arguments[0]);
             var elementType = source.Type.GetGenericArguments()[0];
             var nodeSelector = call.arguments[1] as ExpressionNode_Lambda;
 
             // #1 IQueryable<TResult> Select<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector)
             if (nodeSelector?.parameterNames?.Length == 1)
             {
-                var resultSelector = arg.convertService.ToLambdaExpression(arg, nodeSelector, elementType);
+                var resultSelector = arg.convertService.ConvertToCode_LambdaExpression(arg, nodeSelector, elementType);
 
                 var TResult = resultSelector.ReturnType;
 
@@ -37,7 +37,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
             // #2 IQueryable<TResult> Select<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, int, TResult>> selector)
             if (nodeSelector?.parameterNames?.Length == 2)
             {
-                var resultSelector = arg.convertService.ToLambdaExpression(arg, nodeSelector, elementType, typeof(int));
+                var resultSelector = arg.convertService.ConvertToCode_LambdaExpression(arg, nodeSelector, elementType, typeof(int));
 
                 var TResult = resultSelector.ReturnType;
 

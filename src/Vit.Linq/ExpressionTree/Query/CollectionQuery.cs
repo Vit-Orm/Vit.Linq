@@ -2,20 +2,20 @@
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 
-namespace Vit.Linq.ExpressionTree.CollectionQuery
+namespace Vit.Linq.ExpressionTree.Query
 {
-    public partial class QueryAction
+    public partial class CollectionQuery
     {
-        public QueryAction() { }
+        public CollectionQuery() { }
 
 
-        public QueryAction(ExpressionNode node)
+        public CollectionQuery(ExpressionNode_Lambda node)
         {
             LoadFromNode(this, node);
         }
 
 
-        public ExpressionNode filter { get; set; }
+        public ExpressionNode_Lambda filter { get; set; }
 
         public List<ExpressionNodeOrderField> orders { get; set; }
 

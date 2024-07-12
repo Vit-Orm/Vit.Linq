@@ -31,7 +31,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
             => new ExpressionNode { expressionType = "Binary", nodeType = nodeType, left = left, right = right };
 
         public static ExpressionNode Add(ExpressionNode left, ExpressionNode right, Type valueType)
-            => new ExpressionNode { expressionType = "Binary", nodeType = nameof(ExpressionType.Add), left = left, right = right, valueType = ComponentModel.ValueType.FromType(valueType) };
+            => new ExpressionNode { expressionType = "Binary", nodeType = nameof(ExpressionType.Add), left = left, right = right, valueType = ComponentModel.NodeValueType.FromType(valueType) };
 
     }
 }

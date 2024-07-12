@@ -4,29 +4,29 @@ using System.Linq;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 
-namespace Vit.Linq.ExpressionTree.CollectionQuery
+namespace Vit.Linq.ExpressionTree.Query
 {
-    public partial class QueryAction
+    public partial class CollectionQuery
     {
         class ConvertArgument
         {
-            public QueryAction queryAction;
+            public CollectionQuery collectionQuery;
             public string parameterName;
             public bool gettedOrder = false;
 
             public ExpressionNodeCloner cloner;
         }
 
-        public static void LoadFromNode(QueryAction queryAction, ExpressionNode_Lambda lambda)
+        public static void LoadFromNode(CollectionQuery collectionQuery, ExpressionNode_Lambda lambda)
         {
-            var arg = new ConvertArgument { queryAction = queryAction, parameterName = "m" };
+            var arg = new ConvertArgument { collectionQuery = collectionQuery, parameterName = "m" };
 
             var cloner = new ExpressionNodeCloner();
             cloner.clone = (node) => Clone(arg, node);
             arg.cloner = cloner;
 
             var filter = ConvertFilter(arg, lambda.body);
-            queryAction.filter = ExpressionNode.Lambda(parameterNames: new[] { arg.parameterName }, body: filter);
+            collectionQuery.filter = ExpressionNode.Lambda(parameterNames: new[] { arg.parameterName }, body: filter);
         }
 
         static ExpressionNode ConvertFilter(ConvertArgument arg, ExpressionNode node)
@@ -66,12 +66,12 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
                         {
                             case nameof(Queryable.Take):
                                 {
-                                    arg.queryAction.take = (call.arguments[1] as ExpressionNode_Constant)?.value as int?;
+                                    arg.collectionQuery.take = (call.arguments[1] as ExpressionNode_Constant)?.value as int?;
                                     return (true, ConvertFilter(arg, call.arguments[0]));
                                 }
                             case nameof(Queryable.Skip):
                                 {
-                                    arg.queryAction.skip = (call.arguments[1] as ExpressionNode_Constant)?.value as int?;
+                                    arg.collectionQuery.skip = (call.arguments[1] as ExpressionNode_Constant)?.value as int?;
                                     return (true, ConvertFilter(arg, call.arguments[0]));
                                 }
                             case nameof(Queryable.OrderBy) or nameof(Queryable.OrderByDescending) or nameof(Queryable.ThenBy) or nameof(Queryable.ThenByDescending):
@@ -89,9 +89,9 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
                                             arg.gettedOrder = true;
                                         }
 
-                                        arg.queryAction.orders ??= new List<ExpressionNodeOrderField>();
+                                        arg.collectionQuery.orders ??= new List<ExpressionNodeOrderField>();
 
-                                        arg.queryAction.orders.Insert(0, orderField);
+                                        arg.collectionQuery.orders.Insert(0, orderField);
 
                                     }
                                     return (true, ConvertFilter(arg, call.arguments[0]));
@@ -139,9 +139,9 @@ namespace Vit.Linq.ExpressionTree.CollectionQuery
                             case nameof(Queryable.Count):
                             case nameof(Queryable_Extensions.ToListAndTotalCount) or nameof(Queryable_Extensions.TotalCount):
                                 {
-                                    if (!string.IsNullOrWhiteSpace(arg.queryAction.method)) throw new Exception("can not process multiple Method call");
+                                    if (!string.IsNullOrWhiteSpace(arg.collectionQuery.method)) throw new Exception("can not process multiple Method call");
 
-                                    arg.queryAction.method = call.methodName;
+                                    arg.collectionQuery.method = call.methodName;
                                     return (true, ConvertFilter(arg, call.arguments[0]));
                                 }
 
