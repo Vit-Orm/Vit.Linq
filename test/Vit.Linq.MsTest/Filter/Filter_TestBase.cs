@@ -25,6 +25,20 @@ namespace Vit.Linq.MsTest.Filter
         protected void TestFilterRule()
         {
 
+            #region #0 Empty filter
+            {
+                var query = GetQueryable();
+
+                var item = query.Skip(10).FirstOrDefault();
+                item.name = null;
+
+                var strRule = "{ }".Replace("'", "\"");
+                var rule = GetRule(strRule);
+                var result = Filter(ToQuery(query), rule);
+                Assert.AreEqual(1000, result.Count);
+            }
+            #endregion
+
             #region #1 [object] IsNull | IsNotNull
 
             #region ##1 IsNull

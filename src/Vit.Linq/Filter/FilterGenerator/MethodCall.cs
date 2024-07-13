@@ -12,21 +12,22 @@ namespace Vit.Linq.Filter.FilterGenerator
     {
         public virtual int priority { get; set; } = 500;
 
-        protected List<IMethodConvertor> methodConvertors = new List<IMethodConvertor>();
+        protected List<IMethodConvertor> methodConvertors = new();
 
+
+        public static List<Type> defaultConvertorTypes;
 
         public MethodCall()
         {
-            // populate MethodConvertor
-            {
-                var types = GetType().Assembly.GetTypes().Where(type => type.IsClass
+            // populate
+            defaultConvertorTypes = typeof(MethodCall).Assembly.GetTypes()
+                .Where(type => type.IsClass
                         && !type.IsAbstract
                         && typeof(IMethodConvertor).IsAssignableFrom(type)
                         && type.GetConstructor(Type.EmptyTypes) != null
                 ).ToList();
 
-                types.ForEach(type => RegisterMethodConvertor(Activator.CreateInstance(type) as IMethodConvertor));
-            }
+            defaultConvertorTypes.ForEach(type => RegisterMethodConvertor(Activator.CreateInstance(type) as IMethodConvertor));
         }
 
         public virtual void RegisterMethodConvertor(IMethodConvertor convertor)

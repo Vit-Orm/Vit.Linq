@@ -34,19 +34,18 @@ namespace Vit.Linq.Filter
             return true;
         }
 
+        public static List<Type> defaultGeneratorTypes;
 
         public FilterGenerateService()
         {
-            // populate FilterGenerator
-            {
-                var types = GetType().Assembly.GetTypes().Where(type => type.IsClass
+            // populate
+            defaultGeneratorTypes ??=
+                    typeof(FilterGenerateService).Assembly.GetTypes().Where(type => type.IsClass
                         && !type.IsAbstract
                         && typeof(IFilterGenerator).IsAssignableFrom(type)
                         && type.GetConstructor(Type.EmptyTypes) != null
-                ).ToList();
-
-                types.ForEach(type => AddGenerator(Activator.CreateInstance(type) as IFilterGenerator));
-            }
+                    ).ToList();
+            defaultGeneratorTypes.ForEach(type => AddGenerator(Activator.CreateInstance(type) as IFilterGenerator));
         }
 
 
