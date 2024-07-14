@@ -12,16 +12,16 @@ namespace Vit.Linq
     public static partial class Queryable_Extensions
     {
 
-        public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, IEnumerable<ExpressionNodeOrderField> orders, ExpressionConvertService Instance = null)
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, IEnumerable<ExpressionNodeOrderField> orders, ExpressionConvertService expressionConvertService = null)
         {
             if (query == null || orders?.Any() != true) return query;
 
             IOrderedQueryable<T> orderedQuery = null;
-            Instance ??= ExpressionConvertService.Instance;
+            expressionConvertService ??= ExpressionConvertService.Instance;
 
             foreach (var item in orders)
             {
-                LambdaExpression exp = Instance.ToLambdaExpression(item.member, typeof(T));
+                LambdaExpression exp = expressionConvertService.ConvertToCode_LambdaExpression(item.member, typeof(T));
 
                 if (orderedQuery == null)
                 {

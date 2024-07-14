@@ -8,13 +8,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vit.Core.Module.Serialization;
 using Vit.Linq;
-using Vit.Linq.ExpressionTree.CollectionQuery;
 using Vit.Linq.ExpressionTree.ComponentModel;
+using Vit.Linq.ExpressionTree.Query;
 
 namespace Vit.Linq.ExpressionTree.MsTest
 {
     [TestClass]
-    public class QueryAction_Test
+    public class CollectionQuery_Test
     {
 
 
@@ -26,18 +26,18 @@ namespace Vit.Linq.ExpressionTree.MsTest
 
             Func<Expression, Type, object> QueryExecutor = (expression, type) =>
             {
-                ExpressionNode node;
+                ExpressionNode_Lambda node;
 
                 // #1 Code to Data
                 // query => query.Where().OrderBy().Skip().Take().Select().ToList();
                 var isArgument = QueryableBuilder.CompareQueryByName(queryTypeName);
-                node = convertService.ConvertToLambdaData(expression, autoReduce: true, isArgument: isArgument);
+                node = convertService.ConvertToData_LambdaNode(expression, autoReduce: true, isArgument: isArgument);
                 var strNode = Json.Serialize(node);
 
                 // #2 Filter by QueryAction
                 var queryAction = new QueryAction(node);
                 var strQuery = Json.Serialize(queryAction);
-                var predicate = convertService.ToPredicateExpression<Person>(queryAction.filter);
+                var predicate = convertService.ConvertToCode_PredicateExpression<Person>(queryAction.filter);
                 //var lambdaExp = (Expression<Func<Person, bool>>)convertService.ToLambdaExpression(queryAction.filter, typeof(Person));
 
                 var query = sourceData.Where(predicate);

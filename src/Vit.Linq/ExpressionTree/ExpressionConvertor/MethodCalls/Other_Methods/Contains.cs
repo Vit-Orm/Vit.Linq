@@ -20,10 +20,10 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Other_Methods
     /// </summary>
     public class Contains : MethodConvertor_Common
     {
-        public override Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
+        public override Expression ToCode(ToCodeArgument arg, ExpressionNode_MethodCall call)
         {
-            var instance = arg.convertService.ToExpression(arg, call.@object);
-            var methodArguments = call.arguments?.Select(node => arg.convertService.ToExpression(arg, node)).ToArray();
+            var instance = arg.convertService.ConvertToCode(arg, call.@object);
+            var methodArguments = call.arguments?.Select(node => arg.convertService.ConvertToCode(arg, node)).ToArray();
 
             // #1 instance Method
             if (instance != null)

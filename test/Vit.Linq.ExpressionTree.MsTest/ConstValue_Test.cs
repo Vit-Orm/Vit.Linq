@@ -19,14 +19,14 @@ namespace Vit.Linq.ExpressionTree.MsTest
 
             // #1 to ExpressionNode
             // () =>  (query)=> query.isEven
-            var node = convertService.ConvertToLambdaData(predicate);
+            var node = convertService.ConvertToData_LambdaNode(predicate);
             var str = Json.Serialize(node);
 
             // #2 convert to predicate
             //var lambda = convertService.ToLambdaExpression(node);
             //var del = lambda.Compile();
             //var convertedPredicate = del.DynamicInvoke() as Func<Person, bool>;
-            var convertedPredicate = convertService.ToPredicate<Person>(node.body);
+            var convertedPredicate = convertService.ConvertToCode_Predicate<Person>(node.body);
 
 
             IQueryable<Person> queryable = DataSource.GetQueryable();

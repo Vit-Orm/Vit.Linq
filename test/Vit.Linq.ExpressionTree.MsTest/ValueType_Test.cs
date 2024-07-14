@@ -6,7 +6,7 @@ using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using ValueType = Vit.Linq.ExpressionTree.ComponentModel.ValueType;
+using NodeValueType = Vit.Linq.ExpressionTree.ComponentModel.NodeValueType;
 
 namespace Vit.Linq.ExpressionTree.MsTest
 {
@@ -24,36 +24,36 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 int expectedValue = 12;
                 object value;
 
-                value = ValueType.ConvertToPrimitiveType(12.0, type);
+                value = NodeValueType.ConvertToPrimitiveType(12.0, type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToPrimitiveType(12.1, type);
+                value = NodeValueType.ConvertToPrimitiveType(12.1, type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToPrimitiveType(12, type);
+                value = NodeValueType.ConvertToPrimitiveType(12, type);
                 Assert.AreEqual(expectedValue, value);
 
 
-                value = ValueType.ConvertToPrimitiveType("12", type);
+                value = NodeValueType.ConvertToPrimitiveType("12", type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToPrimitiveType("12.0", type);
+                value = NodeValueType.ConvertToPrimitiveType("12.0", type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToPrimitiveType("12.1", type);
+                value = NodeValueType.ConvertToPrimitiveType("12.1", type);
                 Assert.AreEqual(expectedValue, value);
 
                 // nullable
-                value = ValueType.ConvertToPrimitiveType(null, type);
+                value = NodeValueType.ConvertToPrimitiveType(null, type);
                 Assert.AreEqual(0, value);
 
-                value = ValueType.ConvertToPrimitiveType((int?)12, type);
+                value = NodeValueType.ConvertToPrimitiveType((int?)12, type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToPrimitiveType((double?)12.0, type);
+                value = NodeValueType.ConvertToPrimitiveType((double?)12.0, type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToPrimitiveType((double?)12.1, type);
+                value = NodeValueType.ConvertToPrimitiveType((double?)12.1, type);
                 Assert.AreEqual(expectedValue, value);
 
             }
@@ -62,7 +62,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 var type = typeof(int);
                 int expectedValue = -12;
 
-                var value = ValueType.ConvertToPrimitiveType(-12.1, type);
+                var value = NodeValueType.ConvertToPrimitiveType(-12.1, type);
                 Assert.AreEqual(expectedValue, value);
             }
             // byte
@@ -72,23 +72,23 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 object value;
 
 
-                value = ValueType.ConvertToPrimitiveType(12.0, type);
+                value = NodeValueType.ConvertToPrimitiveType(12.0, type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToPrimitiveType(12.1, type);
+                value = NodeValueType.ConvertToPrimitiveType(12.1, type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToPrimitiveType(12, type);
+                value = NodeValueType.ConvertToPrimitiveType(12, type);
                 Assert.AreEqual(expectedValue, value);
 
 
-                value = ValueType.ConvertToPrimitiveType("12", type);
+                value = NodeValueType.ConvertToPrimitiveType("12", type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToPrimitiveType("12.0", type);
+                value = NodeValueType.ConvertToPrimitiveType("12.0", type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToPrimitiveType("12.1", type);
+                value = NodeValueType.ConvertToPrimitiveType("12.1", type);
                 Assert.AreEqual(expectedValue, value);
             }
             // float
@@ -97,19 +97,19 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 float expectedValue = 12.123f;
                 object value;
 
-                value = ValueType.ConvertToPrimitiveType(12.123, type);
+                value = NodeValueType.ConvertToPrimitiveType(12.123, type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToPrimitiveType("12.123", type);
+                value = NodeValueType.ConvertToPrimitiveType("12.123", type);
                 Assert.AreEqual(expectedValue, value);
 
 
 
                 expectedValue = 12;
-                value = ValueType.ConvertToPrimitiveType(12, type);
+                value = NodeValueType.ConvertToPrimitiveType(12, type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToPrimitiveType("12", type);
+                value = NodeValueType.ConvertToPrimitiveType("12", type);
                 Assert.AreEqual(expectedValue, value);
             }
 
@@ -120,15 +120,15 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 bool expectedValue = true;
                 object value;
 
-                value = ValueType.ConvertToPrimitiveType(true, type);
+                value = NodeValueType.ConvertToPrimitiveType(true, type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertToPrimitiveType("true", type);
+                value = NodeValueType.ConvertToPrimitiveType("true", type);
                 Assert.AreEqual(expectedValue, value);
 
 
                 expectedValue = false;
-                value = ValueType.ConvertToPrimitiveType("false", type);
+                value = NodeValueType.ConvertToPrimitiveType("false", type);
                 Assert.AreEqual(expectedValue, value);
             }
 
@@ -140,16 +140,16 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 var strDate = "2001-02-03 04:05:06";
                 var date = DateTime.Parse(strDate);
 
-                value = ValueType.ConvertToPrimitiveType(strDate, type);
+                value = NodeValueType.ConvertToPrimitiveType(strDate, type);
                 Assert.AreEqual(date, value);
 
-                value = ValueType.ConvertToPrimitiveType((DateTime?)date, type);
+                value = NodeValueType.ConvertToPrimitiveType((DateTime?)date, type);
                 Assert.AreEqual(date, value);
 
-                value = ValueType.ConvertToPrimitiveType(null, type);
+                value = NodeValueType.ConvertToPrimitiveType(null, type);
                 Assert.AreEqual(DateTime.MinValue, value);
 
-                value = ValueType.ConvertToPrimitiveType("2001-02-03T04:05:06Z", type);
+                value = NodeValueType.ConvertToPrimitiveType("2001-02-03T04:05:06Z", type);
                 value = ((DateTime)value).ToUniversalTime();
                 Assert.AreEqual(date, value);
             }
@@ -161,33 +161,33 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 object value;
 
                 // ##1 string -> string
-                value = ValueType.ConvertToPrimitiveType("trueasdge", type);
+                value = NodeValueType.ConvertToPrimitiveType("trueasdge", type);
                 Assert.AreEqual("trueasdge", value);
 
 
                 // ##2 bool -> string
-                value = ValueType.ConvertToPrimitiveType(true, type);
+                value = NodeValueType.ConvertToPrimitiveType(true, type);
                 Assert.AreEqual("true", value);
 
-                value = ValueType.ConvertToPrimitiveType(false, type);
+                value = NodeValueType.ConvertToPrimitiveType(false, type);
                 Assert.AreEqual("false", value);
 
-                value = ValueType.ConvertToPrimitiveType((bool?)true, type);
+                value = NodeValueType.ConvertToPrimitiveType((bool?)true, type);
                 Assert.AreEqual("true", value);
 
-                value = ValueType.ConvertToPrimitiveType(null, type);
+                value = NodeValueType.ConvertToPrimitiveType(null, type);
                 Assert.AreEqual(null, value);
 
 
                 // ##3 double -> string
-                value = ValueType.ConvertToPrimitiveType(12.1, type);
+                value = NodeValueType.ConvertToPrimitiveType(12.1, type);
                 Assert.AreEqual("12.1", value);
 
-                value = ValueType.ConvertToPrimitiveType(12, type);
+                value = NodeValueType.ConvertToPrimitiveType(12, type);
                 Assert.AreEqual("12", value);
 
 
-                value = ValueType.ConvertToPrimitiveType(null, type);
+                value = NodeValueType.ConvertToPrimitiveType(null, type);
                 Assert.AreEqual(null, value);
             }
             #endregion
@@ -209,45 +209,45 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 expectedValue = (int?)12;
                 int? v;
 
-                value = ValueType.ConvertValueToType(12.0, type);
+                value = NodeValueType.ConvertValueToType(12.0, type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
-                value = ValueType.ConvertValueToType(12.1, type);
+                value = NodeValueType.ConvertValueToType(12.1, type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
-                value = ValueType.ConvertValueToType(12, type);
+                value = NodeValueType.ConvertValueToType(12, type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
 
-                value = ValueType.ConvertValueToType("12", type);
+                value = NodeValueType.ConvertValueToType("12", type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
-                value = ValueType.ConvertValueToType("12.0", type);
+                value = NodeValueType.ConvertValueToType("12.0", type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
-                value = ValueType.ConvertValueToType("12.1", type);
+                value = NodeValueType.ConvertValueToType("12.1", type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
                 // nullable
-                value = ValueType.ConvertValueToType(null, type);
+                value = NodeValueType.ConvertValueToType(null, type);
                 v = value as int?;
                 Assert.AreEqual(null, v);
 
-                value = ValueType.ConvertValueToType((int?)12, type);
+                value = NodeValueType.ConvertValueToType((int?)12, type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
-                value = ValueType.ConvertValueToType((double?)12.0, type);
+                value = NodeValueType.ConvertValueToType((double?)12.0, type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
-                value = ValueType.ConvertValueToType((double?)12.1, type);
+                value = NodeValueType.ConvertValueToType((double?)12.1, type);
                 v = value as int?;
                 Assert.AreEqual(expectedValue, v);
 
@@ -258,16 +258,16 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 type = typeof(bool?);
                 expectedValue = (bool?)true;
 
-                value = ValueType.ConvertValueToType(true, type);
+                value = NodeValueType.ConvertValueToType(true, type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertValueToType("true", type);
+                value = NodeValueType.ConvertValueToType("true", type);
                 Assert.AreEqual(expectedValue, value);
 
-                value = ValueType.ConvertValueToType(null, type);
+                value = NodeValueType.ConvertValueToType(null, type);
                 Assert.AreEqual(null, value);
 
-                value = ValueType.ConvertValueToType("false", type);
+                value = NodeValueType.ConvertValueToType("false", type);
                 Assert.AreEqual((bool?)false, value);
             }
             #endregion
@@ -284,7 +284,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 var type = typeof(int[]);
                 int expectedValue = 12;
 
-                var value = ValueType.ConvertValueToType(new[] { 12.1 }, type) as int[];
+                var value = NodeValueType.ConvertValueToType(new[] { 12.1 }, type) as int[];
                 Assert.AreEqual(expectedValue, value[0]);
             }
 
@@ -293,7 +293,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 var type = typeof(int?[]);
                 int? expectedValue = 12;
 
-                var value = ValueType.ConvertValueToType(new[] { 12.1 }, type) as int?[];
+                var value = NodeValueType.ConvertValueToType(new[] { 12.1 }, type) as int?[];
                 Assert.AreEqual(expectedValue, value[0]);
             }
             #endregion
@@ -305,7 +305,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 var type = typeof(List<int>);
                 int expectedValue = 12;
 
-                var value = ValueType.ConvertValueToType(new[] { 12.1 }, type) as List<int>;
+                var value = NodeValueType.ConvertValueToType(new[] { 12.1 }, type) as List<int>;
                 Assert.AreEqual(expectedValue, value[0]);
             }
             // IEnumerable<double>  ->  IEnumerable<int>
@@ -314,7 +314,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 int expectedValue = 12;
                 IEnumerable<double> oriValue = new[] { 11.1 }.Select(m => m + 1);
 
-                var value = ValueType.ConvertValueToType(oriValue, type) as IEnumerable<int>;
+                var value = NodeValueType.ConvertValueToType(oriValue, type) as IEnumerable<int>;
                 Assert.AreEqual(expectedValue, value.First());
             }
             // IEnumerable<double>  ->  IQueryable<int>
@@ -323,7 +323,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 int expectedValue = 12;
                 IEnumerable<double> oriValue = new[] { 11.1 }.Select(m => m + 1);
 
-                var value = ValueType.ConvertValueToType(oriValue, type) as IQueryable<int>;
+                var value = NodeValueType.ConvertValueToType(oriValue, type) as IQueryable<int>;
                 Assert.AreEqual(expectedValue, value.First());
             }
             // IQueryable<double>  ->  ICollection<string>
@@ -332,7 +332,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 var expectedValue = "12.1";
                 IQueryable<double> oriValue = new[] { 11.1 }.AsQueryable().Select(m => m + 1);
 
-                var value = ValueType.ConvertValueToType(oriValue, type) as ICollection<string>;
+                var value = NodeValueType.ConvertValueToType(oriValue, type) as ICollection<string>;
                 Assert.AreEqual(expectedValue, value.First());
             }
             #endregion
@@ -344,7 +344,7 @@ namespace Vit.Linq.ExpressionTree.MsTest
                 var type = typeof(int[][]);
                 int expectedValue = 12;
 
-                var value = ValueType.ConvertValueToType(new[] { new[] { 12.1 } }, type) as int[][];
+                var value = NodeValueType.ConvertValueToType(new[] { new[] { 12.1 } }, type) as int[][];
                 Assert.AreEqual(expectedValue, value[0][0]);
             }
             #endregion

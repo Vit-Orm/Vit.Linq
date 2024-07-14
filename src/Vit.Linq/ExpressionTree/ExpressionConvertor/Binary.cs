@@ -11,7 +11,8 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
     public class Binary : IExpressionConvertor
     {
-        public ExpressionNode ConvertToData(DataConvertArgument arg, Expression expression)
+        public virtual int priority { get; set; } = 100;
+        public ExpressionNode ConvertToData(ToDataArgument arg, Expression expression)
         {
             switch (expression)
             {
@@ -70,7 +71,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
         }
 
 
-        public Expression ConvertToCode(CodeConvertArgument arg, ExpressionNode data)
+        public Expression ConvertToCode(ToCodeArgument arg, ExpressionNode data)
         {
             if (data.expressionType != "Binary") return null;
 
@@ -78,8 +79,8 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             {
                 case nameof(ExpressionType.ArrayIndex):
                     {
-                        var left = arg.convertService.ToExpression(arg, data.left);
-                        var right = arg.convertService.ToExpression(arg, data.right);
+                        var left = arg.convertService.ConvertToCode(arg, data.left);
+                        var right = arg.convertService.ConvertToCode(arg, data.right);
 
                         left ??= Expression.Constant(null);
                         right ??= Expression.Constant(null);
@@ -87,14 +88,14 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                     }
                 case nameof(ExpressionType.TypeIs):
                     {
-                        var value = arg.convertService.ToExpression(arg, data.left);
+                        var value = arg.convertService.ConvertToCode(arg, data.left);
                         var type = data.right?.GetCodeArg("TypeIs_Type") as Type;
                         type ??= data.right?.valueType?.ToType();
                         return Expression.TypeIs(value, type);
                     }
                 case nameof(ExpressionType.TypeAs):
                     {
-                        var value = arg.convertService.ToExpression(arg, data.left);
+                        var value = arg.convertService.ConvertToCode(arg, data.left);
                         var type = data.right?.GetCodeArg("TypeAs_Type") as Type;
                         type ??= data.right?.valueType?.ToType();
                         return Expression.TypeAs(value, type);
@@ -102,8 +103,8 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
                 case nameof(ExpressionType.Add):
                     {
-                        var left = arg.convertService.ToExpression(arg, data.left);
-                        var right = arg.convertService.ToExpression(arg, data.right);
+                        var left = arg.convertService.ConvertToCode(arg, data.left);
+                        var right = arg.convertService.ConvertToCode(arg, data.right);
 
                         left ??= Expression.Constant(null);
                         right ??= Expression.Constant(null);
@@ -130,8 +131,8 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
                 default:
                     {
-                        var left = arg.convertService.ToExpression(arg, data.left);
-                        var right = arg.convertService.ToExpression(arg, data.right);
+                        var left = arg.convertService.ConvertToCode(arg, data.left);
+                        var right = arg.convertService.ConvertToCode(arg, data.right);
 
                         left ??= Expression.Constant(null);
                         right ??= Expression.Constant(null);

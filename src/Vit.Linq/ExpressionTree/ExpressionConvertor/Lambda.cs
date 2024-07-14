@@ -9,7 +9,8 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
     public class Lambda : IExpressionConvertor
     {
-        public ExpressionNode ConvertToData(DataConvertArgument arg, Expression expression)
+        public virtual int priority { get; set; } = 100;
+        public ExpressionNode ConvertToData(ToDataArgument arg, Expression expression)
         {
             if (expression is LambdaExpression lambda)
             {
@@ -26,7 +27,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             return null;
         }
 
-        public Expression ConvertToCode(CodeConvertArgument arg, ExpressionNode data)
+        public Expression ConvertToCode(ToCodeArgument arg, ExpressionNode data)
         {
             if (data.nodeType != NodeType.Lambda) return null;
 
@@ -46,7 +47,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             }).ToArray();
 
             arg = arg.WithParams(parameters);
-            var expression = arg.convertService.ToExpression(arg, lambda.body);
+            var expression = arg.convertService.ConvertToCode(arg, lambda.body);
             if (expression == null)
             {
                 return null;

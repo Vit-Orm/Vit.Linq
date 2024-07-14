@@ -6,9 +6,9 @@ namespace Vit.Linq.Filter.ComponentModel
 {
     public class QueryAction
     {
-        public IFilterRule filter { get; set; }
-
+        public FilterRule filter { get; set; }
         public IEnumerable<OrderField> orders { get; set; }
+
 
         public int? skip { get; set; }
         public int? take { get; set; }

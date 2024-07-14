@@ -16,9 +16,9 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
         // public static IQueryable<TSource> Where<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, int, bool>> predicate)
         public override Type methodType { get; } = typeof(Queryable);
 
-        public override Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
+        public override Expression ToCode(ToCodeArgument arg, ExpressionNode_MethodCall call)
         {
-            var expSource = arg.convertService.ToExpression(arg, call.arguments[0]);
+            var expSource = arg.convertService.ConvertToCode(arg, call.arguments[0]);
             var elementType = expSource.Type.GetGenericArguments()[0];
 
             var lambda = call.arguments[1] as ExpressionNode_Lambda;
@@ -26,7 +26,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
             // #1 IQueryable<TSource> Where<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
             if (lambda?.parameterNames?.Length == 1)
             {
-                var expPredicate = arg.convertService.ToLambdaExpression(arg, lambda, elementType);
+                var expPredicate = arg.convertService.ConvertToCode_LambdaExpression(arg, lambda, elementType);
 
                 var methodArguments = new[] { expSource, expPredicate };
 
@@ -38,7 +38,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
             // #2 IQueryable<TSource> Where<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, int, bool>> predicate)
             else if (lambda?.parameterNames?.Length == 2)
             {
-                var expPredicate = arg.convertService.ToLambdaExpression(arg, lambda, elementType, typeof(int));
+                var expPredicate = arg.convertService.ConvertToCode_LambdaExpression(arg, lambda, elementType, typeof(int));
 
                 var methodArguments = new[] { expSource, expPredicate };
 

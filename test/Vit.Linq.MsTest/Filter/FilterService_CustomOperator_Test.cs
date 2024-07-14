@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter;
 using Vit.Linq.Filter.ComponentModel;
+using Vit.Linq.Filter.FilterConvertor;
 
 namespace Vit.Linq.MsTest.Filter
 {
@@ -24,13 +25,13 @@ namespace Vit.Linq.MsTest.Filter
             {
                 #region Get FilterService
                 var service = new FilterService();
-                Func<OperatorBuilderArgs, Expression> operatorBuilder;
-                operatorBuilder = (OperatorBuilderArgs args) =>
+                Func<OperatorConvertArgument, Expression> convertor;
+                convertor = (arg) =>
                 {
-                    var operatorExpression = Expression.Call(typeof(TestExtensions), "IsEven", null, args.leftValue);
+                    var operatorExpression = Expression.Call(typeof(TestExtensions), "IsEven", null, arg.leftValueExpression);
                     return operatorExpression;
                 };
-                service.CustomOperator_Add("IsEven", operatorBuilder);
+                service.RegisterOperatorConvertor("IsEven", convertor);
                 #endregion
 
 
@@ -51,18 +52,18 @@ namespace Vit.Linq.MsTest.Filter
             {
                 #region Get FilterService
                 var service = new FilterService();
-                Func<OperatorBuilderArgs, Expression> operatorBuilder;
-                operatorBuilder = (OperatorBuilderArgs args) =>
+                Func<OperatorConvertArgument, Expression> convertor;
+                convertor = (arg) =>
                 {
                     var method = typeof(TestExtensions).GetMethod("IsEvenOrOdd");
 
-                    var valueType = typeof(bool);
-                    var rightValueExpression = args.GetRightValueExpression(valueType);
+                    var rightValueType = typeof(bool);
+                    var rightValueExpression = arg.filterService.GetRightValueExpression(arg.filter, arg.parameter, rightValueType);
 
-                    var operatorExpression = Expression.Call(null, method, new[] { args.leftValue, rightValueExpression });
+                    var operatorExpression = Expression.Call(null, method, new[] { arg.leftValueExpression, rightValueExpression });
                     return operatorExpression;
                 };
-                service.CustomOperator_Add("IsEvenOrOdd", operatorBuilder);
+                service.RegisterOperatorConvertor("IsEvenOrOdd", convertor);
                 #endregion
 
 
@@ -82,22 +83,28 @@ namespace Vit.Linq.MsTest.Filter
             {
                 #region Get FilterService
                 var service = new FilterService();
-                Func<OperatorBuilderArgs, Expression> operatorBuilder;
+                Func<OperatorConvertArgument, Expression> convertor;
 
-                operatorBuilder = (OperatorBuilderArgs args) =>
+                convertor = (arg) =>
                 {
-                    var operatorExpression = Expression.Call(typeof(TestExtensions), "IsDivisibleBy", null, args.leftValue, args.GetRightValueExpression(typeof(int)));
+                    var rightValueType = typeof(int);
+                    var rightValueExpression = arg.filterService.GetRightValueExpression(arg.filter, arg.parameter, rightValueType);
+
+                    var operatorExpression = Expression.Call(typeof(TestExtensions), "IsDivisibleBy", null, arg.leftValueExpression, rightValueExpression);
                     return operatorExpression;
                 };
-                service.CustomOperator_Add("IsDivisibleBy", operatorBuilder);
+                service.RegisterOperatorConvertor("IsDivisibleBy", convertor);
 
-                operatorBuilder = (OperatorBuilderArgs args) =>
+                convertor = (arg) =>
                 {
+                    var rightValueType = typeof(int);
+                    var rightValueExpression = arg.filterService.GetRightValueExpression(arg.filter, arg.parameter, rightValueType);
+
                     var method = typeof(TestExtensions).GetMethod("IsDivisibleBy");
-                    var operatorExpression = Expression.Call(null, method, new[] { args.leftValue, args.GetRightValueExpression(typeof(int)) });
+                    var operatorExpression = Expression.Call(null, method, new[] { arg.leftValueExpression, rightValueExpression });
                     return operatorExpression;
                 };
-                service.CustomOperator_Add("IsDivisibleBy2", operatorBuilder);
+                service.RegisterOperatorConvertor("IsDivisibleBy2", convertor);
                 #endregion
 
 
@@ -132,13 +139,14 @@ namespace Vit.Linq.MsTest.Filter
             {
                 #region Get FilterService
                 var service = new FilterService();
-                Func<OperatorBuilderArgs, Expression> operatorBuilder;
-                operatorBuilder = (OperatorBuilderArgs args) =>
+                Func<OperatorConvertArgument, Expression> convertor;
+                convertor = (arg) =>
                 {
-                    var rightValueExpression = LinqHelp.GetFieldMemberExpression(args.parameter, (string)args.rule.value);
-                    return Expression.Equal(args.leftValue, rightValueExpression);
+                    string memberPath = (string)arg.filter.value;
+                    var rightValueExpression = LinqHelp.GetFieldMemberExpression(arg.parameter, memberPath);
+                    return Expression.Equal(arg.leftValueExpression, rightValueExpression);
                 };
-                service.CustomOperator_Add("EqualTo", operatorBuilder);
+                service.RegisterOperatorConvertor("EqualTo", convertor);
                 #endregion
 
                 // EqualTo another field
@@ -161,14 +169,14 @@ namespace Vit.Linq.MsTest.Filter
             {
                 #region Get FilterService
                 var service = new FilterService();
-                Func<OperatorBuilderArgs, Expression> operatorBuilder;
-                operatorBuilder = (OperatorBuilderArgs args) =>
+                Func<OperatorConvertArgument, Expression> convertor;
+                convertor = (arg) =>
                 {
                     //"string".Contains("Str",StringComparison.OrdinalIgnoreCase)
 
-                    var leftValueExpression = args.leftValue;
-                    var valueType = typeof(string);
-                    var rightValueExpression = args.GetRightValueExpression(valueType);
+                    var leftValueExpression = arg.leftValueExpression;
+                    var rightValueType = typeof(string);
+                    var rightValueExpression = arg.filterService.GetRightValueExpression(arg.filter, arg.parameter, rightValueType);
                     var comparison = Expression.Constant(StringComparison.OrdinalIgnoreCase);
 
                     var nullCheck = Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression);
@@ -176,7 +184,7 @@ namespace Vit.Linq.MsTest.Filter
 
                     return Expression.AndAlso(Expression.Not(nullCheck), contains);
                 };
-                service.CustomOperator_Add("Contains", operatorBuilder);
+                service.RegisterOperatorConvertor("Contains", convertor);
                 #endregion
 
 
@@ -201,32 +209,31 @@ namespace Vit.Linq.MsTest.Filter
                 var service = new FilterService();
 
                 var stringListContainsMethod = new Func<IEnumerable<string>, string, IEqualityComparer<string>, bool>(Enumerable.Contains<string>).GetMethodInfo();
-                Expression GetInExp(OperatorBuilderArgs args)
+                Expression GetInExp(OperatorConvertArgument arg)
                 {
-                    Type leftValueType = args.leftValue.Type;
+                    Type leftValueType = arg.leftValueExpression.Type;
+
+                    Type rightValueType = typeof(List<>).MakeGenericType(leftValueType);
+                    var rightValueExpression = arg.filterService.GetRightValueExpression(arg.filter, arg.parameter, rightValueType);
+
                     if (leftValueType == typeof(string))
                     {
                         // #1 List<string>.Contains
-                        Type valueType = typeof(List<>).MakeGenericType(leftValueType);
-                        var rightValueExpression = args.GetRightValueExpression(valueType);
                         var comparison = Expression.Constant(StringComparer.OrdinalIgnoreCase);
-                        return Expression.Call(stringListContainsMethod, rightValueExpression, args.leftValue, comparison);
+                        return Expression.Call(stringListContainsMethod, rightValueExpression, arg.leftValueExpression, comparison);
                     }
                     else
                     {
                         // #2 List<>.Contains
-                        Type valueType = typeof(List<>).MakeGenericType(leftValueType);
-                        var rightValueExpression = args.GetRightValueExpression(valueType);
-
-                        return Expression.Call(rightValueExpression, "Contains", null, args.leftValue);
+                        return Expression.Call(rightValueExpression, "Contains", null, arg.leftValueExpression);
                     }
                 }
 
-                Func<OperatorBuilderArgs, Expression> operatorBuilder;
-                operatorBuilder = GetInExp;
-                service.CustomOperator_Add("In", operatorBuilder);
-                operatorBuilder = (OperatorBuilderArgs args) => Expression.Not(GetInExp(args));
-                service.CustomOperator_Add("NotIn", operatorBuilder);
+                Func<OperatorConvertArgument, Expression> convertor;
+                convertor = GetInExp;
+                service.RegisterOperatorConvertor("In", convertor);
+                convertor = (arg) => Expression.Not(GetInExp(arg));
+                service.RegisterOperatorConvertor("NotIn", convertor);
                 #endregion
 
 

@@ -10,7 +10,8 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
     /// </summary>
     public class Conditional : IExpressionConvertor
     {
-        public ExpressionNode ConvertToData(DataConvertArgument arg, Expression expression)
+        public virtual int priority { get; set; } = 100;
+        public ExpressionNode ConvertToData(ToDataArgument arg, Expression expression)
         {
             if (expression is ConditionalExpression conditionExp)
             {
@@ -23,15 +24,15 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             return null;
         }
 
-        public Expression ConvertToCode(CodeConvertArgument arg, ExpressionNode data)
+        public Expression ConvertToCode(ToCodeArgument arg, ExpressionNode data)
         {
             if (data.nodeType == nameof(ExpressionType.Conditional))
             {
                 ExpressionNode_Conditional conditional = data;
 
-                var test = arg.convertService.ToExpression(arg, conditional.Conditional_GetTest());
-                var ifTrue = arg.convertService.ToExpression(arg, conditional.Conditional_GetIfTrue());
-                var ifFalse = arg.convertService.ToExpression(arg, conditional.Conditional_GetIfFalse());
+                var test = arg.convertService.ConvertToCode(arg, conditional.Conditional_GetTest());
+                var ifTrue = arg.convertService.ConvertToCode(arg, conditional.Conditional_GetIfTrue());
+                var ifFalse = arg.convertService.ConvertToCode(arg, conditional.Conditional_GetIfFalse());
 
                 return Expression.Condition(test, ifTrue, ifFalse);
             }

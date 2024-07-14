@@ -15,7 +15,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
     /// </summary>
     public interface ExpressionNode_New : IExpressionNode
     {
-        ValueType valueType { get; set; }
+        NodeValueType valueType { get; set; }
         List<MemberBind> constructorArgs { get; set; }
         List<MemberBind> memberArgs { get; set; }
 
@@ -50,7 +50,7 @@ namespace Vit.Linq.ExpressionTree.ComponentModel
             return new ExpressionNode
             {
                 nodeType = NodeType.New,
-                valueType = ValueType.FromType(type),
+                valueType = NodeValueType.FromType(type),
                 constructorArgs = constructorArgs,
                 memberArgs = memberArgs,
             }.New_SetType(type);

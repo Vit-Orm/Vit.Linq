@@ -25,6 +25,20 @@ namespace Vit.Linq.MsTest.Filter
         protected void TestFilterRule()
         {
 
+            #region #0 Empty filter
+            {
+                var query = GetQueryable();
+
+                var item = query.Skip(10).FirstOrDefault();
+                item.name = null;
+
+                var strRule = "{ }".Replace("'", "\"");
+                var rule = GetRule(strRule);
+                var result = Filter(ToQuery(query), rule);
+                Assert.AreEqual(1000, result.Count);
+            }
+            #endregion
+
             #region #1 [object] IsNull | IsNotNull
 
             #region ##1 IsNull
@@ -82,7 +96,6 @@ namespace Vit.Linq.MsTest.Filter
             #endregion
 
             #endregion
-
 
             #region #2 [number | string | bool] compare
 
@@ -245,7 +258,6 @@ namespace Vit.Linq.MsTest.Filter
 
             #endregion
 
-
             #region #3 In | NotIn
 
             #region ##1 In
@@ -316,10 +328,9 @@ namespace Vit.Linq.MsTest.Filter
 
             #endregion
 
-
             #region #4 [string] operate
 
-            #region ##1  Contains
+            #region ##1 Contains
             {
                 var query = GetQueryable();
 
@@ -332,7 +343,7 @@ namespace Vit.Linq.MsTest.Filter
             }
             #endregion
 
-            #region ##2  NotContains
+            #region ##2 NotContains
             {
                 //###1
                 {
@@ -369,7 +380,7 @@ namespace Vit.Linq.MsTest.Filter
             }
             #endregion
 
-            #region ##3  StartsWith
+            #region ##3 StartsWith
             {
                 var query = GetQueryable();
 
@@ -381,7 +392,7 @@ namespace Vit.Linq.MsTest.Filter
             }
             #endregion
 
-            #region ##4  EndsWith
+            #region ##4 EndsWith
             {
                 var query = GetQueryable();
 
@@ -422,7 +433,7 @@ namespace Vit.Linq.MsTest.Filter
             }
             #endregion
 
-            #region ##6  IsNotNullOrEmpty
+            #region ##6 IsNotNullOrEmpty
             {
                 //###1
                 {
@@ -451,7 +462,6 @@ namespace Vit.Linq.MsTest.Filter
 
 
             #endregion
-
 
             #region #5 DateTime
             {
@@ -515,8 +525,6 @@ namespace Vit.Linq.MsTest.Filter
                 }
             }
             #endregion
-
-
 
             #region #6 nested field
             {

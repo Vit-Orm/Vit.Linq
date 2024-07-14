@@ -9,11 +9,11 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
     public abstract class MethodConvertor_Base : IMethodConvertor
     {
         public virtual int priority { get; set; } = 100;
-        public abstract bool PredicateToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call);
-        public abstract Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call);
+        public abstract bool PredicateToCode(ToCodeArgument arg, ExpressionNode_MethodCall call);
+        public abstract Expression ToCode(ToCodeArgument arg, ExpressionNode_MethodCall call);
 
-        public abstract bool PredicateToData(DataConvertArgument arg, MethodCallExpression call);
-        public virtual ExpressionNode ToData(DataConvertArgument arg, MethodCallExpression call)
+        public abstract bool PredicateToData(ToDataArgument arg, MethodCallExpression call);
+        public virtual ExpressionNode ToData(ToDataArgument arg, MethodCallExpression call)
         {
             var method = call.Method;
 
@@ -40,7 +40,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
                     if (arguments[i]?.nodeType == NodeType.Constant)
                     {
                         ExpressionNode_Constant constant = arguments[i];
-                        constant.valueType = ComponentModel.ValueType.FromType(paramArray[i].ParameterType);
+                        constant.valueType = ComponentModel.NodeValueType.FromType(paramArray[i].ParameterType);
                     }
                 }
             }

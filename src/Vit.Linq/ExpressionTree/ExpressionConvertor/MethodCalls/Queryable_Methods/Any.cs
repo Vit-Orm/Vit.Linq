@@ -17,12 +17,12 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
 
         public override Type methodType { get; } = typeof(Queryable);
 
-        public override Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
+        public override Expression ToCode(ToCodeArgument arg, ExpressionNode_MethodCall call)
         {
             //var instance = convertService.ToExpression(arg, call.instance);
             //var methodArguments = call.methodArguments?.Select(node => convertService.ToExpression(arg, node)).ToArray();
 
-            var expSource = arg.convertService.ToExpression(arg, call.arguments[0]);
+            var expSource = arg.convertService.ConvertToCode(arg, call.arguments[0]);
             var elementType = expSource.Type.GetGenericArguments()[0];
 
             // #1 public static bool Any<TSource>(this IQueryable<TSource> source)
@@ -40,7 +40,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
             {
                 var lambda = call.arguments[1] as ExpressionNode_Lambda;
 
-                var expPredicate = arg.convertService.ToLambdaExpression(arg, lambda, elementType);
+                var expPredicate = arg.convertService.ConvertToCode_LambdaExpression(arg, lambda, elementType);
 
                 var methodArguments = new[] { expSource, expPredicate };
 

@@ -11,6 +11,8 @@ namespace Vit.Linq.ExpressionTree
     {
         public static ExpressionConvertService Instance = new ExpressionConvertService();
 
+        protected List<IExpressionConvertor> expressionConvertors = new List<IExpressionConvertor>();
+
         public ExpressionConvertService()
         {
             // populate ExpressionConvertor
@@ -25,20 +27,27 @@ namespace Vit.Linq.ExpressionTree
             }
         }
 
-        protected List<IExpressionConvertor> expressionConvertors = new List<IExpressionConvertor>();
+
         public virtual void AddExpresssionConvertor(IExpressionConvertor convertor)
         {
             expressionConvertors.Add(convertor);
+
+            expressionConvertors.Sort((a, b) => a.priority - b.priority);
         }
 
 
 
 
 
-        public virtual void RegisterMethodConvertor(IMethodConvertor convertor)
+        public virtual bool RegisterMethodConvertor(IMethodConvertor convertor)
         {
             var methodCallConvertor = expressionConvertors.FirstOrDefault(m => m is MethodCall) as MethodCall;
+
+            if (methodCallConvertor == null) return false;
+
             methodCallConvertor?.RegisterMethodConvertor(convertor);
+
+            return true;
         }
 
 

@@ -12,7 +12,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
     {
         public override Type methodType { get; } = typeof(Queryable);
 
-        public override Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
+        public override Expression ToCode(ToCodeArgument arg, ExpressionNode_MethodCall call)
         {
             //var instance = arg.convertService.ToExpression(arg, call.@object);
             //var methodArguments = call.arguments?.Select(node => convertService.ToExpression(arg, node)).ToArray();
@@ -23,16 +23,16 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
             //          Expression<Func<TOuter, TKey>> outerKeySelector,
             //          Expression<Func<TInner, TKey>> innerKeySelector,
             //          Expression<Func<TOuter, TInner, TResult>> resultSelector);
-            var outer = arg.convertService.ToExpression(arg, call.arguments[0]);
+            var outer = arg.convertService.ConvertToCode(arg, call.arguments[0]);
             var TOuter = outer.Type.GetGenericArguments()[0];
 
-            var inner = arg.convertService.ToExpression(arg, call.arguments[1]);
+            var inner = arg.convertService.ConvertToCode(arg, call.arguments[1]);
             var TInner = inner.Type.GetGenericArguments()[0];
 
-            var outerKeySelector = arg.convertService.ToLambdaExpression(arg, call.arguments[2], TOuter);
-            var innerKeySelector = arg.convertService.ToLambdaExpression(arg, call.arguments[3], TInner);
+            var outerKeySelector = arg.convertService.ConvertToCode_LambdaExpression(arg, call.arguments[2], TOuter);
+            var innerKeySelector = arg.convertService.ConvertToCode_LambdaExpression(arg, call.arguments[3], TInner);
 
-            var resultSelector = arg.convertService.ToLambdaExpression(arg, call.arguments[4], TOuter, TInner);
+            var resultSelector = arg.convertService.ConvertToCode_LambdaExpression(arg, call.arguments[4], TOuter, TInner);
 
             var TKey = outerKeySelector.ReturnType;
             var TResult = resultSelector.ReturnType;

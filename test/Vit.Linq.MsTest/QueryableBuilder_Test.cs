@@ -20,12 +20,12 @@ namespace Vit.Linq.MsTest
             {
                 Func<Expression, Type, object> QueryExecutor = (exp, type) =>
                 {
-                    var queryAction = new FilterRuleConvert().ConvertToQueryAction(exp);
+                    var queryAction = new FilterGenerateService().ConvertToQueryAction(exp);
                     var strQuery = Json.Serialize(queryAction);
 
-                    var exp2 = new FilterService().ToExpression<Person>(queryAction.filter);
-                    var query2 = new FilterRuleConvert().ConvertToQueryAction(exp2);
-                    var strQuery2 = Json.Serialize(query2);
+                    var exp2 = new FilterService().ConvertToCode_PredicateExpression<Person>(queryAction.filter);
+                    var queryAction2 = new FilterGenerateService().ConvertToQueryAction(exp2);
+                    var strQuery2 = Json.Serialize(queryAction2);
 
 
                     var query = DataSource.GetQueryable().Where(queryAction.filter);
