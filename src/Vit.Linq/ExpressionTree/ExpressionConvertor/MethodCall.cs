@@ -54,6 +54,8 @@ String.EndsWith
 
     public class MethodCall : IExpressionConvertor
     {
+        public virtual int priority { get; set; } = 100;
+
         protected List<IMethodConvertor> methodConvertors = new List<IMethodConvertor>();
 
         public virtual void RegisterMethodConvertor(IMethodConvertor convertor)
@@ -76,7 +78,7 @@ String.EndsWith
         }
 
 
-        public ExpressionNode ConvertToData(DataConvertArgument arg, Expression expression)
+        public ExpressionNode ConvertToData(ToDataArgument arg, Expression expression)
         {
             if (expression is MethodCallExpression methodCall)
             {
@@ -90,7 +92,7 @@ String.EndsWith
             return null;
         }
 
-        public Expression ConvertToCode(CodeConvertArgument arg, ExpressionNode data)
+        public Expression ConvertToCode(ToCodeArgument arg, ExpressionNode data)
         {
             if (data.nodeType != NodeType.MethodCall) return null;
 

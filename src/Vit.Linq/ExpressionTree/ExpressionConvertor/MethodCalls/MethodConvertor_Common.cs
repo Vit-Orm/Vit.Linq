@@ -18,12 +18,12 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
             this.priority = priority;
         }
 
-        public override bool PredicateToData(DataConvertArgument arg, MethodCallExpression call)
+        public override bool PredicateToData(ToDataArgument arg, MethodCallExpression call)
         {
             return call.Method.Name == methodName && (methodType == null || methodType == call.Method.DeclaringType);
         }
 
-        public override bool PredicateToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
+        public override bool PredicateToCode(ToCodeArgument arg, ExpressionNode_MethodCall call)
         {
             return call.methodName == methodName && (methodType == null || methodType.Name == call.methodCall_typeName);
         }

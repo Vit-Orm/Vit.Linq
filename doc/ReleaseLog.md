@@ -1,5 +1,19 @@
 ﻿# Vit.Library ReleaseLog
 
+
+-----------------------
+# 3.0.0
+
+- [ExpressionTree] 
+    - rename to ConvertToCode and ConvertToData
+    - ~~rename QueryAction to CollectionQuery~~
+    - change returnType of ExpressionNode.Lambda to ExpressionNode_Lambda from ExpressionNode
+    - rename ValueType to NodeValueType
+    - rename Binarys to Binary, Unarys to Unary
+    - [ExpressionTree] Queryable.Where With ExpressionNode_Lambda
+    - [Filter] refactor FilterService to FilterGenerateService
+
+
 -----------------------
 # 2.2.25
 

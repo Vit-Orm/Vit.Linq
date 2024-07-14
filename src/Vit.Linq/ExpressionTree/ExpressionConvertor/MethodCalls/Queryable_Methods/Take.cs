@@ -12,9 +12,9 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
     {
         public override Type methodType { get; } = typeof(Queryable);
 
-        public override Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
+        public override Expression ToCode(ToCodeArgument arg, ExpressionNode_MethodCall call)
         {
-            var methodArguments = call.arguments?.Select(node => arg.convertService.ToExpression(arg, node)).ToArray();
+            var methodArguments = call.arguments?.Select(node => arg.convertService.ConvertToCode(arg, node)).ToArray();
 
             MethodInfo method;
             var argType = methodArguments[0].Type;

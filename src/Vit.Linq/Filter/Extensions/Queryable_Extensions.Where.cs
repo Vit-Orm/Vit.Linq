@@ -12,7 +12,7 @@ namespace Vit.Linq
         {
             if (query == null || filter == null) return query;
 
-            var predicate = (filterService ?? FilterService.Instance).ToExpression<T>(filter);
+            var predicate = (filterService ?? FilterService.Instance).ConvertToCode_PredicateExpression<T>(filter);
             if (predicate == null)
             {
                 return query;

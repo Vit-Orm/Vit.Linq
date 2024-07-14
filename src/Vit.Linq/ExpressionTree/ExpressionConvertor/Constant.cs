@@ -8,7 +8,8 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
     public class Constant : IExpressionConvertor
     {
-        public ExpressionNode ConvertToData(DataConvertArgument arg, Expression expression)
+        public virtual int priority { get; set; } = 100;
+        public ExpressionNode ConvertToData(ToDataArgument arg, Expression expression)
         {
             switch (expression)
             {
@@ -51,7 +52,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             return null;
         }
 
-        public Expression ConvertToCode(CodeConvertArgument arg, ExpressionNode data)
+        public Expression ConvertToCode(ToCodeArgument arg, ExpressionNode data)
         {
             if (data.nodeType != NodeType.Constant) return null;
 
@@ -63,7 +64,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
             if (value != null)
             {
-                value = ComponentModel.ValueType.ConvertValueToType(value, targetType);
+                value = ComponentModel.NodeValueType.ConvertValueToType(value, targetType);
             }
 
             var constExp = Expression.Constant(value, targetType);

@@ -13,21 +13,21 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
     {
         public override int priority => 10000;
 
-        public override bool PredicateToData(DataConvertArgument arg, MethodCallExpression call)
+        public override bool PredicateToData(ToDataArgument arg, MethodCallExpression call)
         {
             return call.Object != null;
             //return true;
         }
 
-        public override bool PredicateToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
+        public override bool PredicateToCode(ToCodeArgument arg, ExpressionNode_MethodCall call)
         {
             return call.@object != null;
         }
 
-        public override Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
+        public override Expression ToCode(ToCodeArgument arg, ExpressionNode_MethodCall call)
         {
-            var instance = arg.convertService.ToExpression(arg, call.@object);
-            var methodArguments = call.arguments?.Select(node => arg.convertService.ToExpression(arg, node)).ToArray();
+            var instance = arg.convertService.ConvertToCode(arg, call.@object);
+            var methodArguments = call.arguments?.Select(node => arg.convertService.ConvertToCode(arg, node)).ToArray();
 
             return Expression.Call(instance, call.methodName, null, methodArguments);
         }

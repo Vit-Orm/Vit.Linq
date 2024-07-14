@@ -24,23 +24,23 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls.Queryable_Meth
         // public static IOrderedQueryable<TSource> ThenBy<TSource, TKey>(this IOrderedQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector); 
         // public static IOrderedQueryable<TSource> ThenByDescending<TSource, TKey>(this IOrderedQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector); 
 
-        public override bool PredicateToData(DataConvertArgument arg, MethodCallExpression call)
+        public override bool PredicateToData(ToDataArgument arg, MethodCallExpression call)
         {
             return methodType == call.Method.DeclaringType == methodNames.Contains(call.Method.Name);
         }
 
-        public override bool PredicateToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
+        public override bool PredicateToCode(ToCodeArgument arg, ExpressionNode_MethodCall call)
         {
             return methodNames.Contains(call.methodName) && methodType.Name == call.methodCall_typeName;
         }
 
-        public override Expression ToCode(CodeConvertArgument arg, ExpressionNode_MethodCall call)
+        public override Expression ToCode(ToCodeArgument arg, ExpressionNode_MethodCall call)
         {
-            var expSource = arg.convertService.ToExpression(arg, call.arguments[0]);
+            var expSource = arg.convertService.ConvertToCode(arg, call.arguments[0]);
             var elementType = expSource.Type.GetGenericArguments()[0];
 
             var lambda = call.arguments[1] as ExpressionNode_Lambda;
-            var expKeySelector = arg.convertService.ToLambdaExpression(arg, lambda, elementType);
+            var expKeySelector = arg.convertService.ConvertToCode_LambdaExpression(arg, lambda, elementType);
             var keyType = expKeySelector.ReturnType;
 
             MethodInfo method = null;

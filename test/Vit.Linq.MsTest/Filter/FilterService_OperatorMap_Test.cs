@@ -18,10 +18,10 @@ namespace Vit.Linq.MsTest.Filter
             {
                 var service = new FilterService();
                 var query = DataSource.GetQueryable();
-                service.AddOperatorMap("Equal", RuleOperator.Equal);
+                service.AddOperatorMap("Equals", RuleOperator.Equal);
 
 
-                var strRule = "{'field':'isEven',  'operator': 'eQual',  'value':true }".Replace("'", "\"");
+                var strRule = "{'field':'isEven',  'operator': 'eQuals',  'value':true }".Replace("'", "\"");
                 var rule = Json.Deserialize<FilterRule>(strRule);
                 var result = query.Where(rule, service).ToList();
                 Assert.AreEqual(result.Count, 500);

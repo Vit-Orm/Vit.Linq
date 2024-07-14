@@ -8,16 +8,30 @@ namespace Vit.Linq.ExpressionTree
 {
     public partial class ExpressionConvertService
     {
-        public ExpressionNode ConvertToLambdaData(Expression expression, bool autoReduce = true, Func<object, Type, bool> isArgument = null)
+
+        public ExpressionNode ConvertToData(ToDataArgument arg, Expression expression)
         {
-            return ConvertToLambdaData(expression, out _, autoReduce: autoReduce, isArgument: isArgument);
+            foreach (var expressionConvertor in expressionConvertors)
+            {
+                var node = expressionConvertor.ConvertToData(arg, expression);
+                if (node != null) return node;
+            }
+
+            throw new NotSupportedException($"Unsupported expression type: {expression.GetType()}");
         }
-        public ExpressionNode ConvertToLambdaData(Expression expression, out ParameterInfo[] parameters, bool autoReduce = true, Func<object, Type, bool> isArgument = null)
+
+
+
+        public ExpressionNode_Lambda ConvertToData_LambdaNode(Expression expression, bool autoReduce = true, Func<object, Type, bool> isArgument = null)
         {
-            var arg = new DataConvertArgument { convertService = this, autoReduce = autoReduce, isArgument = isArgument };
-            return ConvertToLambdaData(expression, out parameters, arg);
+            return ConvertToData_LambdaNode(expression, out _, autoReduce: autoReduce, isArgument: isArgument);
         }
-        public ExpressionNode ConvertToLambdaData(Expression expression, out ParameterInfo[] parameters, DataConvertArgument arg)
+        public ExpressionNode_Lambda ConvertToData_LambdaNode(Expression expression, out ParameterInfo[] parameters, bool autoReduce = true, Func<object, Type, bool> isArgument = null)
+        {
+            var arg = new ToDataArgument { convertService = this, autoReduce = autoReduce, isArgument = isArgument };
+            return ConvertToData_LambdaNode(expression, out parameters, arg);
+        }
+        public ExpressionNode_Lambda ConvertToData_LambdaNode(Expression expression, out ParameterInfo[] parameters, ToDataArgument arg)
         {
             arg.convertService ??= this;
 
@@ -27,17 +41,6 @@ namespace Vit.Linq.ExpressionTree
             parameters = arg.globalParameters?.ToArray();
             var parameterNames = parameters?.Select(m => m.parameterName).ToArray();
             return ExpressionNode.Lambda(parameterNames: parameterNames, body: body);
-        }
-
-        public ExpressionNode ConvertToData(DataConvertArgument arg, Expression expression)
-        {
-            foreach (var expressionConvertor in expressionConvertors)
-            {
-                var node = expressionConvertor.ConvertToData(arg, expression);
-                if (node != null) return node;
-            }
-
-            throw new NotSupportedException($"Unsupported expression type: {expression.GetType()}");
         }
 
 

@@ -9,7 +9,8 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
     public class Member : IExpressionConvertor
     {
-        public ExpressionNode ConvertToData(DataConvertArgument arg, Expression expression)
+        public virtual int priority { get; set; } = 100;
+        public ExpressionNode ConvertToData(ToDataArgument arg, Expression expression)
         {
             if (expression is MemberExpression member)
             {
@@ -37,7 +38,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             return null;
         }
 
-        public Expression ConvertToCode(CodeConvertArgument arg, ExpressionNode data)
+        public Expression ConvertToCode(ToCodeArgument arg, ExpressionNode data)
         {
             if (data.nodeType != NodeType.Member) return null;
 
@@ -55,7 +56,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
             }
             else
             {
-                var instanceExp = arg.convertService.ToExpression(arg, member.objectValue);
+                var instanceExp = arg.convertService.ConvertToCode(arg, member.objectValue);
                 return LinqHelp.GetFieldMemberExpression(instanceExp, member.memberName);
             }
         }
