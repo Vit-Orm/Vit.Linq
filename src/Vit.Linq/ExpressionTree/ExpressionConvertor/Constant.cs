@@ -21,14 +21,14 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                         {
                             return arg.CreateParameter(value, type);
                         }
-                        return ExpressionNode.Constant(value: constant.Value, type: type).SetCodeArg("Constant_Type", type);
+                        return ExpressionNode.Constant(value: constant.Value, type: type);
                     }
                 case NewArrayExpression:
                 case ListInitExpression:
                     {
                         if (arg.CanCalculateToConstant(expression))
                         {
-                            return ExpressionNode.Constant(value: arg.CalculateToConstant(expression), type: expression.Type).SetCodeArg("Constant_Type", expression.Type);
+                            return ExpressionNode.Constant(value: arg.CalculateToConstant(expression), type: expression.Type);
                         }
                         break;
                     }
@@ -44,7 +44,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                                 return arg.CreateParameter(value, type);
                             }
 
-                            return ExpressionNode.Constant(value: value, type: type).SetCodeArg("Constant_Type", type);
+                            return ExpressionNode.Constant(value: value, type: type);
                         }
                         break;
                     }
@@ -58,7 +58,7 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
 
             ExpressionNode_Constant constant = data;
             var value = constant.value;
-            Type targetType = (constant.GetCodeArg("Constant_Type") as Type) ?? constant.valueType?.ToType();
+            Type targetType = constant.Constant_GetType() ?? constant.valueType?.ToType();
 
             if (targetType == null) return Expression.Constant(value);
 

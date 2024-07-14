@@ -65,6 +65,7 @@ namespace Vit.Linq.ExpressionTree
                     }
                 case MemberExpression member:
                     {
+                        if (member.Expression == null) return EDataValueType.other;
                         return GetEValueType(member.Expression);
                     }
                 case UnaryExpression unary:
