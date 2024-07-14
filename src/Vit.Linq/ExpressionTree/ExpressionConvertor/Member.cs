@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 using Vit.Linq.ExpressionTree.ComponentModel;
 
@@ -20,8 +21,22 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor
                 }
 
                 var name = member.Member?.Name;
+
+                // Get Class status property
                 if (member.Expression == null)
+                {
+                    if (member.Member is PropertyInfo property && property.GetMethod.IsStatic)
+                    {
+                        var value = property.GetValue(null);
+                        return ExpressionNode.Constant(value, type: expression.Type);
+                    }
+                    if (member.Member is FieldInfo field && field.IsStatic)
+                    {
+                        var value = field.GetValue(null);
+                        return ExpressionNode.Constant(value, type: expression.Type);
+                    }
                     throw new NotSupportedException($"Unsupported MemberExpression : {name}");
+                }
 
                 if (member.Expression is ParameterExpression parameter)
                     return ExpressionNode.Member(parameterName: parameter.Name, memberName: name).Member_SetType(expression.Type);

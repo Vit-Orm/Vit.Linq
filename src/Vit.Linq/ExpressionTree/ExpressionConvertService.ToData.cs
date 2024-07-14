@@ -11,6 +11,8 @@ namespace Vit.Linq.ExpressionTree
 
         public ExpressionNode ConvertToData(ToDataArgument arg, Expression expression)
         {
+            if (expression == null) return null;
+
             foreach (var expressionConvertor in expressionConvertors)
             {
                 var node = expressionConvertor.ConvertToData(arg, expression);
