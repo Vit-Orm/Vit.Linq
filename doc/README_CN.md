@@ -1,9 +1,9 @@
 ﻿
 # Vit.Linq
-Vit.Linq provides two tools for handling Expressions: Filter and ExpressionTree.    
-- **Filter** can convert between FilterRule and Expression Predicate, allowing for dynamic filtering of result sets using JSON data.    
-- **ExpressionTree** facilitates the conversion between ExpressionNode and Expression, enabling transformations between data and code.    
-  > Note: Since non-primitive types cannot be transmitted via data formats, the conversion may not be fully equivalent, and some type information might be lost.    
+Vit.Linq 提供两个针对Expression表达式的工具，Filter 和 ExpressionTree    
+ _ **Filter** 可以把 FilterRule 和 Expression Predicate 进行相互转换， 由此可以通过 json 数据 对结果集进行动态化筛选。    
+ - **ExpressionTree** 实现 ExpressionNode 和 Expression 表达式的相互转换实现数据和代码的转换。    
+  > 因为非基本类型Type不能通过数据格式进行传递，所以转换并不是完全百分百互等的，会丢失部分类型信息    
 > source address: [https://github.com/VitormLib/Vit.Linq](https://github.com/VitormLib/Vit.Linq "https://github.com/VitormLib/Vit.Linq")    
 
 ![](https://img.shields.io/github/license/VitormLib/Vit.Linq.svg)  
@@ -16,9 +16,8 @@ Vit.Linq provides two tools for handling Expressions: Filter and ExpressionTree.
 
 
 
-
 # Filter
-FilterRule can express logical combinations (And / Or / Not) and basic logical evaluations (such as numerical comparisons / string matching / null checks, etc.). The complete set of features is as follows:
+FilerRule 可以表达 逻辑组合 （And / Or / Not ） 和 基本的逻辑判断 （如 数值比较 / 字符串匹配 / 非空判定 等），如下为所有功能：
   - And
   - Or
   - Not
@@ -32,14 +31,13 @@ FilterRule can express logical combinations (And / Or / Not) and basic logical e
     - custom operator
 
 ## Example
-
-Install necessary packages:
+安装引用的包:
 ``` bash
 dotnet add package Vit.Linq
 dotnet add package Vit.Core
 ```
 
-Create console project and edit Program.cs
+创建 console project 并按如下修改 Program.cs
 ``` csharp
 using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter.ComponentModel;
@@ -66,11 +64,11 @@ namespace App
 ```
 
 
-## FilterRule Format
-> FilterRule is JSON-formatted data where the condition can be `and`, `or`, `not`, `notand`, or `notor` (a combination of `not` and `or`).   
-> `rules` can be nested FilterRules.   
-> `field` can be a nested property, such as `id` or `job.name`.   
-> `operator` can be one of the following: `IsNull`, `IsNotNull`, `In`, `NotIn`, `=`, `!=`, `>`, `>=`, `<`, `<=`, `Contains`, `NotContains`, `StartsWith`, `EndsWith`, `IsNullOrEmpty`, `IsNotNullOrEmpty`, etc.    
+## FilterRule 的格式
+> FilterRule 为json格式的数据，其中 condition 可以为 `and`, `or`, `not`, `notand`, `notor`(not or 的组合)    
+> `rules` 可以为嵌套的 FilterRule。    
+> `field` 可以为嵌套属性, 例如 `id` , `job.name` .    
+> `operator` 可以为 `IsNull`, `IsNotNull`, `In`, `NotIn`, `=`, `!=`, `>`, `>=`, `<`, `<=`, `Contains`, `NotContains`, `StartsWith`, `EndsWith`, `IsNullOrEmpty`, `IsNotNullOrEmpty` 等    
 ``` json
 {
   "condition": "and",
@@ -98,16 +96,16 @@ namespace App
 
 
 # ExpressionTree
-ExpressionTree enables the transformation between ExpressionNode (data) and Expression (code), allowing for data and code interchangeability. It supports all query-related expressions (excluding functionalities like Expression.Assign).
+ExpressionTree 可以通过 ExpressionNode(Data) 和 Expression(Code) 的相互转换达到数据和代码相互转换的功能, 支持所有查询相关的Expression(不支持Expression.Assign等功能)
 
 ## Example
-Install necessary packages:
+安装引用的包:
 ``` bash
 dotnet add package Vit.Linq
 dotnet add package Vit.Core
 ```
 
-Create console project and edit Program.cs
+创建 console project 并按如下修改 Program2.cs
 ``` csharp
 using Vit.Core.Module.Serialization;
 using Vit.Linq;
@@ -162,14 +160,7 @@ namespace App
 
 
 
-
-
-
-
-
-
-
-
+ 
 Examples:  
 - [ExpressionTree](test/Vit.Linq.ExpressionTree.MsTest)  
 - [Filter](test/Vit.Linq.MsTest/Filter/Filter_TestBase.cs)  

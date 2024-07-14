@@ -38,6 +38,25 @@ namespace Vit.Linq.MsTest.Filter
 
 
         }
+
+
+        [TestMethod]
+        public void Test_Example()
+        {
+            {
+                var users = new[] { new { id = 1, name = "name1" }, new { id = 2, name = "name2" } };
+
+                var strRule = "{'field':'id',  'operator': '=',  'value': 1 }".Replace("'", "\"");
+                var rule = Json.Deserialize<FilterRule>(strRule);
+                var result = users.AsQueryable().Where(rule).ToList();
+
+                Assert.AreEqual(1, result[0].id);
+            }
+        }
+
+
+
+
     }
 
 

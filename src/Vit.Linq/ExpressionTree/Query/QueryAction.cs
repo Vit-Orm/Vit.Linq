@@ -4,12 +4,12 @@ using Vit.Linq.ExpressionTree.ComponentModel;
 
 namespace Vit.Linq.ExpressionTree.Query
 {
-    public partial class CollectionQuery
+    public partial class QueryAction
     {
-        public CollectionQuery() { }
+        public QueryAction() { }
 
 
-        public CollectionQuery(ExpressionNode_Lambda node)
+        public QueryAction(ExpressionNode_Lambda node)
         {
             LoadFromNode(this, node);
         }

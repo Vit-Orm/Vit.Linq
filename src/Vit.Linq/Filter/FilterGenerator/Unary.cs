@@ -25,7 +25,7 @@ namespace Vit.Linq.Filter.FilterGenerator
                     }
                     else
                     {
-                        rule.condition = RuleCondition.Not;
+                        rule.condition = RuleCondition.Not + rule.condition;
                     }
                     return rule;
                 case ExpressionType.Quote:

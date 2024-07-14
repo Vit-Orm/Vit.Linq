@@ -6,18 +6,18 @@ using Vit.Linq.ExpressionTree.ComponentModel;
 
 namespace Vit.Linq.ExpressionTree.Query
 {
-    public partial class CollectionQuery
+    public partial class QueryAction
     {
         class ConvertArgument
         {
-            public CollectionQuery collectionQuery;
+            public QueryAction collectionQuery;
             public string parameterName;
             public bool gettedOrder = false;
 
             public ExpressionNodeCloner cloner;
         }
 
-        public static void LoadFromNode(CollectionQuery collectionQuery, ExpressionNode_Lambda lambda)
+        public static void LoadFromNode(QueryAction collectionQuery, ExpressionNode_Lambda lambda)
         {
             var arg = new ConvertArgument { collectionQuery = collectionQuery, parameterName = "m" };
 
