@@ -40,6 +40,7 @@ dotnet add package Vit.Core
 ```
 
 Create console project and edit Program.cs
+> code address: [Program.cs](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.Console/Program.cs)    
 ``` csharp
 using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter.ComponentModel;
@@ -108,6 +109,7 @@ dotnet add package Vit.Core
 ```
 
 Create console project and edit Program.cs
+> code address: [Program.cs](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.Console/Program2.cs)    
 ``` csharp
 using Vit.Core.Module.Serialization;
 using Vit.Linq;
@@ -171,9 +173,8 @@ namespace App
 
 
 Examples:  
-- [ExpressionTree](test/Vit.Linq.ExpressionTree.MsTest)  
-- [Filter](test/Vit.Linq.MsTest/Filter/Filter_TestBase.cs)  
-- [CustomOperator](test/Vit.Linq.MsTest/Filter/FilterService_CustomOperator_Test.cs)  
+- [Filter](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.MsTest/Filter/Filter_TestBase.cs)    
+- [ExpressionTree](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.ExpressionTree.MsTest)    
 
 
 
