@@ -48,7 +48,7 @@ namespace Vit.Linq.Filter.FilterConvertor.ConditionConvertor
             var Operator = arg.filterService.GetOperator(filter);
 
 
-            Expression leftValueExpression = arg.filterService.GetLeftValueExpression(filter, arg.parameter);
+            Expression leftValueExpression = arg.filterService.GetLeftValueExpression(arg.parameter, filter);
             Type leftValueType = leftValueExpression.Type;
 
             var operatorConvertArg = new OperatorConvertArgument

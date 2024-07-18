@@ -45,11 +45,9 @@ namespace Vit.Linq.Filter.ComponentModel
         IEnumerable<IFilterRule> IFilterRule.rules => rules?.Select(r => (IFilterRule)r);
 
 
-        public virtual Expression GetLeftValueExpression(Expression valueExpression)
+        public virtual Expression GetLeftValueExpression(Expression parameterExpression)
         {
-            if (!string.IsNullOrWhiteSpace(field))
-                valueExpression = LinqHelp.GetFieldMemberExpression(valueExpression, field);
-            return valueExpression;
+            return LinqHelp.GetFieldMemberExpression(parameterExpression, field);
         }
 
         public override bool Equals(object obj)

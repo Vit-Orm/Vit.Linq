@@ -16,10 +16,6 @@ namespace Vit.Linq.Filter.FilterConvertor.OperatorConvert
             {
                 return (true, ConvertIn(arg));
             }
-            else if (RuleOperator.NotIn.Equals(arg.Operator, arg.comparison))
-            {
-                return (true, Expression.Not(ConvertIn(arg)));
-            }
 
             return default;
         }

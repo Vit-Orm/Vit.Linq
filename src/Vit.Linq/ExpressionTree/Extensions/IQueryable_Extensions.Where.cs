@@ -15,7 +15,7 @@ namespace Vit.Linq
             if (lambdaExpression == null) return query;
             return query.Provider.CreateQuery(
                 Expression.Call(
-                    typeof(Queryable), "Where",
+                    typeof(Queryable), nameof(Queryable.Where),
                     new Type[] { query.ElementType },
                     query.Expression, Expression.Quote(lambdaExpression)));
         }

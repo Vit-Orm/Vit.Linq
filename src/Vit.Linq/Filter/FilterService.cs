@@ -148,11 +148,13 @@ namespace Vit.Linq.Filter
 
 
 
+        public Func<ParameterExpression, IFilterRule, Expression> getLeftValueExpression;
 
-
-        public virtual Expression GetLeftValueExpression(IFilterRule rule, ParameterExpression valueExpression)
+        public virtual Expression GetLeftValueExpression(ParameterExpression parameterExpression, IFilterRule rule)
         {
-            return rule.GetLeftValueExpression(valueExpression);
+            if (getLeftValueExpression != null) return getLeftValueExpression(parameterExpression, rule);
+
+            return rule.GetLeftValueExpression(parameterExpression);
         }
 
 
