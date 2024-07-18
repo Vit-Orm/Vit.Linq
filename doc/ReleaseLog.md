@@ -1,12 +1,18 @@
 ﻿# Vit.Library ReleaseLog
 
+-----------------------
+# 3.0.1
+
+- static method extension: Queryable_Extensions.ToListAsync 
+- [ExpressionTree] CustomMethodAttribute and support custom method convertor
+
 
 -----------------------
 # 3.0.0
 
 - [ExpressionTree] 
     - rename to ConvertToCode and ConvertToData
-    - ~~rename QueryAction to CollectionQuery~~
+    - rename QueryAction to CollectionQuery
     - change returnType of ExpressionNode.Lambda to ExpressionNode_Lambda from ExpressionNode
     - rename ValueType to NodeValueType
     - rename Binarys to Binary, Unarys to Unary

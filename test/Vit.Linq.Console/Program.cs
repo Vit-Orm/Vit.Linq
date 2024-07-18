@@ -1,6 +1,6 @@
 ﻿using Vit.Core.Module.Serialization;
-using Vit.Linq.Filter.ComponentModel;
 using Vit.Linq;
+using Vit.Linq.Filter.ComponentModel;
 
 namespace App
 {

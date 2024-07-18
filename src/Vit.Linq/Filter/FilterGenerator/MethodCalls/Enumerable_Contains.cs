@@ -13,7 +13,7 @@ namespace Vit.Linq.Filter.MethodCalls
     public class Enumerable_Contains : MethodConvertor_Common
     {
         public Enumerable_Contains() : base(methodName: nameof(Enumerable.Contains))
-        { 
+        {
         }
 
 
