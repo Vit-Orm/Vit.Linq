@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Vit.Linq
 {
-    public static class QueryableBuilder
+    public static partial class QueryableBuilder
     {
         public static IQueryable<Model> Build<Model>(Func<Expression, Type, object> QueryExecutor, object queryConfig = null)
         {
@@ -74,94 +74,97 @@ namespace Vit.Linq
         }
     }
 
-    interface IQueryWithConfig
-    {
-        object queryConfig { get; }
-    }
-    internal class OrderedQueryable<T> : IOrderedQueryable<T>, IQueryWithConfig
-    {
-        protected readonly Expression _expression;
-        protected readonly QueryProvider _provider;
 
-        public object queryConfig { get; set; }
-
-        public OrderedQueryable(QueryProvider provider, object queryConfig = null)
+    public static partial class QueryableBuilder
+    {
+        interface IQueryWithConfig
         {
-            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-            _expression = Expression.Constant(this);
-            this.queryConfig = queryConfig;
+            object queryConfig { get; }
         }
-
-        public OrderedQueryable(QueryProvider provider, Expression expression)
+        internal class OrderedQueryable<T> : IOrderedQueryable<T>, IQueryWithConfig
         {
-            if (expression == null)
+            protected readonly Expression _expression;
+            protected readonly QueryProvider _provider;
+
+            public object queryConfig { get; set; }
+
+            public OrderedQueryable(QueryProvider provider, object queryConfig = null)
             {
-                throw new ArgumentNullException(nameof(expression));
+                _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+                _expression = Expression.Constant(this);
+                this.queryConfig = queryConfig;
             }
 
-            if (!typeof(IQueryable<T>).IsAssignableFrom(expression.Type))
+            public OrderedQueryable(QueryProvider provider, Expression expression)
             {
-                throw new ArgumentOutOfRangeException(nameof(expression));
+                if (expression == null)
+                {
+                    throw new ArgumentNullException(nameof(expression));
+                }
+
+                if (!typeof(IQueryable<T>).IsAssignableFrom(expression.Type))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(expression));
+                }
+
+                _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+
+                _expression = expression;
             }
 
-            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+            public Type ElementType => typeof(T);
 
-            _expression = expression;
+            public Expression Expression => _expression;
+
+            public IQueryProvider Provider => _provider;
+
+            public IEnumerator<T> GetEnumerator()
+            {
+                return _provider.Execute<IEnumerable<T>>(_expression).GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
         }
 
-        public Type ElementType => typeof(T);
-
-        public Expression Expression => _expression;
-
-        public IQueryProvider Provider => _provider;
-
-        public IEnumerator<T> GetEnumerator()
+        internal class QueryProvider : IQueryProvider
         {
-            return _provider.Execute<IEnumerable<T>>(_expression).GetEnumerator();
-        }
+            readonly Func<Expression, Type, object> QueryExecutor;
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+
+            public QueryProvider(Func<Expression, Type, object> QueryExecutor)
+            {
+                this.QueryExecutor = QueryExecutor;
+            }
+            public IQueryable CreateQuery(Expression expression)
+            {
+                Type elementType = QueryableBuilder.GetElementType(expression.Type);
+                return (IQueryable)Activator.CreateInstance(typeof(OrderedQueryable<>).MakeGenericType(elementType), new object[] { this, expression });
+            }
+
+            public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
+            {
+                return new OrderedQueryable<TElement>(this, expression);
+            }
+
+            public object Execute(Expression expression)
+            {
+                Type elementType = QueryableBuilder.GetElementType(expression.Type);
+                return ExecuteExpression(expression, elementType);
+            }
+
+            public TResult Execute<TResult>(Expression expression)
+            {
+                return (TResult)ExecuteExpression(expression, typeof(TResult));
+            }
+
+            public object ExecuteExpression(Expression expression, Type type)
+            {
+                return QueryExecutor(expression, type);
+            }
         }
     }
-
-    internal class QueryProvider : IQueryProvider
-    {
-        readonly Func<Expression, Type, object> QueryExecutor;
-
-
-        public QueryProvider(Func<Expression, Type, object> QueryExecutor)
-        {
-            this.QueryExecutor = QueryExecutor;
-        }
-        public IQueryable CreateQuery(Expression expression)
-        {
-            Type elementType = QueryableBuilder.GetElementType(expression.Type);
-            return (IQueryable)Activator.CreateInstance(typeof(OrderedQueryable<>).MakeGenericType(elementType), new object[] { this, expression });
-        }
-
-        public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
-        {
-            return new OrderedQueryable<TElement>(this, expression);
-        }
-
-        public object Execute(Expression expression)
-        {
-            Type elementType = QueryableBuilder.GetElementType(expression.Type);
-            return ExecuteExpression(expression, elementType);
-        }
-
-        public TResult Execute<TResult>(Expression expression)
-        {
-            return (TResult)ExecuteExpression(expression, typeof(TResult));
-        }
-
-        public object ExecuteExpression(Expression expression, Type type)
-        {
-            return QueryExecutor(expression, type);
-        }
-    }
-
 
 }

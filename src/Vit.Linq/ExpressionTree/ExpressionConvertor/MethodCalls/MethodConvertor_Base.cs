@@ -13,7 +13,11 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
         public abstract Expression ToCode(ToCodeArgument arg, ExpressionNode_MethodCall call);
 
         public abstract bool PredicateToData(ToDataArgument arg, MethodCallExpression call);
-        public virtual ExpressionNode ToData(ToDataArgument arg, MethodCallExpression call)
+
+        public virtual ExpressionNode ToData(ToDataArgument arg, MethodCallExpression call) => ConvertToData(arg, call);
+
+
+        public static ExpressionNode ConvertToData(ToDataArgument arg, MethodCallExpression call)
         {
             var method = call.Method;
 
