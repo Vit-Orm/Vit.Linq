@@ -154,7 +154,7 @@ namespace Vit.Linq.Filter
         {
             if (getLeftValueExpression != null) return getLeftValueExpression(parameterExpression, rule);
 
-            return rule.GetLeftValueExpression(parameterExpression);
+            return LinqHelp.GetFieldMemberExpression(parameterExpression, rule.field);
         }
 
 

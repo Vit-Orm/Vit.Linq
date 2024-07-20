@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace Vit.Linq.Filter.ComponentModel
 {
@@ -42,7 +41,5 @@ namespace Vit.Linq.Filter.ComponentModel
         /// value of the filter. Supported value types are "integer", "double", "string", "date", "datetime", and "boolean".
         /// </summary>
         object value { get; set; }
-
-        Expression GetLeftValueExpression(Expression valueExpression);
     }
 }
