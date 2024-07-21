@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace Vit.Linq.Filter.ComponentModel
 {
@@ -43,14 +42,6 @@ namespace Vit.Linq.Filter.ComponentModel
         public virtual object value { get; set; }
 
         IEnumerable<IFilterRule> IFilterRule.rules => rules?.Select(r => (IFilterRule)r);
-
-
-        public virtual Expression GetLeftValueExpression(Expression valueExpression)
-        {
-            if (!string.IsNullOrWhiteSpace(field))
-                valueExpression = LinqHelp.GetFieldMemberExpression(valueExpression, field);
-            return valueExpression;
-        }
 
         public override bool Equals(object obj)
         {

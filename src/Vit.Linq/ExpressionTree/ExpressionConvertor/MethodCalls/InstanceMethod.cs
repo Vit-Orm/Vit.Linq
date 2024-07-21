@@ -5,7 +5,7 @@ using Vit.Linq.ExpressionTree.ComponentModel;
 
 namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
 {
-    #region #99 InstanceMethod
+
     // InstanceMethod:
     //  String.StartsWith
     //  String.EndsWith
@@ -32,6 +32,6 @@ namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
             return Expression.Call(instance, call.methodName, null, methodArguments);
         }
     }
-    #endregion
+
 
 }

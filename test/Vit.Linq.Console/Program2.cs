@@ -5,10 +5,10 @@ using Vit.Linq.ExpressionTree;
 namespace App
 {
     internal class Program2
-    {      
+    {
         static void Main2(string[] args)
         {
-            var users = new[] { new User(1), new User(2), new User(3), new User(4)};
+            var users = new[] { new User(1), new User(2), new User(3), new User(4) };
             var query = users.AsQueryable();
 
             var queryExpression = users.AsQueryable().Where(m => m.id > 0).OrderBy(m => m.id).Skip(1).Take(2);

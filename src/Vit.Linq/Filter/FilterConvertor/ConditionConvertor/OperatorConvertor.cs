@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+
 using Vit.Linq;
 using Vit.Linq.Filter.ComponentModel;
-using Vit.Linq.Filter.FilterConvertor.OperatorConvert;
 
 namespace Vit.Linq.Filter.FilterConvertor.ConditionConvertor
 {
@@ -48,7 +48,7 @@ namespace Vit.Linq.Filter.FilterConvertor.ConditionConvertor
             var Operator = arg.filterService.GetOperator(filter);
 
 
-            Expression leftValueExpression = arg.filterService.GetLeftValueExpression(filter, arg.parameter);
+            Expression leftValueExpression = arg.filterService.GetLeftValueExpression(arg.parameter, filter);
             Type leftValueType = leftValueExpression.Type;
 
             var operatorConvertArg = new OperatorConvertArgument

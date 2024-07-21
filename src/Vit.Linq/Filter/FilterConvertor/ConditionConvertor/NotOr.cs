@@ -1,6 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Linq.Expressions;
+
 using Vit.Linq.Filter.ComponentModel;
 
 namespace Vit.Linq.Filter.FilterConvertor.ConditionConvertor
