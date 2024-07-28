@@ -10,33 +10,13 @@ namespace Vit.Linq
     public partial class LinqHelp
     {
 
-        #region GetElementType
-        public static Type GetElementType(Expression expression)
-        {
-            if (expression.Type.IsArray)
-            {
-
-                Type elementType = expression.Type.GetElementType();
-                return elementType;
-            }
-
-            //  IEnumerable<T>  or  IQueryable<T>
-            if (expression.Type.IsGenericType && typeof(IEnumerable).IsAssignableFrom(expression.Type))
-            {
-                Type elementType = expression.Type.GetGenericArguments()[0];
-                return elementType;
-            }
-            throw new ArgumentException("Unsupported expression type");
-        }
-        #endregion
-
         #region GetMemberType
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="type"></param>
-        /// <param name="memberPath"> could be nasted , example: "name"  "depart.name"  "departs[1].name" "departs.1.name"</param>
+        /// <param name="memberPath"> could be nested , example: "name"  "depart.name"  "departs[1].name" "departs.1.name"</param>
         /// <returns></returns>
         public static Type GetNestedMemberType(Type type, string memberPath)
         {
