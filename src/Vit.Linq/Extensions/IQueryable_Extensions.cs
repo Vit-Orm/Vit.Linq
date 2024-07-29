@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -68,9 +69,9 @@ namespace Vit.Linq
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object IQueryable_ToList(this IQueryable source)
+        public static IList IQueryable_ToList(this IQueryable source)
         {
-            return source.Provider.Execute(
+            return (IList)source.Provider.Execute(
                 Expression.Call(
                     typeof(Enumerable), "ToList",
                     new Type[] { source.ElementType }, source.Expression));

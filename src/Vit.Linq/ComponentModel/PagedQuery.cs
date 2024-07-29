@@ -10,6 +10,6 @@ namespace Vit.Linq.ComponentModel
         public IEnumerable<OrderField> orders { get; set; }
         public PageInfo page { get; set; }
 
-        public RangedQuery ToRangedQuery() => new RangedQuery { filter = filter, orders = orders, range = page.ToRange() };
+        public RangedQuery ToRangedQuery() => new RangedQuery { filter = filter, orders = orders, range = page?.ToRange() };
     }
 }
