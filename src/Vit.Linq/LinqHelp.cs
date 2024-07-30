@@ -7,6 +7,21 @@ namespace Vit.Linq
 {
     public partial class LinqHelp
     {
+        public static Type GetElementType(Type type)
+        {
+            if (type.IsArray)
+            {
+                return type.GetElementType();
+            }
+
+            if (type.IsGenericType && typeof(IEnumerable).IsAssignableFrom(type))
+            {
+                //  IEnumerable<T>  or  IQueryable<T>
+                return type.GetGenericArguments()[0];
+            }
+            return null;
+        }
+
         /// <summary>
         /// 
         /// </summary>
