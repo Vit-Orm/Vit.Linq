@@ -27,7 +27,7 @@ FilterRule can express logical combinations (And / Or / Not) and basic logical e
   - Logical Judgement
     - [object] is null (==null) / is not null (!=null)
     - [numeric] compare: ==  !=  >  >=  <  <=
-    - [string] compare: Contains NotContains StartsWith EndsWith IsNullOrEmpty IsNotNullOrEmpty
+    - [string] compare: Contains NotContain StartsWith EndsWith IsNullOrEmpty IsNotNullOrEmpty
     - [array] contains: In / NotIn
     - custom operator
 
@@ -71,7 +71,7 @@ namespace App
 > FilterRule is JSON-formatted data where the condition can be `and`, `or`, `not`, `notand`, or `notor` (a combination of `not` and `or`).   
 > `rules` can be nested FilterRules.   
 > `field` can be a nested property, such as `id` or `job.name`.   
-> `operator` can be one of the following: `IsNull`, `IsNotNull`, `In`, `NotIn`, `=`, `!=`, `>`, `>=`, `<`, `<=`, `Contains`, `NotContains`, `StartsWith`, `EndsWith`, `IsNullOrEmpty`, `IsNotNullOrEmpty`, etc.    
+> `operator` can be one of the following: `IsNull`, `IsNotNull`, `In`, `NotIn`, `=`, `!=`, `>`, `>=`, `<`, `<=`, `Contains`, `NotContain`, `StartsWith`, `EndsWith`, `IsNullOrEmpty`, `IsNotNullOrEmpty`, etc.    
 ``` json
 {
   "condition": "and",

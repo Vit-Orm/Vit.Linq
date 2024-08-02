@@ -26,7 +26,7 @@ FilerRule 可以表达 逻辑组合 （And / Or / Not ） 和 基本的逻辑判
   - Logical Judgement
     - [object] is null (==null) / is not null (!=null)
     - [numeric] compare: ==  !=  >  >=  <  <=
-    - [string] compare: Contains NotContains StartsWith EndsWith IsNullOrEmpty IsNotNullOrEmpty
+    - [string] compare: Contains NotContain StartsWith EndsWith IsNullOrEmpty IsNotNullOrEmpty
     - [array] contains: In / NotIn
     - custom operator
 
@@ -68,7 +68,7 @@ namespace App
 > FilterRule 为json格式的数据，其中 condition 可以为 `and`, `or`, `not`, `notand`, `notor`(not or 的组合)    
 > `rules` 可以为嵌套的 FilterRule。    
 > `field` 可以为嵌套属性, 例如 `id` , `job.name` .    
-> `operator` 可以为 `IsNull`, `IsNotNull`, `In`, `NotIn`, `=`, `!=`, `>`, `>=`, `<`, `<=`, `Contains`, `NotContains`, `StartsWith`, `EndsWith`, `IsNullOrEmpty`, `IsNotNullOrEmpty` 等    
+> `operator` 可以为 `IsNull`, `IsNotNull`, `In`, `NotIn`, `=`, `!=`, `>`, `>=`, `<`, `<=`, `Contains`, `NotContain`, `StartsWith`, `EndsWith`, `IsNullOrEmpty`, `IsNotNullOrEmpty` 等    
 ``` json
 {
   "condition": "and",

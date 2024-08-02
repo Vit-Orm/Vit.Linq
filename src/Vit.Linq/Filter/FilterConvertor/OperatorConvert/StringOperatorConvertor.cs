@@ -21,7 +21,7 @@ namespace Vit.Linq.Filter.FilterConvertor.OperatorConvert
 
                 return (true, Expression.AndAlso(Expression.Not(nullCheck), contains));
             }
-            else if (RuleOperator.NotContains.Equals(arg.Operator, arg.comparison))
+            else if (RuleOperator.NotContain.Equals(arg.Operator, arg.comparison))
             {
                 var leftValueExpression = arg.leftValueExpression;
                 var leftValueType = arg.leftValueType;

@@ -343,13 +343,13 @@ namespace Vit.Linq.MsTest.Filter
             }
             #endregion
 
-            #region ##2 NotContains
+            #region ##2 NotContain
             {
                 //###1
                 {
                     var query = GetQueryable();
 
-                    var strRule = "{'field':'name',  'operator': 'NotContains',  'value': '987' }".Replace("'", "\"");
+                    var strRule = "{'field':'name',  'operator': 'NotContain',  'value': '987' }".Replace("'", "\"");
                     var rule = GetRule(strRule);
                     var result = Filter(ToQuery(query), rule);
                     Assert.AreEqual(999, result.Count);
@@ -361,7 +361,7 @@ namespace Vit.Linq.MsTest.Filter
                     var query = GetQueryable();
                     query.Skip(987).FirstOrDefault().name = null;
 
-                    var strRule = "{'field':'name',  'operator': 'NotContains',  'value': '987' }".Replace("'", "\"");
+                    var strRule = "{'field':'name',  'operator': 'NotContain',  'value': '987' }".Replace("'", "\"");
                     var rule = GetRule(strRule);
                     var result = Filter(ToQuery(query), rule);
                     Assert.AreEqual(1000, result.Count);
@@ -372,7 +372,7 @@ namespace Vit.Linq.MsTest.Filter
                     var query = GetQueryable();
                     query.Skip(987).FirstOrDefault().name = "";
 
-                    var strRule = "{'field':'name',  'operator': 'NotContains',  'value': '987' }".Replace("'", "\"");
+                    var strRule = "{'field':'name',  'operator': 'NotContain',  'value': '987' }".Replace("'", "\"");
                     var rule = GetRule(strRule);
                     var result = Filter(ToQuery(query), rule);
                     Assert.AreEqual(1000, result.Count);
