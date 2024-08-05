@@ -20,7 +20,7 @@ namespace Vit.Linq
         /// <returns></returns>
         public static Type GetNestedMemberType(Type type, string memberPath)
         {
-            if (string.IsNullOrWhiteSpace(memberPath)) return type;
+            if (string.IsNullOrWhiteSpace(memberPath) || type == null) return type;
 
             memberPath = memberPath.Replace("]", "").Replace("[", ".");
             foreach (var memberName in memberPath.Split('.'))
@@ -31,10 +31,12 @@ namespace Vit.Linq
                 }
                 else if (type.IsGenericType && typeof(IEnumerable).IsAssignableFrom(type) && int.TryParse(memberName, out _))
                 {
-                    type = type.GetGenericArguments()[0];
+                    type = type.GetGenericArguments().FirstOrDefault();
                 }
                 else
                     type = GetMemberType(type, memberName);
+
+                if (type == null) break;
             }
             return type;
         }
