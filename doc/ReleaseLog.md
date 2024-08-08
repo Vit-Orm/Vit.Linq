@@ -1,4 +1,9 @@
-﻿# Vit.Library ReleaseLog
+﻿# Vit.Linq ReleaseLog
+
+-----------------------
+# 3.0.3
+-  Demo for CustomMethod
+
 
 -----------------------
 # 3.0.1

@@ -52,7 +52,7 @@ String.EndsWith
      */
 
 
-    public class MethodCall : IExpressionConvertor
+    public partial class MethodCall : IExpressionConvertor
     {
         public virtual int priority { get; set; } = 100;
 
@@ -104,6 +104,9 @@ String.EndsWith
 
             throw new NotSupportedException($"Method not supported: {call.methodName}");
         }
+
+
+
 
     }
 }

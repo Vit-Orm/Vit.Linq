@@ -8,16 +8,14 @@ using Vit.Linq.ExpressionTree.ComponentModel;
 namespace Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls
 {
 
-
-
+    /// <summary>
+    /// Mark this method to be able to convert to ExpressionNode from Expression. Method arguments must be ValueType (including string).
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class CustomMethodAttribute : Attribute
     {
-        public CustomMethodAttribute()
-        {
-        }
         public virtual bool PredicateToData(ToDataArgument arg, MethodCallExpression call) => true;
-        public virtual ExpressionNode ToData(ToDataArgument arg, MethodCallExpression call) => MethodConvertor_Base.ConvertToData(arg, call);
+        public virtual ExpressionNode ToData(ToDataArgument arg, MethodCallExpression call) => MethodCall.ConvertToData(arg, call);
 
 
         public virtual bool PredicateToCode(ToCodeArgument arg, ExpressionNode_MethodCall call) => true;
