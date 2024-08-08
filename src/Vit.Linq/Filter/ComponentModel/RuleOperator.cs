@@ -2,8 +2,8 @@
 {
     public class RuleOperator
     {
-        public const string IsNull = "IsNull";
-        public const string IsNotNull = "IsNotNull";
+        public const string IsNull = nameof(IsNull);
+        public const string IsNotNull = nameof(IsNotNull);
 
 
         public const string Equal = "=";
@@ -16,15 +16,15 @@
 
 
 
-        public const string In = "In";
-        public const string NotIn = "NotIn";
+        public const string In = nameof(In);
+        public const string NotIn = nameof(NotIn);
 
-        public const string Contains = "Contains";
-        public const string NotContains = "NotContains";
-        public const string StartsWith = "StartsWith";
-        public const string EndsWith = "EndsWith";
-        public const string IsNullOrEmpty = "IsNullOrEmpty";
-        public const string IsNotNullOrEmpty = "IsNotNullOrEmpty";
+        public const string Contains = nameof(Contains);
+        public const string NotContain = nameof(NotContain);
+        public const string StartsWith = nameof(StartsWith);
+        public const string EndsWith = nameof(EndsWith);
+        public const string IsNullOrEmpty = nameof(IsNullOrEmpty);
+        public const string IsNotNullOrEmpty = nameof(IsNotNullOrEmpty);
 
 
     }

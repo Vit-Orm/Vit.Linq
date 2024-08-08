@@ -24,7 +24,7 @@ namespace Vit.Linq.Filter.ComponentModel
         ///     "IsNull", "IsNotNull" ,
         ///     "=", "!=", "&gt;", "&lt;" , "&gt;=", "&lt;=", 
         ///     "In" , "NotIn" ,
-        ///     "Contains", "NotContains", "StartsWith", "EndsWith" , "IsNullOrEmpty", "IsNotNullOrEmpty"
+        ///     "Contains", "NotContain", "StartsWith", "EndsWith" , "IsNullOrEmpty", "IsNotNullOrEmpty"
         ///
         ///    //TODO [array]   "is empty", "is not empty"
         /// </summary>

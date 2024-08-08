@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Vit.Linq.ExpressionTree.MsTest
+﻿namespace Vit.Linq.ExpressionTree.MsTest
 {
 
 
