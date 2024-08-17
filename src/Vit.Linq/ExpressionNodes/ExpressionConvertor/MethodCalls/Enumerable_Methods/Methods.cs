@@ -5,12 +5,12 @@ using System.Linq.Expressions;
 
 using Vit.Linq.ExpressionNodes.ComponentModel;
 
-namespace Vit.Linq.ExpressionNodes.ExpressionConvertor.MethodCalls.Queryable_Methods
+namespace Vit.Linq.ExpressionNodes.ExpressionConvertor.MethodCalls.Enumerable_Methods
 {
 
     public class Methods : MethodConvertor_Base
     {
-        static readonly Type methodType = typeof(Queryable);
+        static readonly Type methodType = typeof(Enumerable);
 
         static readonly List<string> methodNames = methodType
             .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
@@ -21,6 +21,7 @@ namespace Vit.Linq.ExpressionNodes.ExpressionConvertor.MethodCalls.Queryable_Met
         {
             return methodType == call.Method.DeclaringType;
         }
+
 
 
         public override bool PredicateToCode(ToCodeArgument arg, ExpressionNode_MethodCall call)

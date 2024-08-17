@@ -71,6 +71,7 @@ String.EndsWith
             var types = GetType().Assembly.GetTypes().Where(type => type.IsClass
                     && !type.IsAbstract
                     && typeof(IMethodConvertor).IsAssignableFrom(type)
+                    && !typeof(Attribute).IsAssignableFrom(type)
                     && type.GetConstructor(Type.EmptyTypes) != null
             ).ToList();
 
@@ -82,9 +83,11 @@ String.EndsWith
         {
             if (expression is MethodCallExpression methodCall)
             {
-                var convertor = methodConvertors.FirstOrDefault(m => m.PredicateToData(arg, methodCall));
-                if (convertor != null)
-                    return convertor.ToData(arg, methodCall);
+                foreach (var convertor in methodConvertors)
+                {
+                    var result = convertor.ToData(arg, methodCall);
+                    if (result.success) return result.node;
+                }
 
                 throw new NotSupportedException($"Unsupported method call: {methodCall.Method.Name}");
             }
@@ -98,9 +101,11 @@ String.EndsWith
 
             ExpressionNode_MethodCall call = data;
 
-            var convertor = methodConvertors.FirstOrDefault(m => m.PredicateToCode(arg, call));
-            if (convertor != null)
-                return convertor.ToCode(arg, call);
+            foreach (var convertor in methodConvertors)
+            {
+                var result = convertor.ToCode(arg, call);
+                if (result.success) return result.expression;
+            }
 
             throw new NotSupportedException($"Method not supported: {call.methodName}");
         }

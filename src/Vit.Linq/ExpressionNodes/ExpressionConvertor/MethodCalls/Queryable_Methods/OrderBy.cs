@@ -14,7 +14,6 @@ namespace Vit.Linq.ExpressionNodes.ExpressionConvertor.MethodCalls.Queryable_Met
     /// </summary>
     public class OrderBy : MethodConvertor_Base
     {
-
         public Type methodType { get; } = typeof(Queryable);
 
         static readonly List<string> methodNames = new List<string> { "OrderBy", "OrderByDescending", "ThenBy", "ThenByDescending" };
@@ -26,8 +25,10 @@ namespace Vit.Linq.ExpressionNodes.ExpressionConvertor.MethodCalls.Queryable_Met
 
         public override bool PredicateToData(ToDataArgument arg, MethodCallExpression call)
         {
-            return methodType == call.Method.DeclaringType == methodNames.Contains(call.Method.Name);
+            return methodType == call.Method.DeclaringType && methodNames.Contains(call.Method.Name);
         }
+
+
 
         public override bool PredicateToCode(ToCodeArgument arg, ExpressionNode_MethodCall call)
         {

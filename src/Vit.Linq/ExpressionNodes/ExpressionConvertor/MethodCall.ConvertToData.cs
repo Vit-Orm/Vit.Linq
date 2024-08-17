@@ -12,7 +12,6 @@ namespace Vit.Linq.ExpressionNodes.ExpressionConvertor
         {
             var method = call.Method;
 
-
             // #1 Object
             ExpressionNode @object = call.Object == null ? null : arg.convertService.ConvertToData(arg, call.Object);
 

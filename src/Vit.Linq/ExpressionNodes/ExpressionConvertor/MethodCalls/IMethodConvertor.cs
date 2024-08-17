@@ -7,10 +7,8 @@ namespace Vit.Linq.ExpressionNodes.ExpressionConvertor.MethodCalls
     public interface IMethodConvertor
     {
         int priority { get; }
-        bool PredicateToCode(ToCodeArgument arg, ExpressionNode_MethodCall call);
-        Expression ToCode(ToCodeArgument arg, ExpressionNode_MethodCall call);
+        (bool success, ExpressionNode node) ToData(ToDataArgument arg, MethodCallExpression call);
+        (bool success, Expression expression) ToCode(ToCodeArgument arg, ExpressionNode_MethodCall call);
 
-        bool PredicateToData(ToDataArgument arg, MethodCallExpression call);
-        ExpressionNode ToData(ToDataArgument arg, MethodCallExpression call);
     }
 }
