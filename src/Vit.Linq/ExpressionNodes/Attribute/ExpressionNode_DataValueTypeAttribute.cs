@@ -3,15 +3,13 @@
 namespace Vit.Linq.ExpressionNodes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class DataValueTypeAttribute : Attribute
+    public class ExpressionNode_DataValueTypeAttribute : Attribute
     {
         public EDataValueType dataValueType { get; set; }
-        public DataValueTypeAttribute(EDataValueType dataValueType)
+        public ExpressionNode_DataValueTypeAttribute(EDataValueType dataValueType)
         {
             this.dataValueType = dataValueType;
         }
     }
-
-
 
 }

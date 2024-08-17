@@ -9,7 +9,7 @@ namespace Vit.Linq.ExpressionNodes.ExpressionConvertor.MethodCalls
     /// Mark this method to be able to convert to ExpressionNode from Expression. Method arguments must be ValueType (including string).
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class ExpressionNodeCustomMethodAttribute : Attribute, IMethodConvertor
+    public class ExpressionNode_CustomMethodAttribute : Attribute, IMethodConvertor
     {
         public int priority { get; set; } = 90;
 

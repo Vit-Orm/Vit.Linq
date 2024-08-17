@@ -97,9 +97,9 @@ namespace Vit.Linq.ExpressionNodes
                     {
                         // get ValueType from ValueTypeAttribute
                         {
-                            if (call.Method.GetCustomAttributes(typeof(DataValueTypeAttribute), inherit: true).FirstOrDefault() is DataValueTypeAttribute attribute) return attribute.dataValueType;
+                            if (call.Method.GetCustomAttributes(typeof(ExpressionNode_DataValueTypeAttribute), inherit: true).FirstOrDefault() is ExpressionNode_DataValueTypeAttribute attribute) return attribute.dataValueType;
 
-                            attribute = call.Method.DeclaringType.GetCustomAttributes(typeof(DataValueTypeAttribute), inherit: true).FirstOrDefault() as DataValueTypeAttribute;
+                            attribute = call.Method.DeclaringType.GetCustomAttributes(typeof(ExpressionNode_DataValueTypeAttribute), inherit: true).FirstOrDefault() as ExpressionNode_DataValueTypeAttribute;
                             if (attribute != null) return attribute.dataValueType;
                         }
 
