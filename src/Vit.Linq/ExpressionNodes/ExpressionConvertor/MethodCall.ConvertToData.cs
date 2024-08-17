@@ -12,20 +12,14 @@ namespace Vit.Linq.ExpressionNodes.ExpressionConvertor
         {
             var method = call.Method;
 
-            // #1 typeName
-            var typeName = method.DeclaringType.Name;
 
-            // #2 Object
+            // #1 Object
             ExpressionNode @object = call.Object == null ? null : arg.convertService.ConvertToData(arg, call.Object);
 
-
-            // #3 methodName
-            var methodName = method.Name;
-
-            // #4 typeArguments
+            // #2 typeArguments
             // var typeArguments = method.GetGenericArguments();
 
-            // #5 Arguments
+            // #3 Arguments
             var arguments = call.Arguments?.Select(param => arg.convertService.ConvertToData(arg, param)).ToArray();
             if (arguments?.Any() == true)
             {
@@ -49,9 +43,8 @@ namespace Vit.Linq.ExpressionNodes.ExpressionConvertor
             //    var value = GetValue(call);
             //    return ExpressionNode_Constant.FromValue(value);
             //}
-            var parameterTypes = call.Method.GetParameters().Select(parameter => parameter.ParameterType).ToArray();
-            var returnType = call.Method.ReturnType;
-            return ExpressionNode.MethodCall(methodCall_typeName: typeName, methodName: methodName, @object: @object, arguments: arguments).MethodCall_SetParamTypes(parameterTypes, returnType);
+
+            return ExpressionNode.MethodCall(method: method, @object: @object, arguments: arguments);
         }
 
     }

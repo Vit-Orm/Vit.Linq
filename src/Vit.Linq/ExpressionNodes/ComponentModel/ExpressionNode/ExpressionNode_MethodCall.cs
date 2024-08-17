@@ -1,10 +1,9 @@
 ﻿using System;
-
-
+using System.Linq;
+using System.Reflection;
 
 namespace Vit.Linq.ExpressionNodes.ComponentModel
 {
-
     public interface ExpressionNode_MethodCall : IExpressionNode
     {
         /// <summary>
@@ -20,6 +19,9 @@ namespace Vit.Linq.ExpressionNodes.ComponentModel
         Type[] MethodCall_GetParamTypes();
         Type MethodCall_GetReturnType();
         ExpressionNode MethodCall_SetParamTypes(Type[] paramTypes, Type returnType = null);
+
+        ExpressionNode MethodCall_SetMethod(MethodInfo method);
+        MethodInfo MethodCall_GetMethod();
     }
 
     public partial class ExpressionNode : ExpressionNode_MethodCall
@@ -35,8 +37,18 @@ namespace Vit.Linq.ExpressionNodes.ComponentModel
 
         public ExpressionNode[] arguments { get; set; }
 
-        public static ExpressionNode MethodCall(string methodCall_typeName = null, string methodName = null, ExpressionNode @object = null, ExpressionNode[] arguments = null)
+        public static ExpressionNode MethodCall(MethodInfo method, ExpressionNode @object = null, ExpressionNode[] arguments = null)
         {
+            // #1 typeName
+            var methodCall_typeName = method.DeclaringType.Name;
+
+            // #2 methodName
+            var methodName = method.Name;
+
+            // #3 type
+            var parameterTypes = method.GetParameters().Select(parameter => parameter.ParameterType).ToArray();
+            var returnType = method.ReturnType;
+
             return new ExpressionNode
             {
                 nodeType = NodeType.MethodCall,
@@ -44,25 +56,41 @@ namespace Vit.Linq.ExpressionNodes.ComponentModel
                 methodName = methodName,
                 @object = @object,
                 arguments = arguments,
-            };
+            }
+            .MethodCall_SetMethod(method)
+            .MethodCall_SetParamTypes(parameterTypes: parameterTypes, returnType: returnType)
+            ;
         }
 
         public Type[] MethodCall_GetParamTypes()
         {
-            return GetCodeArg("MethodCall_ParamTypes") as Type[];
+            return GetCodeArg("MethodCall_ParameterTypes") as Type[];
         }
         public Type MethodCall_GetReturnType()
         {
             return GetCodeArg("MethodCall_ReturnType") as Type;
         }
 
-        public ExpressionNode MethodCall_SetParamTypes(Type[] paramTypes, Type returnType = null)
+        public ExpressionNode MethodCall_SetParamTypes(Type[] parameterTypes, Type returnType = null)
         {
-            if (paramTypes != null)
-                SetCodeArg("MethodCall_ParamTypes", paramTypes);
+            if (parameterTypes != null)
+                SetCodeArg("MethodCall_ParameterTypes", parameterTypes);
             if (returnType != null)
                 SetCodeArg("MethodCall_ReturnType", returnType);
             return this;
         }
+
+        public ExpressionNode MethodCall_SetMethod(MethodInfo method)
+        {
+            if (method != null)
+                SetCodeArg("MethodCall_Method", method);
+            return this;
+        }
+        public MethodInfo MethodCall_GetMethod()
+        {
+            return GetCodeArg("MethodCall_Method") as MethodInfo;
+        }
+
+
     }
 }

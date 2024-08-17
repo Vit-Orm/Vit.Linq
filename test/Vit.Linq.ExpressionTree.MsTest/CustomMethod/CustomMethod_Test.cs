@@ -61,7 +61,7 @@ namespace Vit.Linq.ExpressionNodes.MsTest.CustomMethod
 
     public static partial class CustomMethod_Test_Extensions
     {
-        [CustomMethod]
+        [ExpressionNodeCustomMethod]
         public static int Add(this int data, int value) => throw new NotImplementedException();
 
         [MyCustomMethod(offset = 10)]
@@ -71,7 +71,7 @@ namespace Vit.Linq.ExpressionNodes.MsTest.CustomMethod
 
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class MyCustomMethodAttribute : CustomMethodAttribute
+    public class MyCustomMethodAttribute : ExpressionNodeCustomMethodAttribute
     {
         public int offset { get; set; }
 
