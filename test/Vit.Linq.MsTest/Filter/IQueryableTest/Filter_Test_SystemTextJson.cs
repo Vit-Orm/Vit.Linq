@@ -5,8 +5,8 @@ using System.Text.Json;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using Vit.Linq.Filter;
-using Vit.Linq.Filter.ComponentModel;
+using Vit.Linq.FilterRules;
+using Vit.Linq.FilterRules.ComponentModel;
 
 using Queryable = System.Linq.IQueryable;
 

@@ -4,7 +4,7 @@ using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using Vit.Linq.Filter.ComponentModel;
+using Vit.Linq.FilterRules.ComponentModel;
 
 namespace Vit.Linq.MsTest.Filter
 {

@@ -1,4 +1,4 @@
-﻿namespace Vit.Linq.ExpressionTree.MsTest
+﻿namespace Vit.Linq.ExpressionNodes.MsTest
 {
     public class Person
     {

@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vit.Core.Module.Serialization;
 
-namespace Vit.Linq.ExpressionTree.MsTest
+namespace Vit.Linq.ExpressionNodes.MsTest
 {
     [TestClass]
     public class ConstValue_Test

@@ -7,9 +7,9 @@ using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vit.Core.Module.Serialization;
-using Vit.Linq.Filter;
-using Vit.Linq.Filter.ComponentModel;
-using Vit.Linq.Filter.FilterConvertor;
+using Vit.Linq.FilterRules;
+using Vit.Linq.FilterRules.ComponentModel;
+using Vit.Linq.FilterRules.FilterConvertor;
 
 namespace Vit.Linq.MsTest.Filter
 {

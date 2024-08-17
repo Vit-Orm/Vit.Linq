@@ -2,9 +2,9 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using NodeValueType = Vit.Linq.ExpressionTree.ComponentModel.NodeValueType;
+using NodeValueType = Vit.Linq.ExpressionNodes.ComponentModel.NodeValueType;
 
-namespace Vit.Linq.ExpressionTree.MsTest
+namespace Vit.Linq.ExpressionNodes.MsTest
 {
     [TestClass]
     public class ValueType_Test

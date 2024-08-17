@@ -2,9 +2,9 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using Vit.Linq.ExpressionTree.ComponentModel;
+using Vit.Linq.ExpressionNodes.ComponentModel;
 
-namespace Vit.Linq.ExpressionTree.MsTest
+namespace Vit.Linq.ExpressionNodes.MsTest
 {
     [TestClass]
     public class Serialize_Test

@@ -1,6 +1,6 @@
 ﻿using Vit.Core.Module.Serialization;
 using Vit.Linq;
-using Vit.Linq.ExpressionTree;
+using Vit.Linq.ExpressionNodes;
 
 namespace App
 {
@@ -19,7 +19,7 @@ namespace App
             #endregion
 
             #region #2 ExpressionNode to QueryAction
-            var queryAction = new Vit.Linq.ExpressionTree.Query.QueryAction(node);
+            var queryAction = new Vit.Linq.ExpressionNodes.Query.QueryAction(node);
             var strQuery = Json.Serialize(queryAction);
             #endregion
 

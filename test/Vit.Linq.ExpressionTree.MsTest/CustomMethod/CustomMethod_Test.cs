@@ -3,11 +3,11 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vit.Core.Module.Serialization;
-using Vit.Linq.ExpressionTree.ComponentModel;
-using Vit.Linq.ExpressionTree.ExpressionConvertor;
-using Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls;
+using Vit.Linq.ExpressionNodes.ComponentModel;
+using Vit.Linq.ExpressionNodes.ExpressionConvertor;
+using Vit.Linq.ExpressionNodes.ExpressionConvertor.MethodCalls;
 
-namespace Vit.Linq.ExpressionTree.MsTest.CustomMethod
+namespace Vit.Linq.ExpressionNodes.MsTest.CustomMethod
 {
 
 
