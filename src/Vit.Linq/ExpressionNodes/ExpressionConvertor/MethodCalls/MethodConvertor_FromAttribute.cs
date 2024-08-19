@@ -6,7 +6,7 @@ using Vit.Linq.ExpressionNodes.ComponentModel;
 
 namespace Vit.Linq.ExpressionNodes.ExpressionConvertor.MethodCalls
 {
-    public class MethodConvertor_FromAttrubute : IMethodConvertor
+    public class MethodConvertor_FromAttribute : IMethodConvertor
     {
         public int priority => 100000;
 
