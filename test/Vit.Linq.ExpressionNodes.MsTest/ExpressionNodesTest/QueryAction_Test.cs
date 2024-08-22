@@ -11,17 +11,14 @@ using Vit.Linq.ExpressionNodes.Query;
 namespace Vit.Linq.ExpressionNodes.MsTest.ExpressionNodesTest
 {
     [TestClass]
-    public class CollectionQuery_Test
+    public class QueryAction_Test
     {
-
 
         [TestMethod]
         public void TestQueryable()
         {
             ExpressionTester.TestQueryable(GetQuery());
         }
-
-
 
 
         static IQueryable<ExpressionTester.User> GetQuery()
