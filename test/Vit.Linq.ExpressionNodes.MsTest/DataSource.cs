@@ -1,8 +1,5 @@
 ﻿namespace Vit.Linq.ExpressionNodes.MsTest
 {
-
-
-
     public class DataSource
     {
         public static List<Person> BuildDataSource(int count = 1000)

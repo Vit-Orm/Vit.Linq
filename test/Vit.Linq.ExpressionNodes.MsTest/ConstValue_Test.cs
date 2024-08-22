@@ -9,7 +9,6 @@ namespace Vit.Linq.ExpressionNodes.MsTest
     [TestClass]
     public class ConstValue_Test
     {
-
         void Test(Expression<Func<Person, bool>> predicate)
         {
             var convertService = ExpressionConvertService.Instance;

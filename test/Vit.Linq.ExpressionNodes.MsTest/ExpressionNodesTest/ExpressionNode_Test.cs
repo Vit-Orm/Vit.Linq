@@ -4,9 +4,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vit.Core.Module.Serialization;
 using Vit.Linq.ExpressionNodes.ComponentModel;
-using Vit.Linq.ExpressionNodes.ExpressionTreeTest;
+using Vit.Linq.ExpressionNodes.ExpressionNodesTest;
 
-namespace Vit.Linq.ExpressionNodes.MsTest.ExpressionTreeTest
+namespace Vit.Linq.ExpressionNodes.MsTest.ExpressionNodesTest
 {
     [TestClass]
     public class ExpressionNode_Test
