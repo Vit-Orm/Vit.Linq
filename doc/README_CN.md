@@ -16,7 +16,7 @@ Vit.Linq 提供两个针对Expression表达式的工具，Filter 和 ExpressionT
 
 
 
-# Filter
+# FilterRules
 FilerRule 可以表达 逻辑组合 （And / Or / Not ） 和 基本的逻辑判断 （如 数值比较 / 字符串匹配 / 非空判定 等），如下为所有功能：
   - And
   - Or
@@ -38,6 +38,7 @@ dotnet add package Vit.Core
 ```
 
 创建 console project 并按如下修改 Program.cs
+> code address: [Program.cs](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.Console/Program.cs)    
 ``` csharp
 using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter.ComponentModel;
@@ -60,7 +61,6 @@ namespace App
         }
     }
 }
-
 ```
 
 
@@ -95,8 +95,8 @@ namespace App
 ```
 
 
-# ExpressionTree
-ExpressionTree 可以通过 ExpressionNode(Data) 和 Expression(Code) 的相互转换达到数据和代码相互转换的功能, 支持所有查询相关的Expression(不支持Expression.Assign等功能)
+# ExpressionNodes
+ExpressionNode 可以通过 ExpressionNode(Data) 和 Expression(Code) 的相互转换达到数据和代码相互转换的功能, 支持所有查询相关的Expression(不支持Expression.Assign等功能)
 
 ## Example
 安装引用的包:
@@ -106,18 +106,19 @@ dotnet add package Vit.Core
 ```
 
 创建 console project 并按如下修改 Program2.cs
+> code address: [Program2.cs](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.Console/Program2.cs)    
 ``` csharp
 using Vit.Core.Module.Serialization;
 using Vit.Linq;
-using Vit.Linq.ExpressionTree;
+using Vit.Linq.ExpressionNodes;
 
 namespace App
 {
     internal class Program2
-    {      
-        static void Main(string[] args)
+    {
+        static void Main2(string[] args)
         {
-            var users = new[] { new User(1), new User(2), new User(3), new User(4)};
+            var users = new[] { new User(1), new User(2), new User(3), new User(4) };
             var query = users.AsQueryable();
 
             var queryExpression = users.AsQueryable().Where(m => m.id > 0).OrderBy(m => m.id).Skip(1).Take(2);
@@ -128,7 +129,7 @@ namespace App
             #endregion
 
             #region #2 ExpressionNode to QueryAction
-            var queryAction = new Vit.Linq.ExpressionTree.Query.QueryAction(node);
+            var queryAction = new Vit.Linq.ExpressionNodes.Query.QueryAction(node);
             var strQuery = Json.Serialize(queryAction);
             #endregion
 
@@ -162,10 +163,8 @@ namespace App
 
  
 Examples:  
-- [ExpressionTree](test/Vit.Linq.ExpressionTree.MsTest)  
-- [Filter](test/Vit.Linq.MsTest/Filter/Filter_TestBase.cs)  
-- [CustomOperator](test/Vit.Linq.MsTest/Filter/FilterService_CustomOperator_Test.cs)  
-
+- [FilterRules](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.MsTest/FilterRules/Filter_TestBase.cs)    
+- [ExpressionNodes](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.ExpressionNodes.MsTest)    
 
 
 

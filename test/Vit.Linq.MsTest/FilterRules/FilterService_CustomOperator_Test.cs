@@ -11,7 +11,7 @@ using Vit.Linq.FilterRules;
 using Vit.Linq.FilterRules.ComponentModel;
 using Vit.Linq.FilterRules.FilterConvertor;
 
-namespace Vit.Linq.MsTest.Filter
+namespace Vit.Linq.MsTest.FilterRules
 {
 
     [TestClass]

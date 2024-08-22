@@ -12,7 +12,7 @@ using Vit.Linq.FilterRules.ComponentModel;
 
 using Queryable = System.Linq.IQueryable;
 
-namespace Vit.Linq.MsTest.Filter.IQueryableTest
+namespace Vit.Linq.MsTest.FilterRules.IQueryableTest
 {
     [TestClass]
     public class Filter_Test_Newtonsoft : Filter_TestBase<Queryable>

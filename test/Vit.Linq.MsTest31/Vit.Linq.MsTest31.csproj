@@ -21,7 +21,7 @@
 
     <ItemGroup>
         <Compile Include="..\Vit.Linq.MsTest\Extensions\*.cs" Link="Extensions\%(RecursiveDir)%(FileName)%(Extension)" />
-        <Compile Include="..\Vit.Linq.MsTest\Filter\**\*.cs" Link="Filter\%(RecursiveDir)%(FileName)%(Extension)" />
+        <Compile Include="..\Vit.Linq.MsTest\FilterRules\**\*.cs" Link="FilterRules\%(RecursiveDir)%(FileName)%(Extension)" />
         <Compile Include="..\Vit.Linq.MsTest\DataSource.cs" />
         <Compile Include="..\Vit.Linq.MsTest\QueryableBuilder_Test.cs" />
     </ItemGroup>
