@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 
 using Vit.Linq.ComponentModel;
-using Vit.Linq.Filter;
+using Vit.Linq.FilterRules;
 
 
 namespace Vit.Linq

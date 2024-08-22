@@ -2,7 +2,7 @@
 using System.Linq;
 
 using Vit.Linq.ComponentModel;
-using Vit.Linq.Filter.ComponentModel;
+using Vit.Linq.FilterRules.ComponentModel;
 
 namespace Vit.Linq
 {

@@ -3,10 +3,10 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vit.Core.Module.Serialization;
-using Vit.Linq.ExpressionTree.ComponentModel;
-using Vit.Linq.ExpressionTree.ExpressionTreeTest;
+using Vit.Linq.ExpressionNodes.ComponentModel;
+using Vit.Linq.ExpressionNodes.ExpressionTreeTest;
 
-namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest
+namespace Vit.Linq.ExpressionNodes.MsTest.ExpressionTreeTest
 {
     [TestClass]
     public class ExpressionNode_Test

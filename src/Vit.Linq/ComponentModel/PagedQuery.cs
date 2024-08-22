@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-using Vit.Linq.Filter.ComponentModel;
+using Vit.Linq.FilterRules.ComponentModel;
 
 namespace Vit.Linq.ComponentModel
 {

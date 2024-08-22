@@ -3,11 +3,10 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vit.Core.Module.Serialization;
-using Vit.Linq.ExpressionTree.ComponentModel;
-using Vit.Linq.ExpressionTree.ExpressionConvertor;
-using Vit.Linq.ExpressionTree.ExpressionConvertor.MethodCalls;
+using Vit.Linq.ExpressionNodes.ComponentModel;
+using Vit.Linq.ExpressionNodes.ExpressionConvertor;
 
-namespace Vit.Linq.ExpressionTree.MsTest.CustomMethod
+namespace Vit.Linq.ExpressionNodes.MsTest.CustomMethod
 {
 
 
@@ -61,7 +60,7 @@ namespace Vit.Linq.ExpressionTree.MsTest.CustomMethod
 
     public static partial class CustomMethod_Test_Extensions
     {
-        [CustomMethod]
+        [ExpressionNode_CustomMethod]
         public static int Add(this int data, int value) => throw new NotImplementedException();
 
         [MyCustomMethod(offset = 10)]
@@ -71,18 +70,18 @@ namespace Vit.Linq.ExpressionTree.MsTest.CustomMethod
 
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class MyCustomMethodAttribute : CustomMethodAttribute
+    public class MyCustomMethodAttribute : ExpressionNode_CustomMethodAttribute
     {
         public int offset { get; set; }
 
-        public override ExpressionNode ToData(ToDataArgument arg, MethodCallExpression call)
+        public override (bool success, ExpressionNode node) ToData(ToDataArgument arg, MethodCallExpression call)
         {
             var node = MethodCall.ConvertToData(arg, call);
             ExpressionNode_MethodCall nodeMethodCall = node;
 
             nodeMethodCall.arguments[1].value = (int)nodeMethodCall.arguments[1].value + offset;
 
-            return node;
+            return (true, node);
         }
     }
 

@@ -4,11 +4,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vit.Core.Module.Serialization;
 using Vit.Linq;
-using Vit.Linq.ExpressionTree.ComponentModel;
-using Vit.Linq.ExpressionTree.ExpressionTreeTest;
-using Vit.Linq.ExpressionTree.Query;
+using Vit.Linq.ExpressionNodes.ComponentModel;
+using Vit.Linq.ExpressionNodes.ExpressionTreeTest;
+using Vit.Linq.ExpressionNodes.Query;
 
-namespace Vit.Linq.ExpressionTree.MsTest.ExpressionTreeTest
+namespace Vit.Linq.ExpressionNodes.MsTest.ExpressionTreeTest
 {
     [TestClass]
     public class CollectionQuery_Test

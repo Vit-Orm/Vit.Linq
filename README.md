@@ -17,7 +17,7 @@ Vit.Linq provides two tools for handling Expressions: Filter and ExpressionTree.
 
 
 
-# Filter
+# FilterRules
 FilterRule can express logical combinations (And / Or / Not) and basic logical evaluations (such as numerical comparisons / string matching / null checks, etc.). The complete set of features is as follows:
   - And
   - Or
@@ -43,8 +43,8 @@ Create console project and edit Program.cs
 > code address: [Program.cs](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.Console/Program.cs)    
 ``` csharp
 using Vit.Core.Module.Serialization;
-using Vit.Linq.Filter.ComponentModel;
 using Vit.Linq;
+using Vit.Linq.FilterRules.ComponentModel;
 
 namespace App
 {
@@ -63,6 +63,7 @@ namespace App
         }
     }
 }
+
 
 ```
 
@@ -98,8 +99,8 @@ namespace App
 ```
 
 
-# ExpressionTree
-ExpressionTree enables the transformation between ExpressionNode (data) and Expression (code), allowing for data and code interchangeability. It supports all query-related expressions (excluding functionalities like Expression.Assign).
+# ExpressionNodes
+ExpressionNode enables the transformation between ExpressionNode (data) and Expression (code), allowing for data and code interchangeability. It supports all query-related expressions (excluding functionalities like Expression.Assign).
 
 ## Example
 Install necessary packages:
@@ -113,15 +114,15 @@ Create console project and edit Program.cs
 ``` csharp
 using Vit.Core.Module.Serialization;
 using Vit.Linq;
-using Vit.Linq.ExpressionTree;
+using Vit.Linq.ExpressionNodes;
 
 namespace App
 {
     internal class Program2
-    {      
-        static void Main(string[] args)
+    {
+        static void Main2(string[] args)
         {
-            var users = new[] { new User(1), new User(2), new User(3), new User(4)};
+            var users = new[] { new User(1), new User(2), new User(3), new User(4) };
             var query = users.AsQueryable();
 
             var queryExpression = users.AsQueryable().Where(m => m.id > 0).OrderBy(m => m.id).Skip(1).Take(2);
@@ -132,7 +133,7 @@ namespace App
             #endregion
 
             #region #2 ExpressionNode to QueryAction
-            var queryAction = new Vit.Linq.ExpressionTree.Query.QueryAction(node);
+            var queryAction = new Vit.Linq.ExpressionNodes.Query.QueryAction(node);
             var strQuery = Json.Serialize(queryAction);
             #endregion
 
@@ -160,6 +161,7 @@ namespace App
         }
     }
 }
+
 ```
 
 
@@ -173,8 +175,8 @@ namespace App
 
 
 Examples:  
-- [Filter](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.MsTest/Filter/Filter_TestBase.cs)    
-- [ExpressionTree](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.ExpressionTree.MsTest)    
+- [FilterRules](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.MsTest/FilterRules/Filter_TestBase.cs)    
+- [ExpressionNodes](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.ExpressionNodes.MsTest)    
 
 
 
