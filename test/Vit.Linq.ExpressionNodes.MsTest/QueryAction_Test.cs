@@ -11,10 +11,8 @@ using Vit.Linq.ExpressionNodes.Query;
 namespace Vit.Linq.ExpressionNodes.MsTest
 {
     [TestClass]
-    public class CollectionQuery_Test
+    public class QueryAction_Test
     {
-
-
         IQueryable<Person> GetQuery()
         {
             var convertService = ExpressionConvertService.Instance;
