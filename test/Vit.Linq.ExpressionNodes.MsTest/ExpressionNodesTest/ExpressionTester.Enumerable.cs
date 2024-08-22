@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Vit.Linq.ExpressionNodes.ExpressionTreeTest
+namespace Vit.Linq.ExpressionNodes.ExpressionNodesTest
 {
 
     public partial class ExpressionTester
