@@ -4,15 +4,15 @@ Vit.Linq 提供两个针对Expression表达式的工具，Filter 和 ExpressionT
  _ **Filter** 可以把 FilterRule 和 Expression Predicate 进行相互转换， 由此可以通过 json 数据 对结果集进行动态化筛选。    
  - **ExpressionTree** 实现 ExpressionNode 和 Expression 表达式的相互转换实现数据和代码的转换。    
   > 因为非基本类型Type不能通过数据格式进行传递，所以转换并不是完全百分百互等的，会丢失部分类型信息    
-> source address: [https://github.com/VitormLib/Vit.Linq](https://github.com/VitormLib/Vit.Linq "https://github.com/VitormLib/Vit.Linq")    
+> source address: [https://github.com/Vit-Orm/Vit.Linq](https://github.com/Vit-Orm/Vit.Linq "https://github.com/Vit-Orm/Vit.Linq")    
 
-![](https://img.shields.io/github/license/VitormLib/Vit.Linq.svg)  
-![](https://img.shields.io/github/repo-size/VitormLib/Vit.Linq.svg)  ![](https://img.shields.io/github/last-commit/VitormLib/Vit.Linq.svg)  
+![](https://img.shields.io/github/license/Vit-Orm/Vit.Linq.svg)  
+![](https://img.shields.io/github/repo-size/Vit-Orm/Vit.Linq.svg)  ![](https://img.shields.io/github/last-commit/Vit-Orm/Vit.Linq.svg)  
  
 
 | Build | NuGet |
 | -------- | -------- |
-|![](https://github.com/VitormLib/Vit.Linq/workflows/ki_devops3/badge.svg) | [![](https://img.shields.io/nuget/v/Vit.Linq.svg)](https://www.nuget.org/packages/Vit.Linq) ![](https://img.shields.io/nuget/dt/Vit.Linq.svg) |
+|![](https://github.com/Vit-Orm/Vit.Linq/workflows/ki_devops3/badge.svg) | [![](https://img.shields.io/nuget/v/Vit.Linq.svg)](https://www.nuget.org/packages/Vit.Linq) ![](https://img.shields.io/nuget/dt/Vit.Linq.svg) |
 
 
 
@@ -38,7 +38,7 @@ dotnet add package Vit.Core
 ```
 
 创建 console project 并按如下修改 Program.cs
-> code address: [Program.cs](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.Console/Program.cs)    
+> code address: [Program.cs](https://github.com/Vit-Orm/Vit.Linq/tree/master/test/Vit.Linq.Console/Program.cs)    
 ``` csharp
 using Vit.Core.Module.Serialization;
 using Vit.Linq.Filter.ComponentModel;
@@ -106,7 +106,7 @@ dotnet add package Vit.Core
 ```
 
 创建 console project 并按如下修改 Program2.cs
-> code address: [Program2.cs](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.Console/Program2.cs)    
+> code address: [Program2.cs](https://github.com/Vit-Orm/Vit.Linq/tree/master/test/Vit.Linq.Console/Program2.cs)    
 ``` csharp
 using Vit.Core.Module.Serialization;
 using Vit.Linq;
@@ -163,8 +163,8 @@ namespace App
 
  
 Examples:  
-- [FilterRules](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.MsTest/FilterRules/Filter_TestBase.cs)    
-- [ExpressionNodes](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.ExpressionNodes.MsTest)    
+- [FilterRules](https://github.com/Vit-Orm/Vit.Linq/tree/master/test/Vit.Linq.MsTest/FilterRules/Filter_TestBase.cs)    
+- [ExpressionNodes](https://github.com/Vit-Orm/Vit.Linq/tree/master/test/Vit.Linq.ExpressionNodes.MsTest)    
 
 
 

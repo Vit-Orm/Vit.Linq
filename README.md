@@ -4,15 +4,15 @@ Vit.Linq provides two tools for handling Expressions: Filter and ExpressionTree.
 - **Filter** can convert between FilterRule and Expression Predicate, allowing for dynamic filtering of result sets using JSON data.    
 - **ExpressionTree** facilitates the conversion between ExpressionNode and Expression, enabling transformations between data and code.    
   > Note: Since non-primitive types cannot be transmitted via data formats, the conversion may not be fully equivalent, and some type information might be lost.    
-> source address: [https://github.com/VitormLib/Vit.Linq](https://github.com/VitormLib/Vit.Linq "https://github.com/VitormLib/Vit.Linq")    
+> source address: [https://github.com/Vit-Orm/Vit.Linq](https://github.com/Vit-Orm/Vit.Linq "https://github.com/Vit-Orm/Vit.Linq")    
 
-![](https://img.shields.io/github/license/VitormLib/Vit.Linq.svg)  
-![](https://img.shields.io/github/repo-size/VitormLib/Vit.Linq.svg)  ![](https://img.shields.io/github/last-commit/VitormLib/Vit.Linq.svg)  
+![](https://img.shields.io/github/license/Vit-Orm/Vit.Linq.svg)  
+![](https://img.shields.io/github/repo-size/Vit-Orm/Vit.Linq.svg)  ![](https://img.shields.io/github/last-commit/Vit-Orm/Vit.Linq.svg)  
  
 
 | Build | NuGet |
 | -------- | -------- |
-|![](https://github.com/VitormLib/Vit.Linq/workflows/ki_devops3/badge.svg) | [![](https://img.shields.io/nuget/v/Vit.Linq.svg)](https://www.nuget.org/packages/Vit.Linq) ![](https://img.shields.io/nuget/dt/Vit.Linq.svg) |
+|![](https://github.com/Vit-Orm/Vit.Linq/workflows/ki_devops3/badge.svg) | [![](https://img.shields.io/nuget/v/Vit.Linq.svg)](https://www.nuget.org/packages/Vit.Linq) ![](https://img.shields.io/nuget/dt/Vit.Linq.svg) |
 
 
 
@@ -40,7 +40,7 @@ dotnet add package Vit.Core
 ```
 
 Create console project and edit Program.cs
-> code address: [Program.cs](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.Console/Program.cs)    
+> code address: [Program.cs](https://github.com/Vit-Orm/Vit.Linq/tree/master/test/Vit.Linq.Console/Program.cs)    
 ``` csharp
 using Vit.Core.Module.Serialization;
 using Vit.Linq;
@@ -110,7 +110,7 @@ dotnet add package Vit.Core
 ```
 
 Create console project and edit Program.cs
-> code address: [Program.cs](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.Console/Program2.cs)    
+> code address: [Program.cs](https://github.com/Vit-Orm/Vit.Linq/tree/master/test/Vit.Linq.Console/Program2.cs)    
 ``` csharp
 using Vit.Core.Module.Serialization;
 using Vit.Linq;
@@ -175,8 +175,8 @@ namespace App
 
 
 Examples:  
-- [FilterRules](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.MsTest/FilterRules/Filter_TestBase.cs)    
-- [ExpressionNodes](https://github.com/VitormLib/Vit.Linq/tree/master/test/Vit.Linq.ExpressionNodes.MsTest)    
+- [FilterRules](https://github.com/Vit-Orm/Vit.Linq/tree/master/test/Vit.Linq.MsTest/FilterRules/Filter_TestBase.cs)    
+- [ExpressionNodes](https://github.com/Vit-Orm/Vit.Linq/tree/master/test/Vit.Linq.ExpressionNodes.MsTest)    
 
 
 

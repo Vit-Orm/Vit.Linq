@@ -21,7 +21,7 @@ namespace Vit.Linq.ExpressionNodes.ExpressionConvertor
 
                 var parameterTypes = lambda.Parameters.Select(parameter => parameter.Type).ToArray();
                 var returnType = lambda.ReturnType;
-                return ExpressionNode.Lambda(parameterNames: parameterNames, body: body).Lambda_SetParamTypes(parameterTypes, returnType);
+                return ExpressionNode.Lambda(parameterNames: parameterNames, body: body).Lambda_SetParamTypes(parameterTypes, returnType).Lambda_SetLambdaExpression(lambda);
             }
 
             return null;

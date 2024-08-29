@@ -6,14 +6,14 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <Version>3.1.0</Version>
+        <Version>3.1.1</Version>
         <LangVersion>9.0</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup>
         <Authors>Lith</Authors>
         <Description>Linq Extension</Description>
-        <PackageProjectUrl>https://github.com/VitormLib/Vit.Linq</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/Vit-Orm/Vit.Linq</PackageProjectUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>linq</PackageTags>
     </PropertyGroup>

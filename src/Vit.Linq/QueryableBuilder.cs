@@ -21,6 +21,10 @@ namespace Vit.Linq
             return (query as IQueryWithConfig)?.queryConfig;
         }
 
+        public static bool BuildFrom(IQueryable query)
+        {
+            return query is IQueryWithConfig;
+        }
 
         public static Func<object, Type, bool> CompareQueryByName(string queryName)
         {
@@ -72,11 +76,9 @@ namespace Vit.Linq
 
             return null;
         }
-    }
 
 
-    public static partial class QueryableBuilder
-    {
+
         interface IQueryWithConfig
         {
             object queryConfig { get; }
