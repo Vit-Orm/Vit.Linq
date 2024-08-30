@@ -23,6 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.Console", "test\Vi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vit.Linq.ExpressionNodes.MsTest", "test\Vit.Linq.ExpressionNodes.MsTest\Vit.Linq.ExpressionNodes.MsTest.csproj", "{FC2D5B01-792D-4CDC-BB78-9379D4DB5441}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6C2A6022-0195-48D3-9CBF-9372FA5CA148}"
+	ProjectSection(SolutionItems) = preProject
+		src\Versions.props = src\Versions.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +56,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5801E323-C03D-48D2-BEFF-DE060B3293B0} = {0062F400-558C-4084-8004-3C8D4CBBFDE4}
+		{A27EF8DC-2284-43BF-98E7-CE3C35E296CD} = {6C2A6022-0195-48D3-9CBF-9372FA5CA148}
 		{32F107EF-09D7-4D5D-9D43-6BA00DAEBD5C} = {0062F400-558C-4084-8004-3C8D4CBBFDE4}
 		{FC2D5B01-792D-4CDC-BB78-9379D4DB5441} = {0062F400-558C-4084-8004-3C8D4CBBFDE4}
 	EndGlobalSection
