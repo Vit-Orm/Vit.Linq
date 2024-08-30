@@ -38,7 +38,7 @@ jobs:
       - name: Run test
         run: |
            set -e
-           echo run test
+           echo call ./Publish/DevOps3/build-bash/10.Test.bash to test
 
            cd ./Publish/DevOps3/build-bash
            bash 10.Test.bash;
