@@ -12,7 +12,7 @@ Vit.Linq 提供两个针对Expression表达式的工具，Filter 和 ExpressionT
 
 | Build | NuGet |
 | -------- | -------- |
-|![](https://github.com/Vit-Orm/Vit.Linq/workflows/ki_devops3/badge.svg) | [![](https://img.shields.io/nuget/v/Vit.Linq.svg)](https://www.nuget.org/packages/Vit.Linq) ![](https://img.shields.io/nuget/dt/Vit.Linq.svg) |
+|![](https://github.com/Vit-Orm/Vit.Linq/workflows/ki_devops3_build/badge.svg) | [![](https://img.shields.io/nuget/v/Vit.Linq.svg)](https://www.nuget.org/packages/Vit.Linq) ![](https://img.shields.io/nuget/dt/Vit.Linq.svg) |
 
 
 
