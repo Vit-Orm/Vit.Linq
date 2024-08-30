@@ -12,7 +12,7 @@ Vit.Linq provides two tools for handling Expressions: Filter and ExpressionTree.
 
 | Build | NuGet |
 | -------- | -------- |
-|![](https://github.com/Vit-Orm/Vit.Linq/workflows/ki_devops3/badge.svg) | [![](https://img.shields.io/nuget/v/Vit.Linq.svg)](https://www.nuget.org/packages/Vit.Linq) ![](https://img.shields.io/nuget/dt/Vit.Linq.svg) |
+|![](https://github.com/Vit-Orm/Vit.Linq/workflows/ki_devops3_build/badge.svg) | [![](https://img.shields.io/nuget/v/Vit.Linq.svg)](https://www.nuget.org/packages/Vit.Linq) ![](https://img.shields.io/nuget/dt/Vit.Linq.svg) |
 
 
 
