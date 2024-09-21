@@ -11,17 +11,13 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Authors>Lith</Authors>
         <Description>Linq Extension</Description>
-        <PackageProjectUrl>https://github.com/Vit-Orm/Vit.Linq</PackageProjectUrl>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageTags>linq</PackageTags>
+        <PackageTags>linq vit</PackageTags>
     </PropertyGroup>
 
     <PropertyGroup>
-        <DocumentationFile>bin\Debug\netstandard2.0\Vit.Linq.xml</DocumentationFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
-
     <ItemGroup>
         <None Include="..\..\README.md">
             <Pack>True</Pack>

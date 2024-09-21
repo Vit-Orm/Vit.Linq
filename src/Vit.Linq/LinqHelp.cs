@@ -80,9 +80,9 @@ namespace Vit.Linq
 
         public static Expression<Func<T, object>> GetFieldExpression<T>(string fieldPath)
         {
-            var parammeter = Expression.Parameter(typeof(T));
-            Expression memberExp = GetFieldMemberExpression(parammeter, fieldPath);
-            var lambda = Expression.Lambda(memberExp, parammeter).Compile();
+            var parameter = Expression.Parameter(typeof(T));
+            Expression memberExp = GetFieldMemberExpression(parameter, fieldPath);
+            var lambda = Expression.Lambda(memberExp, parameter).Compile();
             return t => lambda.DynamicInvoke(t);
         }
 
