@@ -1,4 +1,4 @@
-﻿# Vit.Linq ReleaseLog
+﻿# Vit.Linq ReleaseNotes
 -----------------------
 # 3.1.0
 - [Vit.Linq] rename namespace ExpressionTree to ExpressionNodes , Filter to FilterRules
