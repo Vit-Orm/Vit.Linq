@@ -67,6 +67,15 @@ namespace Vit.Linq.MsTest.FilterRules
                 Assert.AreEqual(1, result.Count);
                 Assert.AreEqual(10, result[0].id);
             }
+
+            {
+                var query = GetQueryable();
+
+                var strRule = "{'field':'id',  'operator': 'IsNull'  }".Replace("'", "\"");
+                var rule = GetRule(strRule);
+                var result = Filter(ToQuery(query), rule);
+                Assert.AreEqual(0, result.Count);
+            }
             #endregion
 
             #region ##2 IsNotNull
@@ -92,6 +101,15 @@ namespace Vit.Linq.MsTest.FilterRules
                 var rule = GetRule(strRule);
                 var result = Filter(ToQuery(query), rule);
                 Assert.AreEqual(999, result.Count);
+            }
+
+            {
+                var query = GetQueryable();
+
+                var strRule = "{'field':'id',  'operator': 'IsNotNull'  }".Replace("'", "\"");
+                var rule = GetRule(strRule);
+                var result = Filter(ToQuery(query), rule);
+                Assert.AreEqual(1000, result.Count);
             }
             #endregion
 
@@ -332,14 +350,43 @@ namespace Vit.Linq.MsTest.FilterRules
 
             #region ##1 Contains
             {
-                var query = GetQueryable();
+                //###1 Contains
+                {
+                    var query = GetQueryable();
 
-                var strRule = "{'field':'name',  'operator': 'Contains',  'value': '987' }".Replace("'", "\"");
-                var rule = GetRule(strRule);
-                var result = Filter(ToQuery(query), rule);
+                    var strRule = "{'field':'name',  'operator': 'Contains',  'value': '987' }".Replace("'", "\"");
+                    var rule = GetRule(strRule);
+                    var result = Filter(ToQuery(query), rule);
 
-                Assert.AreEqual(1, result.Count);
-                Assert.AreEqual(987, result.First().id);
+                    Assert.AreEqual(1, result.Count);
+                    Assert.AreEqual(987, result.First().id);
+                }
+
+                //###2  "".Contains
+                {
+                    var query = GetQueryable();
+                    query.Skip(988).FirstOrDefault().name = "";
+
+                    var strRule = "{'field':'name',  'operator': 'Contains',  'value': '987' }".Replace("'", "\"");
+                    var rule = GetRule(strRule);
+                    var result = Filter(ToQuery(query), rule);
+
+                    Assert.AreEqual(1, result.Count);
+                    Assert.AreEqual(987, result.First().id);
+                }
+
+                //###3  null.Contains
+                {
+                    var query = GetQueryable();
+                    query.Skip(988).FirstOrDefault().name = null;
+
+                    var strRule = "{'condition':'And','rules':[ {'field':'name',  'operator': 'IsNotNull' }, {'field':'name',  'operator': 'Contains',  'value': '987' }    ]}".Replace("'", "\"");
+                    var rule = GetRule(strRule);
+                    var result = Filter(ToQuery(query), rule);
+
+                    Assert.AreEqual(1, result.Count);
+                    Assert.AreEqual(987, result.First().id);
+                }
             }
             #endregion
 
@@ -355,27 +402,26 @@ namespace Vit.Linq.MsTest.FilterRules
                     Assert.AreEqual(999, result.Count);
                 }
 
-
                 //###2
                 {
                     var query = GetQueryable();
-                    query.Skip(987).FirstOrDefault().name = null;
+                    query.Skip(988).FirstOrDefault().name = "";
 
                     var strRule = "{'field':'name',  'operator': 'NotContain',  'value': '987' }".Replace("'", "\"");
                     var rule = GetRule(strRule);
                     var result = Filter(ToQuery(query), rule);
-                    Assert.AreEqual(1000, result.Count);
+                    Assert.AreEqual(999, result.Count);
                 }
 
                 //###3
                 {
                     var query = GetQueryable();
-                    query.Skip(987).FirstOrDefault().name = "";
+                    query.Skip(988).FirstOrDefault().name = null;
 
-                    var strRule = "{'field':'name',  'operator': 'NotContain',  'value': '987' }".Replace("'", "\"");
+                    var strRule = "{'condition':'Or','rules':[ {'field':'name',  'operator': 'IsNull' }, {'field':'name',  'operator': 'NotContain',  'value': '987' }       ]}  ".Replace("'", "\"");
                     var rule = GetRule(strRule);
                     var result = Filter(ToQuery(query), rule);
-                    Assert.AreEqual(1000, result.Count);
+                    Assert.AreEqual(999, result.Count);
                 }
             }
             #endregion
