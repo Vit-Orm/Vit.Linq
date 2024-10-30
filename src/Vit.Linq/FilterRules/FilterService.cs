@@ -17,6 +17,7 @@ namespace Vit.Linq.FilterRules
 
 
         public bool operatorIsIgnoreCase = true;
+        public virtual bool checkNullForString { get; set; } = false;
 
         public virtual Expression ConvertToCode(ParameterExpression parameter, IFilterRule rule)
         {
