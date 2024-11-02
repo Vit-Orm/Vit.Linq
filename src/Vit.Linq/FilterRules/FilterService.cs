@@ -17,6 +17,10 @@ namespace Vit.Linq.FilterRules
 
 
         public bool operatorIsIgnoreCase = true;
+
+        /// <summary>
+        /// if true, will add IsNullOrEmpty check for string type for StringOperators like: Contains/NotContain/StartsWith/EndsWith
+        /// </summary>
         public virtual bool checkNullForString { get; set; } = false;
 
         public virtual Expression ConvertToCode(ParameterExpression parameter, IFilterRule rule)
