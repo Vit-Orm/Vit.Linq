@@ -21,10 +21,12 @@ namespace Vit.Linq.FilterRules.FilterConvertor.OperatorConvert
                 var leftValueType = arg.leftValueType;
                 var rightValueExpression = arg.filterService.GetRightValueExpression(arg.filter, arg.parameter, leftValueType);
 
-                var nullCheck = Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression);
+                var nullValue = Expression.Constant(null, leftValueType);
+                var equalNull = Expression.Equal(leftValueExpression, nullValue);
+
                 var contains = Expression.Call(leftValueExpression, "Contains", null, rightValueExpression);
 
-                return (true, Expression.AndAlso(Expression.Not(nullCheck), contains));
+                return (true, Expression.AndAlso(Expression.Not(equalNull), contains));
             }
             else if (RuleOperator.NotContain.Equals(arg.Operator, arg.comparison))
             {
@@ -32,10 +34,12 @@ namespace Vit.Linq.FilterRules.FilterConvertor.OperatorConvert
                 var leftValueType = arg.leftValueType;
                 var rightValueExpression = arg.filterService.GetRightValueExpression(arg.filter, arg.parameter, leftValueType);
 
-                var nullCheck = Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression);
+                var nullValue = Expression.Constant(null, leftValueType);
+                var equalNull = Expression.Equal(leftValueExpression, nullValue);
+
                 var contains = Expression.Call(leftValueExpression, "Contains", null, rightValueExpression);
 
-                return (true, Expression.OrElse(nullCheck, Expression.Not(contains)));
+                return (true, Expression.OrElse(equalNull, Expression.Not(contains)));
             }
             else if (RuleOperator.StartsWith.Equals(arg.Operator, arg.comparison))
             {
@@ -43,10 +47,12 @@ namespace Vit.Linq.FilterRules.FilterConvertor.OperatorConvert
                 var leftValueType = arg.leftValueType;
                 var rightValueExpression = arg.filterService.GetRightValueExpression(arg.filter, arg.parameter, leftValueType);
 
-                var nullCheck = Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression));
+                var nullValue = Expression.Constant(null, leftValueType);
+                var equalNull = Expression.Equal(leftValueExpression, nullValue);
+
                 var startsWith = Expression.Call(leftValueExpression, "StartsWith", null, rightValueExpression);
 
-                return (true, Expression.AndAlso(nullCheck, startsWith));
+                return (true, Expression.AndAlso(Expression.Not(equalNull), startsWith));
             }
             else if (RuleOperator.EndsWith.Equals(arg.Operator, arg.comparison))
             {
@@ -54,10 +60,12 @@ namespace Vit.Linq.FilterRules.FilterConvertor.OperatorConvert
                 var leftValueType = arg.leftValueType;
                 var rightValueExpression = arg.filterService.GetRightValueExpression(arg.filter, arg.parameter, leftValueType);
 
-                var nullCheck = Expression.Not(Expression.Call(typeof(string), "IsNullOrEmpty", null, leftValueExpression));
+                var nullValue = Expression.Constant(null, leftValueType);
+                var equalNull = Expression.Equal(leftValueExpression, nullValue);
+
                 var endsWith = Expression.Call(leftValueExpression, "EndsWith", null, rightValueExpression);
 
-                return (true, Expression.AndAlso(nullCheck, endsWith));
+                return (true, Expression.AndAlso(Expression.Not(equalNull), endsWith));
             }
             else if (RuleOperator.IsNullOrEmpty.Equals(arg.Operator, arg.comparison))
             {

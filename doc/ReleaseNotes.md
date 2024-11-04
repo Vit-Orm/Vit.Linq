@@ -1,6 +1,11 @@
 ﻿# Vit.Linq ReleaseNotes
 
 -----------------------
+# 3.1.5
+- FilterService.checkNullForString = true;
+- StringOperators will check null not String.IsNullOrEmpty
+
+-----------------------
 # 3.1.4
 - FilterService.checkNullForString = false;
 
